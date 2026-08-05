@@ -1,0 +1,2 @@
+"""Conversation gateway boundary."""
+

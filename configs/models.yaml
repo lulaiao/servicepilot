@@ -1,0 +1,15 @@
+inference:
+  provider: mock
+  model: deterministic-rule-baseline
+  revision: local
+future_candidates:
+  status: provisional_not_selected
+  planner:
+    - small-local-instruct-model
+    - medium-local-instruct-model
+  original_brief_examples:
+    - Qwen2.5-1.5B-Instruct
+    - Qwen2.5-3B-Instruct
+    - Qwen2.5-7B-Instruct
+selection_protocol: docs/model_selection_protocol.md
+status: "TBD pending official license/model-card review, fixed-workload comparison, compatibility test, and GPU audit"

@@ -1,0 +1,10 @@
+enabled: false
+status: "TBD until deterministic evaluation and reward unit tests pass"
+components:
+  task_success: null
+  final_state_correctness: null
+  policy_compliance: null
+  evidence_sufficiency: null
+  fault_recovery: null
+  user_experience: null
+

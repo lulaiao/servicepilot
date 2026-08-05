@@ -1,0 +1,2 @@
+"""Authoritative business domain."""
+

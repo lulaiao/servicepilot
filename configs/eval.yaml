@@ -1,0 +1,9 @@
+seed: 20260805
+judge: deterministic
+llm_judge_is_primary: false
+metrics:
+  - executable_task_success_rate
+  - final_state_accuracy
+  - policy_violation_rate
+  - false_success_rate
+

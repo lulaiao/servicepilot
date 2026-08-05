@@ -1,0 +1,12 @@
+project:
+  name: servicepilot
+  seed: 20260805
+runtime:
+  mode: deterministic
+  tool_budget: 12
+  retry_budget: 2
+  monitor_intervention_budget: 2
+privacy:
+  synthetic_data_only: true
+  redact_secrets: true
+
