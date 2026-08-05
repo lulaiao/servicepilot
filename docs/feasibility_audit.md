@@ -8,7 +8,9 @@ Workspace: `/data/ssd1/lla/servicepilot`
 The host has ample CPU, RAM, and disk capacity for the deterministic simulator,
 scenario runner, retrieval corpus, and local experiment artifacts. Phase 1 can
 proceed without Docker or a GPU by using an in-process repository and synthetic
-data. The target Python 3.11 runtime is not currently available in `PATH`.
+data. Python 3.11 is not in the default `PATH`, but an existing compatible
+environment was discovered and used for Phase 1:
+`/data/ssd1/lla/conda_envs/mcp-sql-reflex-rl/bin/python` (Python 3.11.15).
 Docker daemon access and the NVIDIA runtime are currently blocked and must be
 resolved before container integration or model experiments.
 
@@ -21,7 +23,7 @@ resolved before container integration or model experiments.
 | Memory | 503 GiB total, 401 GiB available | Sufficient; all 7.6 GiB swap was in use during audit and should be monitored |
 | Workspace disk | 15 TiB total, 3.4 TiB available, 76% used | Sufficient for MVP; set artifact quotas before model/training work |
 | Inodes | 466M total, 5% used | No inode pressure |
-| Python | CPython 3.8.10, pip 20.0.2 | Blocker for target Python 3.11 dependency set |
+| Python | System CPython 3.8.10; existing project environment CPython 3.11.15 | Target runtime available through an explicit interpreter path |
 | Git | 2.25.1 | Adequate |
 | Docker | CLI 23.0.4, Compose 2.17.2 | Installed, but daemon socket access is denied |
 | CUDA toolkit | `nvcc` 12.1 (V12.1.66) | Toolkit exists; not proof that runtime is usable |
@@ -50,10 +52,9 @@ These are planning bounds, not measured experiment results:
 
 ## Risks and mitigations
 
-1. **Python compatibility — high.** Python 3.8 cannot run the provisional
-   FastAPI/Pydantic/tooling baseline. Create a user-owned Python 3.11
-   environment (for example via an existing environment manager) before
-   installing dependencies. Do not mutate the system Python.
+1. **Python environment isolation — low.** Python 3.8 remains the system
+   default, so commands must explicitly use the discovered Python 3.11
+   environment. Do not mutate the system Python or assume shell activation.
 2. **GPU driver/runtime — high for model phases, none for Phase 1.** Ask the
    server administrator to validate driver/library compatibility and device
    visibility. Re-run `nvidia-smi` before selecting vLLM, SGLang, PyTorch, or

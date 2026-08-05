@@ -1,7 +1,7 @@
 """Dependency-free process health check used during repository bootstrap."""
 
-from dataclasses import dataclass
 import platform
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -20,4 +20,3 @@ def check_health() -> HealthReport:
         status="ok",
         python_version=platform.python_version(),
     )
-

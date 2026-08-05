@@ -21,7 +21,7 @@ Status: **complete**
 
 ## Phase 1 — deterministic business simulator
 
-Status: pending
+Status: **complete**
 
 1. Define enums and typed records for orders, payments, refunds, coupons,
    merchant/delivery state, policy version, and audit events.
@@ -40,6 +40,8 @@ Acceptance:
   refund.
 - A stale expected version cannot mutate an order.
 - Final state and policy applicability are independently assertable.
+
+Evidence: `experiments/reports/phase1_acceptance.md`.
 
 ## Phase 2 — MCP and reliability
 

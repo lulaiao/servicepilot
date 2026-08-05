@@ -45,3 +45,29 @@ GPU repair and official model-card/license verification, candidates will be
 tested on frozen ServicePilot scenarios against deterministic and smaller-model
 baselines. The smallest model that meets quality and safety gates is preferred;
 larger size must justify its measured latency, memory, and disk cost.
+
+## Phase 1 decisions
+
+### How does the system avoid duplicate refunds after a lost response?
+
+The write service stores an action-scoped idempotency key together with a hash
+of the normalized request and the authoritative result inside the same
+repository transaction as the refund. An identical retry returns that result
+before checking the now-stale order version. Reusing the key with different
+parameters raises an idempotency conflict. A concurrent test submits 32
+identical calls and verifies that exactly one refund exists.
+
+### Why use immutable records and optimistic versions?
+
+Immutable dataclasses make state changes explicit and prevent hidden in-place
+mutation. Each accepted mutation returns a new aggregate with an incremented
+version. Callers must provide the version observed during preview; a mismatch
+rejects stale decisions before a write. The in-memory lock makes Phase 1 atomic,
+while the same contract can map to a PostgreSQL transaction later.
+
+### Why keep policy in both text and executable code?
+
+Natural-language sections are retrievable evidence for later Policy Agents.
+Executable assertions are deterministic truth for write authorization and
+evaluation. Stable evidence IDs and policy versions connect the two, so an
+Agent cannot approve an operation merely by generating persuasive text.
