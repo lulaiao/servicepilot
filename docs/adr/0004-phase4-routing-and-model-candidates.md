@@ -17,8 +17,10 @@ composition have not been shown to offset another runtime dependency.
 
 Treat the locally cached `Qwen2.5-Coder-1.5B-Instruct` revision
 `2e1fd397ee46e1388853d2af2c993145b0f1098a` only as a runnable small-model
-candidate. It is not selected: it is code-specialized, the local GPU runtime is
-unavailable, and no ServicePilot development-set result exists yet.
+candidate. Reject it for the current CPU deployment after the ServicePilot
+development benchmark: it is less accurate and substantially more expensive
+than the rule baseline. This does not claim that the Qwen2.5 family as a whole
+is unsuitable.
 
 ## Measured evidence
 
@@ -31,6 +33,15 @@ The rule extractor reaches development Macro-F1 0.8333, schema validity 1.0
 and high-risk error rate 0.1667. It therefore remains a transparent baseline,
 not an accepted language-understanding solution.
 
+The cached Qwen Coder candidate reaches primary accuracy 0.5833, Macro-F1
+0.5000, slot exact match 0.3333 and schema validity 0.9167 on the same 12
+development examples. Float32 CPU inference averages 12.8405 seconds, has
+57.8929-second P95 latency, 0.0779 examples/second throughput and 9378.3 MiB
+peak RSS. Its linked snapshot occupies 2.9 GiB. One invalid output used
+`unknown` outside the declared enum; four other examples selected an incorrect
+primary intent. Raw report SHA256:
+`473e5f1252ad3ba2ae95b92667c866b6ac5ef60c85e9428f17a37ddbe8825a02`.
+
 ## Alternatives
 
 - Static single Agent: cheapest and equally successful on the current catalog,
@@ -39,12 +50,12 @@ not an accepted language-understanding solution.
   composition becomes a measured need.
 - Larger local instruction model: deferred until GPU visibility is repaired
   and identical-budget comparisons can measure quality per memory and latency.
-- Cached Qwen Coder 1.5B: useful for an offline compatibility experiment, but
-  specialization mismatch and CPU cost may disqualify it.
+- Cached Qwen Coder 1.5B: rejected for this workload and CPU budget. Reconsider
+  only with a task-appropriate prompt/model variant and usable GPU runtime.
 
 ## Gate
 
-This ADR remains provisional until the local candidate development benchmark
-and at least one credible alternative are measured. No sealed result may be
-used to tune prompts, rules or select a model.
-
+The routing architecture remains provisional until a task-appropriate local
+instruction model can be compared on usable GPU hardware. The cached Coder
+candidate is rejected. No sealed result may be used to tune prompts, rules or
+select a model.

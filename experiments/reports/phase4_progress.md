@@ -42,15 +42,33 @@ development data only.
 ## Current blocker
 
 `nvidia-smi` cannot communicate with the driver and
-`torch.cuda.is_available()` is false. A one-example float32 CPU smoke using the
-cached 1.5B candidate did not finish within 90 seconds and was stopped. This is
-runtime evidence against casually selecting that model, but not a quality
-result.
+`torch.cuda.is_available()` is false. The completed 12-example float32 CPU run
+for cached Qwen2.5-Coder-1.5B-Instruct produced:
+
+| Metric | Result |
+| --- | ---: |
+| Primary accuracy | 0.5833 |
+| Macro-F1 | 0.5000 |
+| Slot exact match | 0.3333 |
+| Schema validity | 0.9167 |
+| Mean / P95 latency | 12.8405 s / 57.8929 s |
+| Throughput | 0.0779 examples/s |
+| Peak RSS | 9378.3 MiB |
+| Linked model size | 2.9 GiB |
+
+This candidate is rejected for the current CPU workload because it is worse
+than the rule baseline on quality, latency and memory. The result does not
+reject other Qwen variants. A medium, task-appropriate instruction-model
+comparison remains blocked on GPU availability or a separately approved CPU
+budget.
 
 ## Reproduction
 
 ```text
 PYTHONPATH=src .venv/bin/python scripts/run_phase4_routing_eval.py
+PYTHONPATH=src .venv/bin/python scripts/analyze_model_benchmark.py \
+  --input artifacts/reports/qwen25_coder_1_5b_dev.json \
+  --output artifacts/reports/qwen25_coder_1_5b_dev_metrics.json
 .venv/bin/python -m pytest -q
 .venv/bin/python -m ruff check .
 .venv/bin/python -m mypy src/servicepilot
