@@ -55,9 +55,11 @@ Evidence: `experiments/reports/phase2_acceptance.md`.
 
 ## Phase 3 — single-agent executable baseline
 
-Status: pending. Implement the FSM user simulator, rule/MockModel policy,
-unified traces, budgets, 30+ scenarios, final-state judge, and false-success
-detection.
+Status: **complete**. Implemented the FSM user simulator, deterministic rule
+policy, unified traces, budgets, 36 scenarios, final-state judge, and
+false-success detection.
+
+Evidence: `experiments/reports/phase3_acceptance.md`.
 
 ## Phase 4 — intent and dynamic multi-agent routing
 

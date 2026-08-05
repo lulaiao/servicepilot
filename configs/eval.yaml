@@ -1,9 +1,14 @@
 seed: 20260805
 judge: deterministic
 llm_judge_is_primary: false
+phase3:
+  catalog: servicepilot.eval.catalog.build_phase3_scenarios
+  scenario_count: 36
+  scenario_sha256: ea33cccc96eec2a877f204c00441ad73a6b8545784f39e98cdd55a8081e2cead
+  trace_output: artifacts/traces/phase3_trajectories.jsonl
+  report_output: artifacts/reports/phase3_report.json
 metrics:
   - executable_task_success_rate
   - final_state_accuracy
   - policy_violation_rate
   - false_success_rate
-

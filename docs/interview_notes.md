@@ -106,3 +106,36 @@ A version conflict means the user's confirmation was based on stale business
 state. Blind retry could execute an action the user did not approve under the
 new conditions. Recovery must re-read, re-evaluate policy, generate a new
 preview and obtain confirmation.
+
+## Phase 3 decisions
+
+### Why start with a rule Agent instead of a local LLM?
+
+The rule baseline isolates system correctness from model variance. If
+confirmation, idempotency, state transitions, fault recovery or the Judge are
+wrong, an LLM would make the failure harder to localize. The baseline also
+provides a lower-bound cost/quality point that every local model must beat under
+the same tool and turn budget.
+
+### How do we know the Agent really completed the task?
+
+The final message is not an evaluation input. The Judge reads the order,
+refunds, coupon, delivery issues, handoff tickets and schedule from the
+Repository, then checks required/forbidden actions and policy evidence. A unit
+test deliberately gives the Judge an impossible expected state while retaining
+an Agent success claim; it is labeled `FALSE_SUCCESS`.
+
+### Why is a 100% Phase 3 score not a model-quality claim?
+
+The 36 cases are a deterministic development catalog deliberately aligned with
+the explicit rule baseline. The score proves that the executable loop and
+assertions agree on these fixed cases. It does not measure paraphrase
+generalization, unseen policy reasoning or learned tool use. Phase 4 must use a
+sealed scenario split and equal-budget comparisons before making those claims.
+
+### How does the user simulator avoid leaking hidden state?
+
+The user simulator owns the scenario and releases order ID, refund details or
+new schedule only through explicit response methods after the Agent asks. It can
+reject an unexplained or undesired write. The Agent does not read the Judge's
+expected final state.

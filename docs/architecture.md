@@ -38,3 +38,17 @@ The Gateway owns trace IDs, duration, result summary, call/retry budgets,
 exponential backoff, error classification and fault injection. MCP owns protocol
 discovery, schemas, structured output and transport compatibility. The domain
 service remains the only high-risk write authority.
+
+## Phase 3 executable loop
+
+```text
+ScenarioSpec -> FSMUserSimulator <-> RuleBasedSingleAgent
+                                  -> ReliableToolGateway
+                                  -> authoritative Repository
+Trajectory + final Repository ----> DeterministicJudge -> EvalReport
+```
+
+The Agent receives information through simulated user messages. It asks for
+order ID and transactional slots, previews high-risk writes, explains the
+preview, waits for confirmation, and only then executes. The Judge is outside
+the Agent and has read-only access to the final authoritative state.

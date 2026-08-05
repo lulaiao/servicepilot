@@ -28,6 +28,14 @@
 - Rescheduling, delivery issue and handoff ticket domain capabilities.
 - Timeout, transient, empty, partial, lost-response and version-conflict
   recovery tests.
+- Phase 3 immutable scenario, trajectory, Judge and aggregate report schemas.
+- FSM user simulator with progressive slot disclosure and confirmation refusal.
+- Rule-based single-Agent baseline covering 12 intent classes and multi-intent
+  execution.
+- Deterministic 36-scenario catalog with language and transient-fault variants.
+- Executable final-state, policy evidence, forbidden-action and false-success
+  Judge.
+- Reproducible JSONL trajectory/report/manifest generation command.
 
 ### Verification
 
@@ -39,3 +47,6 @@
 - Phase 1 strict MyPy analysis: 23 source files passed.
 - Phase 2 full suite: 42 tests passed.
 - Phase 2 Ruff and strict MyPy analysis: 29 source files passed.
+- Phase 3 fixed development catalog: 36/36 executable tasks succeeded; final
+  state accuracy 100%, policy violations 0%, false-success 0%.
+- Phase 3 full test suite: 50 tests passed before final documentation update.

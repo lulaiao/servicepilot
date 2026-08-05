@@ -5,10 +5,10 @@ and local services. It is designed around executable business state, policy
 evidence, reliable MCP tool boundaries, stateful routing, layered memory, and
 deterministic evaluation.
 
-The repository has completed **Phase 2**: the deterministic business simulator
-is exposed through five official MCP SDK v2 servers and a reliable typed Gateway
-with bounded retry, budgets, structured errors, traces and deterministic fault
-injection. No model weights or paid APIs are required.
+The repository has completed **Phase 3**: a deterministic FSM user simulator,
+rule-based single Agent, 36 executable scenarios, unified JSONL trajectories and
+an authoritative-state Judge now run through the reliable MCP/Gateway boundary.
+No model weights or paid APIs are required.
 
 ## Quick start
 
@@ -35,6 +35,12 @@ Phase 2 uses the project-private environment with the pinned MCP v2 SDK:
 .venv/bin/python -m pytest
 .venv/bin/python -m ruff check src tests
 PYTHONPATH=src .venv/bin/python -m mypy src
+```
+
+Run the Phase 3 evaluation and regenerate raw evidence:
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/run_eval.py
 ```
 
 Docker is optional until the persistence phase. The current host cannot access

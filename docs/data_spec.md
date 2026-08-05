@@ -38,3 +38,15 @@ version.
 Phase 3 scenarios and Phase 8 trajectories must be divided by normalized
 scenario family before paraphrase generation. Every split will have a SHA256
 manifest containing generator version, seed, policy version, and record count.
+
+## Phase 3 scenario and trajectory records
+
+`ScenarioSpec` contains scenario ID, intent, initial order state, user utterance,
+revealed slots, confirmation policy, allowed/forbidden actions, gold evidence,
+fault plan and expected final state. The Phase 3 catalog is generated
+deterministically in code and addressed by SHA256.
+
+`Trajectory` contains ordered typed events, trace ID, detected intent tuple,
+completion claim and final message. Tool events preserve arguments and the full
+typed Gateway result. Generated JSONL is excluded from Git but reproducible from
+the tracked catalog, code revision and manifest.

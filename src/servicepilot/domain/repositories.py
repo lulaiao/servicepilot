@@ -42,7 +42,9 @@ class DomainRepository(Protocol):
     def get_delivery(self, order_id: str) -> Delivery: ...
     def save_delivery(self, delivery: Delivery) -> None: ...
     def add_delivery_issue(self, issue: DeliveryIssue) -> None: ...
+    def list_delivery_issues(self, order_id: str) -> tuple[DeliveryIssue, ...]: ...
     def add_handoff_ticket(self, ticket: HandoffTicket) -> None: ...
+    def list_handoff_tickets(self, order_id: str) -> tuple[HandoffTicket, ...]: ...
     def add_audit_event(self, event: AuditEvent) -> None: ...
     def list_audit_events(self) -> tuple[AuditEvent, ...]: ...
     def get_idempotent_result(
@@ -179,9 +181,25 @@ class InMemoryRepository:
         with self._lock:
             self._delivery_issues[issue.issue_id] = issue
 
+    def list_delivery_issues(self, order_id: str) -> tuple[DeliveryIssue, ...]:
+        with self._lock:
+            return tuple(
+                issue
+                for issue in self._delivery_issues.values()
+                if issue.order_id == order_id
+            )
+
     def add_handoff_ticket(self, ticket: HandoffTicket) -> None:
         with self._lock:
             self._handoff_tickets[ticket.ticket_id] = ticket
+
+    def list_handoff_tickets(self, order_id: str) -> tuple[HandoffTicket, ...]:
+        with self._lock:
+            return tuple(
+                ticket
+                for ticket in self._handoff_tickets.values()
+                if ticket.order_id == order_id
+            )
 
     def load_dataset(self, dataset: SyntheticDataset) -> None:
         with self._lock:
