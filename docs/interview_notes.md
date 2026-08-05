@@ -71,3 +71,38 @@ Natural-language sections are retrievable evidence for later Policy Agents.
 Executable assertions are deterministic truth for write authorization and
 evaluation. Stable evidence IDs and policy versions connect the two, so an
 Agent cannot approve an operation merely by generating persuasive text.
+
+## Phase 2 decisions
+
+### Why MCP SDK v2 rather than the already installed v1?
+
+At implementation time, official v2.0.0 was the stable line and supported the
+2026-07-28 protocol plus earlier revisions. The existing v1.28.1 environment did
+not expose the v2 `MCPServer` and `Client` API and was already on the maintenance
+line. Starting new code on v1 would create immediate migration debt. We pinned
+v2 and proved actual tool discovery and structured in-memory calls rather than
+relying only on documentation.
+
+### Why is an internal Gateway still needed if MCP already wraps tools?
+
+MCP standardizes discovery, schemas, calls and transports. It does not define
+ServicePilot's retry budget, transaction confirmation, idempotency fingerprint,
+optimistic version recovery, fault curriculum, trace summary or error policy.
+Those remain application concerns in `ReliableToolGateway` and the domain
+service. This separation also permits the deterministic baseline to run without
+starting a network server.
+
+### What happens when a refund commits but the response is lost?
+
+The fault hook raises only after `create_refund_request` commits. Gateway marks
+the failure retryable and sends the identical request again. The domain service
+finds the action-scoped idempotency record and returns the original refund
+before rejecting the now-stale version or consumed token. The contract test
+asserts one refund and two attempts.
+
+### Why are version conflicts not automatically retried?
+
+A version conflict means the user's confirmation was based on stale business
+state. Blind retry could execute an action the user did not approve under the
+new conditions. Recovery must re-read, re-evaluate policy, generate a new
+preview and obtain confirmation.

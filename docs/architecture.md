@@ -20,3 +20,21 @@ For high-risk writes:
 3. the mutation and idempotency record are stored atomically;
 4. the confirmation is consumed and an audit event is appended;
 5. an identical retry returns the stored result before stale-version checks.
+
+## MCP boundary
+
+Five official MCP SDK v2 servers expose 22 tools: Order, Payment/Refund, Coupon,
+Policy, and Merchant/Delivery. Native async MCP functions avoid worker-thread
+coupling and delegate to a transport-independent `ServiceRegistry`.
+
+The call path is:
+
+```text
+Agent -> ReliableToolGateway -> MCP/Registry -> TransactionService
+      -> PolicyEngine + DomainRepository
+```
+
+The Gateway owns trace IDs, duration, result summary, call/retry budgets,
+exponential backoff, error classification and fault injection. MCP owns protocol
+discovery, schemas, structured output and transport compatibility. The domain
+service remains the only high-risk write authority.

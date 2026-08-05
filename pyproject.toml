@@ -12,6 +12,7 @@ license = {text = "Apache-2.0"}
 authors = [{name = "ServicePilot contributors"}]
 dependencies = [
   "fastapi>=0.115,<1",
+  "mcp==2.0.0",
   "pydantic>=2.10,<3",
   "pydantic-settings>=2.7,<3",
   "pyyaml>=6.0,<7",
@@ -22,8 +23,8 @@ dependencies = [
 dev = [
   "httpx>=0.28,<1",
   "mypy>=1.14,<2",
-  "pytest>=8.3,<9",
-  "pytest-asyncio>=0.25,<1",
+  "pytest>=8.3,<10",
+  "pytest-asyncio>=0.25,<2",
   "ruff>=0.9,<1",
 ]
 
@@ -45,4 +46,3 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 python_version = "3.11"
 strict = true
 packages = ["servicepilot"]
-

@@ -21,6 +21,13 @@
   and preview-confirm-execute transaction service.
 - Request-bound one-time confirmations, optimistic concurrency, action-scoped
   idempotency, and concurrent duplicate-write coverage.
+- Five official MCP SDK v2 servers exposing 22 strongly validated business
+  tools with structured output and in-memory protocol contract tests.
+- Reliable Agent-side Gateway with trace IDs, latency, summaries, call budgets,
+  bounded exponential retry, stable error codes and deterministic fault plans.
+- Rescheduling, delivery issue and handoff ticket domain capabilities.
+- Timeout, transient, empty, partial, lost-response and version-conflict
+  recovery tests.
 
 ### Verification
 
@@ -30,3 +37,5 @@
 - Phase 1 `make test` with Python 3.11.15: 26 tests passed.
 - Phase 1 `ruff check src tests`: passed.
 - Phase 1 strict MyPy analysis: 23 source files passed.
+- Phase 2 full suite: 42 tests passed.
+- Phase 2 Ruff and strict MyPy analysis: 29 source files passed.

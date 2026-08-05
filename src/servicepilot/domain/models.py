@@ -146,6 +146,25 @@ class AuditEvent:
 
 
 @dataclass(frozen=True)
+class DeliveryIssue:
+    issue_id: str
+    order_id: str
+    issue_type: str
+    status: str
+    created_at: datetime
+
+
+@dataclass(frozen=True)
+class HandoffTicket:
+    ticket_id: str
+    order_id: str
+    reason: str
+    context: str
+    status: str
+    created_at: datetime
+
+
+@dataclass(frozen=True)
 class WritePreview:
     action: str
     target_id: str

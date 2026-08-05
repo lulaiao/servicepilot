@@ -20,6 +20,7 @@ from servicepilot.domain.models import (
     AuditEvent,
     Coupon,
     CouponStatus,
+    Delivery,
     Order,
     OrderStatus,
     Refund,
@@ -184,6 +185,64 @@ class TransactionService:
             decision.evidence_ids,
             f"Restore coupon {order.coupon_id}",
         )
+
+    def preview_reschedule(
+        self, order_id: str, new_time: datetime
+    ) -> WritePreview:
+        if new_time.tzinfo is None:
+            raise PolicyViolationError("NEW_TIME_MUST_HAVE_TIMEZONE")
+        order = self.repository.get_order(order_id)
+        decision = self.policy_engine.check_reschedule(order)
+        if not decision.allowed:
+            raise PolicyViolationError(decision.reason_code)
+        return self._create_preview(
+            "reschedule_order",
+            order,
+            {"order_id": order_id, "new_time": new_time.isoformat()},
+            decision.policy_version,
+            decision.evidence_ids,
+            f"Reschedule order {order_id} to {new_time.isoformat()}",
+        )
+
+    def execute_reschedule(
+        self,
+        order_id: str,
+        new_time: datetime,
+        confirmation_token: str,
+        idempotency_key: str,
+        expected_version: int,
+    ) -> Delivery:
+        action = "reschedule_order"
+        payload = {"order_id": order_id, "new_time": new_time.isoformat()}
+        fingerprint = self._fingerprint(payload)
+        with self.repository.transaction():
+            previous = self._idempotent_result(action, idempotency_key, fingerprint)
+            if previous is not None:
+                return cast(Delivery, previous)
+            self._require_confirmation(
+                confirmation_token, action, order_id, fingerprint, idempotency_key
+            )
+            order = self.repository.get_order(order_id)
+            self._require_version(order, expected_version)
+            decision = self.policy_engine.check_reschedule(order)
+            if not decision.allowed:
+                raise PolicyViolationError(decision.reason_code)
+            delivery = self.repository.get_delivery(order_id)
+            updated = replace(
+                delivery,
+                scheduled_at=new_time,
+                version=delivery.version + 1,
+            )
+            self.repository.save_delivery(updated)
+            self.repository.save_order(replace(order, version=order.version + 1))
+            self.repository.save_idempotent_result(
+                action, idempotency_key, fingerprint, updated
+            )
+            self._consume_confirmation(confirmation_token)
+            self._audit(
+                action, order_id, "succeeded", idempotency_key, order.version + 1
+            )
+            return updated
 
     def execute_coupon_restore(
         self,

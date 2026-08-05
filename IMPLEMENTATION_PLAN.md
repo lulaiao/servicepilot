@@ -45,11 +45,13 @@ Evidence: `experiments/reports/phase1_acceptance.md`.
 
 ## Phase 2 — MCP and reliability
 
-Status: pending. Add typed Order, Refund, Coupon, Policy, and
+Status: **complete**. Added typed Order, Refund, Coupon, Policy, and
 Merchant/Delivery servers and a gateway with timeout, retry, typed errors,
 audit, confirmation, version checks, and at least five deterministic faults.
-Before implementation, verify the current official MCP Python SDK documentation,
-pin the tested revision, and record the SDK-versus-minimal-adapter spike.
+The official MCP Python SDK is pinned to v2.0.0; SDK-versus-adapter evidence is
+recorded in ADR 0003.
+
+Evidence: `experiments/reports/phase2_acceptance.md`.
 
 ## Phase 3 — single-agent executable baseline
 

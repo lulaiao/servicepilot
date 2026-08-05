@@ -5,10 +5,10 @@ and local services. It is designed around executable business state, policy
 evidence, reliable MCP tool boundaries, stateful routing, layered memory, and
 deterministic evaluation.
 
-The repository has completed **Phase 1**: environment audit plus a deterministic
-business simulator with versioned policies, explicit state transitions,
-preview-confirm-execute writes, optimistic concurrency, idempotency, audit
-events, and seeded synthetic data. No model weights or paid APIs are required.
+The repository has completed **Phase 2**: the deterministic business simulator
+is exposed through five official MCP SDK v2 servers and a reliable typed Gateway
+with bounded retry, budgets, structured errors, traces and deterministic fault
+injection. No model weights or paid APIs are required.
 
 ## Quick start
 
@@ -28,11 +28,13 @@ python -m pip install -e ".[dev]"
 pytest
 ```
 
-On the audited host, the existing Python 3.11 environment can run the full
-Phase 1 suite without installing packages:
+Phase 2 uses the project-private environment with the pinned MCP v2 SDK:
 
 ```bash
-PYTHON=/data/ssd1/lla/conda_envs/mcp-sql-reflex-rl/bin/python make test
+.venv/bin/python -m pip install -e ".[dev]"
+.venv/bin/python -m pytest
+.venv/bin/python -m ruff check src tests
+PYTHONPATH=src .venv/bin/python -m mypy src
 ```
 
 Docker is optional until the persistence phase. The current host cannot access

@@ -6,7 +6,18 @@ from threading import RLock
 from typing import Any, Protocol
 
 from servicepilot.domain.errors import NotFoundError
-from servicepilot.domain.models import AuditEvent, Coupon, Order, Refund
+from servicepilot.domain.models import (
+    AuditEvent,
+    Coupon,
+    Delivery,
+    DeliveryIssue,
+    HandoffTicket,
+    Merchant,
+    Order,
+    PaymentRecord,
+    Refund,
+    SyntheticDataset,
+)
 
 
 class DomainRepository(Protocol):
@@ -15,12 +26,23 @@ class DomainRepository(Protocol):
     def transaction(self) -> AbstractContextManager[None]: ...
     def add_order(self, order: Order) -> None: ...
     def get_order(self, order_id: str) -> Order: ...
+    def list_orders(self, user_id: str) -> tuple[Order, ...]: ...
     def save_order(self, order: Order) -> None: ...
     def add_coupon(self, coupon: Coupon) -> None: ...
     def get_coupon(self, coupon_id: str) -> Coupon: ...
     def save_coupon(self, coupon: Coupon) -> None: ...
     def add_refund(self, refund: Refund) -> None: ...
     def list_refunds(self, order_id: str) -> tuple[Refund, ...]: ...
+    def get_refund(self, refund_id: str) -> Refund: ...
+    def add_payment(self, payment: PaymentRecord) -> None: ...
+    def list_payments(self, order_id: str) -> tuple[PaymentRecord, ...]: ...
+    def add_merchant(self, merchant: Merchant) -> None: ...
+    def get_merchant(self, merchant_id: str) -> Merchant: ...
+    def add_delivery(self, delivery: Delivery) -> None: ...
+    def get_delivery(self, order_id: str) -> Delivery: ...
+    def save_delivery(self, delivery: Delivery) -> None: ...
+    def add_delivery_issue(self, issue: DeliveryIssue) -> None: ...
+    def add_handoff_ticket(self, ticket: HandoffTicket) -> None: ...
     def add_audit_event(self, event: AuditEvent) -> None: ...
     def list_audit_events(self) -> tuple[AuditEvent, ...]: ...
     def get_idempotent_result(
@@ -39,6 +61,11 @@ class InMemoryRepository:
         self._orders: dict[str, Order] = {}
         self._coupons: dict[str, Coupon] = {}
         self._refunds: dict[str, Refund] = {}
+        self._payments: dict[str, PaymentRecord] = {}
+        self._merchants: dict[str, Merchant] = {}
+        self._deliveries: dict[str, Delivery] = {}
+        self._delivery_issues: dict[str, DeliveryIssue] = {}
+        self._handoff_tickets: dict[str, HandoffTicket] = {}
         self._audits: list[AuditEvent] = []
         self._idempotency: dict[tuple[str, str], tuple[str, Any]] = {}
 
@@ -57,6 +84,20 @@ class InMemoryRepository:
                 return self._orders[order_id]
             except KeyError as exc:
                 raise NotFoundError(f"order not found: {order_id}") from exc
+
+    def list_orders(self, user_id: str) -> tuple[Order, ...]:
+        with self._lock:
+            return tuple(
+                sorted(
+                    (
+                        order
+                        for order in self._orders.values()
+                        if order.user_id == user_id
+                    ),
+                    key=lambda order: order.created_at,
+                    reverse=True,
+                )
+            )
 
     def save_order(self, order: Order) -> None:
         with self._lock:
@@ -88,6 +129,72 @@ class InMemoryRepository:
                 for refund in self._refunds.values()
                 if refund.order_id == order_id
             )
+
+    def get_refund(self, refund_id: str) -> Refund:
+        with self._lock:
+            try:
+                return self._refunds[refund_id]
+            except KeyError as exc:
+                raise NotFoundError(f"refund not found: {refund_id}") from exc
+
+    def add_payment(self, payment: PaymentRecord) -> None:
+        with self._lock:
+            self._payments[payment.payment_id] = payment
+
+    def list_payments(self, order_id: str) -> tuple[PaymentRecord, ...]:
+        with self._lock:
+            return tuple(
+                payment
+                for payment in self._payments.values()
+                if payment.order_id == order_id
+            )
+
+    def add_merchant(self, merchant: Merchant) -> None:
+        with self._lock:
+            self._merchants[merchant.merchant_id] = merchant
+
+    def get_merchant(self, merchant_id: str) -> Merchant:
+        with self._lock:
+            try:
+                return self._merchants[merchant_id]
+            except KeyError as exc:
+                raise NotFoundError(f"merchant not found: {merchant_id}") from exc
+
+    def add_delivery(self, delivery: Delivery) -> None:
+        with self._lock:
+            self._deliveries[delivery.order_id] = delivery
+
+    def get_delivery(self, order_id: str) -> Delivery:
+        with self._lock:
+            try:
+                return self._deliveries[order_id]
+            except KeyError as exc:
+                raise NotFoundError(f"delivery not found: {order_id}") from exc
+
+    def save_delivery(self, delivery: Delivery) -> None:
+        with self._lock:
+            self._deliveries[delivery.order_id] = delivery
+
+    def add_delivery_issue(self, issue: DeliveryIssue) -> None:
+        with self._lock:
+            self._delivery_issues[issue.issue_id] = issue
+
+    def add_handoff_ticket(self, ticket: HandoffTicket) -> None:
+        with self._lock:
+            self._handoff_tickets[ticket.ticket_id] = ticket
+
+    def load_dataset(self, dataset: SyntheticDataset) -> None:
+        with self._lock:
+            for order in dataset.orders:
+                self._orders[order.order_id] = order
+            for payment in dataset.payments:
+                self._payments[payment.payment_id] = payment
+            for coupon in dataset.coupons:
+                self._coupons[coupon.coupon_id] = coupon
+            for merchant in dataset.merchants:
+                self._merchants[merchant.merchant_id] = merchant
+            for delivery in dataset.deliveries:
+                self._deliveries[delivery.order_id] = delivery
 
     def add_audit_event(self, event: AuditEvent) -> None:
         with self._lock:

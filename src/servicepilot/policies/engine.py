@@ -93,6 +93,23 @@ class PolicyEngine:
             evidence,
         )
 
+    def check_reschedule(self, order: Order) -> PolicyDecision:
+        version_error = self._check_version(order)
+        if version_error is not None:
+            return version_error
+        evidence = ("policy_reschedule_2026_1_section_6",)
+        allowed = order.status in {
+            OrderStatus.PAID,
+            OrderStatus.ACCEPTED,
+            OrderStatus.PREPARING,
+        }
+        return PolicyDecision(
+            allowed,
+            "ELIGIBLE" if allowed else "RESCHEDULE_INELIGIBLE",
+            self.version,
+            evidence,
+        )
+
     def _check_version(self, order: Order) -> PolicyDecision | None:
         if order.policy_version == self.version:
             return None
