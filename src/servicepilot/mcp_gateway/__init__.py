@@ -1,11 +1,6 @@
 """Reliable MCP client gateway."""
 
 from servicepilot.mcp_gateway.errors import ToolErrorCode
-from servicepilot.mcp_gateway.gateway import (
-    ReliableToolGateway,
-    ToolFailure,
-    ToolResult,
-)
 
 __all__ = [
     "ReliableToolGateway",
@@ -13,3 +8,19 @@ __all__ = [
     "ToolFailure",
     "ToolResult",
 ]
+
+
+def __getattr__(name: str) -> object:
+    if name in {"ReliableToolGateway", "ToolFailure", "ToolResult"}:
+        from servicepilot.mcp_gateway.gateway import (
+            ReliableToolGateway,
+            ToolFailure,
+            ToolResult,
+        )
+
+        return {
+            "ReliableToolGateway": ReliableToolGateway,
+            "ToolFailure": ToolFailure,
+            "ToolResult": ToolResult,
+        }[name]
+    raise AttributeError(name)

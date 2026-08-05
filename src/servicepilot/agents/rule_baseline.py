@@ -65,8 +65,7 @@ class RuleBasedSingleAgent:
             scenario, trace_id, events, claimed_success, message, intents
         )
 
-    @staticmethod
-    def detect_intents(text: str) -> tuple[Intent, ...]:
+    def detect_intents(self, text: str) -> tuple[Intent, ...]:
         if "忽略规则" in text or "直接修改数据库" in text:
             return (Intent.OUT_OF_SCOPE,)
         if ("延迟" in text or "超时" in text or "太慢" in text) and (

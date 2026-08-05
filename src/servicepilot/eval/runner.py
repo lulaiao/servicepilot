@@ -1,5 +1,6 @@
 """Phase 3 scenario execution and metric aggregation."""
 
+from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import Decimal
 
@@ -35,6 +36,7 @@ from servicepilot.policies.engine import PolicyEngine
 
 async def run_scenario(
     scenario: ScenarioSpec,
+    agent: RuleBasedSingleAgent | None = None,
 ) -> tuple[Trajectory, JudgeResult, InMemoryRepository]:
     repository = _seed_repository(scenario)
     policies = PolicyEngine.default()
@@ -51,7 +53,7 @@ async def run_scenario(
         ),
         backoff=lambda _: None,
     )
-    trajectory = await RuleBasedSingleAgent().run(
+    trajectory = await (agent or RuleBasedSingleAgent()).run(
         scenario, FSMUserSimulator(scenario), gateway
     )
     result = DeterministicJudge().evaluate(scenario, trajectory, repository)
@@ -60,11 +62,14 @@ async def run_scenario(
 
 async def run_suite(
     scenarios: tuple[ScenarioSpec, ...],
+    agent_factory: Callable[[], RuleBasedSingleAgent] = RuleBasedSingleAgent,
 ) -> tuple[tuple[Trajectory, ...], tuple[JudgeResult, ...], EvalReport]:
     trajectories: list[Trajectory] = []
     results: list[JudgeResult] = []
     for scenario in scenarios:
-        trajectory, result, _ = await run_scenario(scenario)
+        trajectory, result, _ = await run_scenario(
+            scenario, agent=agent_factory()
+        )
         trajectories.append(trajectory)
         results.append(result)
     return tuple(trajectories), tuple(results), build_report(scenarios, results)
