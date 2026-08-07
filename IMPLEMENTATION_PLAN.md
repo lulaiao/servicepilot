@@ -63,10 +63,70 @@ Evidence: `experiments/reports/phase3_acceptance.md`.
 
 ## Phase 4 — intent and dynamic multi-agent routing
 
-Status: pending. Compare rule and local structured-output baselines; route from
-full dialogue/tool state on every turn and material tool result.
-Select any local model using `docs/model_selection_protocol.md`; report quality,
-schema-validity, latency, and memory together.
+Status: **in progress**. The deterministic routing baseline is complete; local
+model selection and Harness Formalization remain open.
+
+### Phase 4A — intent and dynamic routing
+
+- Compare rule and local structured-output baselines.
+- Route from full dialogue/tool state on every turn and material tool result.
+- Select any local model using `docs/model_selection_protocol.md`; report
+  quality, schema validity, latency, throughput, memory and disk together.
+
+Evidence: `experiments/reports/phase4_progress.md`.
+
+### Phase 4B — Harness Formalization
+
+Formalize the existing execution and evaluation infrastructure as two typed,
+model-independent boundaries:
+
+1. `AgentRuntimeHarness`
+   - owns session lifecycle, run configuration and dependency assembly;
+   - injects the model/policy, state manager, Router and tool dispatcher;
+   - enforces turn, tool, retry, time and token budgets;
+   - runs ordered input, tool and output guardrails;
+   - records typed events, checkpoints, termination reason and resource usage;
+   - supports deterministic replay without issuing business writes.
+2. `EvaluationHarness`
+   - creates an isolated seeded environment per trial;
+   - runs the FSM user simulator and selected runtime harness;
+   - applies deterministic state/evidence/forbidden-action grading;
+   - supports bounded concurrency, failure isolation and resumable manifests;
+   - aggregates metrics without allowing Agent prose to determine success.
+
+Required contracts:
+
+- `HarnessRunConfig`, `HarnessSession`, `HarnessEvent`,
+  `HarnessTerminationReason`, `ModelAdapter`, `ToolDispatcher`,
+  `GuardrailPipeline`, `CheckpointStore` and `ReplayMode`;
+- immutable configuration containing scenario/data hash, code revision, model
+  revision, prompt revision, decoding parameters and all budgets;
+- append-only trace semantics and payload fingerprints for replay;
+- explicit separation between runtime guardrails and the external Judge.
+
+Required comparisons:
+
+- existing direct Agent loop versus the formalized Harness under identical
+  scenarios, policy, faults and budgets;
+- ablations for tool budget, input guardrail, observation rerouting and
+  external Verifier;
+- report executable success, false-success, high-risk errors, tool calls,
+  turns, latency and Harness overhead.
+
+Acceptance:
+
+- the existing 36 deterministic scenarios retain identical authoritative
+  outcomes through the new Harness;
+- replay performs zero business writes and reproduces the recorded final
+  decision/termination metadata;
+- interrupted runs resume from a typed checkpoint without repeating a
+  committed high-risk write;
+- Prompt Injection, missing confirmation, exhausted budgets and version
+  conflicts have explicit termination/recovery paths;
+- every reported Harness metric links to code revision, run configuration,
+  scenario hash, raw trace and report;
+- no external Harness framework is accepted until it beats the lightweight
+  internal baseline on a measured requirement.
 
 ## Phase 5 — layered memory
 
