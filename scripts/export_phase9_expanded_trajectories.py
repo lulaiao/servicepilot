@@ -24,7 +24,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--code-revision", required=True)
     parser.add_argument("--sealed-catalog", type=Path, required=True)
-    parser.add_argument("--train-dev-catalog", type=Path, required=True)
+    parser.add_argument("--train-dev-catalog", type=Path, action="append", required=True)
     parser.add_argument("--variant-output", type=Path, required=True)
     parser.add_argument("--trajectory-output", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
@@ -42,7 +42,9 @@ def load_families(path: Path) -> tuple[ExpandedScenarioFamily, ...]:
 
 async def main() -> None:
     args = parse_args()
-    families = load_families(args.sealed_catalog) + load_families(args.train_dev_catalog)
+    families = load_families(args.sealed_catalog) + tuple(
+        family for path in args.train_dev_catalog for family in load_families(path)
+    )
     variants = tuple(variant for family in families for variant in expand_family_variants(family))
     variant_payload = "".join(item.model_dump_json() + "\n" for item in variants).encode()
     harness = EvaluationHarness(code_revision=args.code_revision)
