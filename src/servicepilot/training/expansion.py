@@ -556,7 +556,13 @@ def build_phase9_train_dev_families_v2(
             continue
         family_id = f"expanded-{recipe_id}"
         split_score = int(hashlib.sha256(f"{seed}:{signature}".encode()).hexdigest(), 16) % 5
-        split = DataSplit.DEV if split_score == 0 else DataSplit.TRAIN
+        split = (
+            DataSplit.TRAIN
+            if base.intent in {Intent.ORDER_QUERY, Intent.OUT_OF_SCOPE}
+            else DataSplit.DEV
+            if split_score == 0
+            else DataSplit.TRAIN
+        )
         scenario = base.model_copy(
             update={
                 "scenario_id": family_id,

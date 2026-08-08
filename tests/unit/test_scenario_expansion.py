@@ -67,6 +67,11 @@ async def test_second_batch_is_large_nonleaking_and_executable() -> None:
     assert {item.split for item in families} == {DataSplit.TRAIN, DataSplit.DEV}
     assert not reserved & {item.semantic_signature_sha256 for item in families}
     assert len({item.semantic_signature_sha256 for item in families}) == len(families)
+    assert all(
+        item.split is DataSplit.TRAIN
+        for item in families
+        if item.canonical_scenario.intent.value in {"order_query", "out_of_scope"}
+    )
 
     harness = EvaluationHarness()
     failures = []
