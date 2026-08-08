@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 
 import pytest
@@ -15,6 +16,7 @@ from servicepilot.harness.guardrails import GuardrailPipeline
 from servicepilot.harness.models import (
     GuardrailDecision,
     GuardrailStage,
+    HarnessBudgets,
     HarnessRunConfig,
     HarnessSession,
     HarnessSessionStatus,
@@ -39,6 +41,33 @@ class BlockingGuardrail:
             guardrail=self.name,
             reason="blocked in test",
         )
+
+
+class ToolBlockingGuardrail:
+    name = "tool_blocking_test_guardrail"
+
+    def evaluate(
+        self, stage: GuardrailStage, payload: dict[str, object]
+    ) -> GuardrailDecision:
+        blocked = (
+            stage is GuardrailStage.TOOL
+            and payload.get("tool_name") == "create_refund_request"
+        )
+        return GuardrailDecision(
+            allowed=not blocked,
+            guardrail=self.name,
+            reason="blocked high-risk write" if blocked else "allowed",
+        )
+
+
+class TokenReportingAgent(RuleBasedSingleAgent):
+    model_tokens_used = 2
+
+
+class SlowAgent(RuleBasedSingleAgent):
+    async def run(self, *args: object, **kwargs: object):  # type: ignore[no-untyped-def]
+        await asyncio.sleep(0.02)
+        return await super().run(*args, **kwargs)  # type: ignore[arg-type]
 
 
 def config_for(scenario_id: str) -> HarnessRunConfig:
@@ -205,3 +234,139 @@ async def test_input_guardrail_stops_before_agent_or_tools() -> None:
     assert session.status is HarnessSessionStatus.FAILED
     assert session.termination_reason is HarnessTerminationReason.GUARDRAIL_STOP
     assert session.trajectory is None
+
+
+@pytest.mark.asyncio
+async def test_tool_guardrail_blocks_write_before_gateway() -> None:
+    scenario = next(
+        item
+        for item in build_phase3_scenarios()
+        if item.intent is Intent.PARTIAL_REFUND and not item.faults
+    )
+    config = config_for(scenario.scenario_id)
+    environment = build_trial_environment(scenario, config.budgets)
+    runtime = AgentRuntimeHarness(
+        guardrails=GuardrailPipeline((ToolBlockingGuardrail(),))
+    )
+
+    session = await runtime.run(
+        scenario=scenario,
+        agent=RuleBasedSingleAgent(),
+        simulator=FSMUserSimulator(scenario),
+        gateway=environment.gateway,
+        config=config,
+    )
+
+    assert session.termination_reason is HarnessTerminationReason.GUARDRAIL_STOP
+    assert len(environment.repository.list_refunds(scenario.order_id)) == 0
+    blocked = next(
+        step for step in session.tool_steps if step.status.value == "blocked"
+    )
+    assert blocked.guardrail_decisions[0]["guardrail"] == ToolBlockingGuardrail.name
+
+
+@pytest.mark.asyncio
+async def test_tool_budget_has_explicit_termination() -> None:
+    scenario = next(
+        item
+        for item in build_phase3_scenarios()
+        if item.intent is Intent.CANCEL_ORDER and item.accept_confirmation
+    )
+    budgets = HarnessBudgets(max_tool_calls=1, timeout_seconds=0.1)
+    config = config_for(scenario.scenario_id).model_copy(
+        update={"budgets": budgets}
+    )
+    environment = build_trial_environment(scenario, budgets)
+
+    session = await AgentRuntimeHarness().run(
+        scenario=scenario,
+        agent=RuleBasedSingleAgent(),
+        simulator=FSMUserSimulator(scenario),
+        gateway=environment.gateway,
+        config=config,
+    )
+
+    assert session.termination_reason is HarnessTerminationReason.TOOL_BUDGET_EXHAUSTED
+    assert session.tool_calls_used == 1
+
+
+@pytest.mark.asyncio
+async def test_retry_budget_has_explicit_termination() -> None:
+    scenario = next(
+        item
+        for item in build_phase3_scenarios()
+        if item.intent is Intent.ORDER_QUERY
+    ).model_copy(
+        update={"faults": {"get_order": (FaultKind.TIMEOUT,) * 3}}
+    )
+    budgets = HarnessBudgets(max_retries=2, timeout_seconds=0.1)
+    config = config_for(scenario.scenario_id).model_copy(
+        update={"budgets": budgets}
+    )
+    environment = build_trial_environment(scenario, budgets)
+
+    session = await AgentRuntimeHarness().run(
+        scenario=scenario,
+        agent=RuleBasedSingleAgent(),
+        simulator=FSMUserSimulator(scenario),
+        gateway=environment.gateway,
+        config=config,
+    )
+
+    assert session.termination_reason is HarnessTerminationReason.RETRY_BUDGET_EXHAUSTED
+    assert session.retries_used == 2
+
+
+@pytest.mark.asyncio
+async def test_turn_and_token_budgets_have_explicit_termination() -> None:
+    scenario = build_phase3_scenarios()[0]
+    turn_budgets = HarnessBudgets(max_turns=1, timeout_seconds=0.1)
+    turn_config = config_for(scenario.scenario_id).model_copy(
+        update={"budgets": turn_budgets}
+    )
+    turn_environment = build_trial_environment(scenario, turn_budgets)
+    turn_session = await AgentRuntimeHarness().run(
+        scenario=scenario,
+        agent=RuleBasedSingleAgent(),
+        simulator=FSMUserSimulator(scenario),
+        gateway=turn_environment.gateway,
+        config=turn_config,
+    )
+    assert turn_session.termination_reason is HarnessTerminationReason.TURN_BUDGET_EXHAUSTED
+
+    token_budgets = HarnessBudgets(
+        max_model_tokens=1, timeout_seconds=0.1
+    )
+    token_config = config_for(scenario.scenario_id).model_copy(
+        update={"budgets": token_budgets}
+    )
+    token_environment = build_trial_environment(scenario, token_budgets)
+    token_session = await AgentRuntimeHarness().run(
+        scenario=scenario,
+        agent=TokenReportingAgent(),
+        simulator=FSMUserSimulator(scenario),
+        gateway=token_environment.gateway,
+        config=token_config,
+    )
+    assert token_session.termination_reason is HarnessTerminationReason.TOKEN_BUDGET_EXHAUSTED
+    assert token_session.model_tokens_used == 2
+
+
+@pytest.mark.asyncio
+async def test_time_budget_has_explicit_termination() -> None:
+    scenario = build_phase3_scenarios()[0]
+    budgets = HarnessBudgets(timeout_seconds=0.001)
+    config = config_for(scenario.scenario_id).model_copy(
+        update={"budgets": budgets}
+    )
+    environment = build_trial_environment(scenario, budgets)
+
+    session = await AgentRuntimeHarness().run(
+        scenario=scenario,
+        agent=SlowAgent(),
+        simulator=FSMUserSimulator(scenario),
+        gateway=environment.gateway,
+        config=config,
+    )
+
+    assert session.termination_reason is HarnessTerminationReason.TIME_BUDGET_EXHAUSTED

@@ -1,5 +1,6 @@
 """Model-independent Agent Runtime Harness."""
 
+import asyncio
 import hashlib
 
 from servicepilot.eval.models import ScenarioSpec, Trajectory
@@ -7,6 +8,7 @@ from servicepilot.eval.simulator import FSMUserSimulator
 from servicepilot.harness.checkpoints import InMemoryCheckpointStore
 from servicepilot.harness.dispatcher import (
     CheckpointingToolDispatcher,
+    HarnessControlStop,
     SimulatedHarnessInterruption,
 )
 from servicepilot.harness.guardrails import GuardrailPipeline
@@ -107,6 +109,9 @@ class AgentRuntimeHarness:
             existing_steps=session_holder[0].tool_steps,
             persist=persist_step,
             interrupt_after_committed_tool=interrupt_after_committed_tool,
+            guardrails=self.guardrails,
+            max_tool_calls=config.budgets.max_tool_calls,
+            max_retries=config.budgets.max_retries,
         )
         input_decisions = self.guardrails.evaluate(
             GuardrailStage.INPUT, {"text": scenario.user_utterance}
@@ -127,8 +132,20 @@ class AgentRuntimeHarness:
             self.checkpoints.save(stopped)
             return stopped
         try:
-            trajectory = await agent.run(scenario, simulator, dispatcher)  # type: ignore[arg-type]
+            async with asyncio.timeout(config.budgets.timeout_seconds):
+                trajectory = await agent.run(scenario, simulator, dispatcher)  # type: ignore[arg-type]
             session = session_holder[0]
+        except TimeoutError:
+            return self._stop(
+                session_holder[0],
+                HarnessTerminationReason.TIME_BUDGET_EXHAUSTED,
+                "runtime time budget exhausted",
+                dispatcher,
+            )
+        except HarnessControlStop as exc:
+            return self._stop(
+                session_holder[0], exc.reason, str(exc), dispatcher
+            )
         except SimulatedHarnessInterruption as exc:
             interrupted = self._append(
                 session_holder[0],
@@ -151,6 +168,38 @@ class AgentRuntimeHarness:
             )
             self.checkpoints.save(failed)
             raise
+        turns_used = sum(
+            event.role.value in {"user", "assistant"}
+            for event in trajectory.events
+        )
+        model_tokens_used = int(getattr(agent, "model_tokens_used", 0))
+        session = session.model_copy(
+            update={
+                "turns_used": turns_used,
+                "tool_calls_used": dispatcher.tool_calls_used,
+                "retries_used": dispatcher.retries_used,
+                "model_tokens_used": model_tokens_used,
+            }
+        )
+        if turns_used > config.budgets.max_turns:
+            return self._stop(
+                session,
+                HarnessTerminationReason.TURN_BUDGET_EXHAUSTED,
+                "runtime turn budget exhausted",
+                dispatcher,
+                trajectory=trajectory,
+            )
+        if (
+            config.budgets.max_model_tokens is not None
+            and model_tokens_used > config.budgets.max_model_tokens
+        ):
+            return self._stop(
+                session,
+                HarnessTerminationReason.TOKEN_BUDGET_EXHAUSTED,
+                "runtime model-token budget exhausted",
+                dispatcher,
+                trajectory=trajectory,
+            )
         output_decisions = self.guardrails.evaluate(
             GuardrailStage.OUTPUT,
             {"claimed_success": trajectory.claimed_success},
@@ -183,6 +232,32 @@ class AgentRuntimeHarness:
         )
         self.checkpoints.save(completed)
         return completed
+
+    def _stop(
+        self,
+        session: HarnessSession,
+        reason: HarnessTerminationReason,
+        message: str,
+        dispatcher: CheckpointingToolDispatcher,
+        *,
+        trajectory: Trajectory | None = None,
+    ) -> HarnessSession:
+        stopped = self._append(
+            session.model_copy(
+                update={
+                    "tool_calls_used": dispatcher.tool_calls_used,
+                    "retries_used": dispatcher.retries_used,
+                }
+            ),
+            "runtime_stopped",
+            {"reason": reason.value, "message": message},
+            status=HarnessSessionStatus.FAILED,
+            termination=reason,
+            trajectory=trajectory,
+            error=message,
+        )
+        self.checkpoints.save(stopped)
+        return stopped
 
     def replay(
         self,

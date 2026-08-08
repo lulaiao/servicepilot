@@ -26,6 +26,11 @@ class HarnessTerminationReason(StrEnum):
     RUNTIME_ERROR = "runtime_error"
     REPLAY_COMPLETED = "replay_completed"
     INTERRUPTED = "interrupted"
+    TURN_BUDGET_EXHAUSTED = "turn_budget_exhausted"
+    TOOL_BUDGET_EXHAUSTED = "tool_budget_exhausted"
+    RETRY_BUDGET_EXHAUSTED = "retry_budget_exhausted"
+    TIME_BUDGET_EXHAUSTED = "time_budget_exhausted"
+    TOKEN_BUDGET_EXHAUSTED = "token_budget_exhausted"
 
 
 class ReplayMode(StrEnum):
@@ -100,11 +105,16 @@ class HarnessSession(BaseModel):
     trajectory: Trajectory | None = None
     error: str | None = None
     tool_steps: tuple["ToolStepCheckpoint", ...] = ()
+    turns_used: int = 0
+    tool_calls_used: int = 0
+    retries_used: int = 0
+    model_tokens_used: int = 0
 
 
 class ToolStepStatus(StrEnum):
     STARTED = "started"
     COMMITTED = "committed"
+    BLOCKED = "blocked"
 
 
 class ToolStepCheckpoint(BaseModel):
@@ -116,6 +126,7 @@ class ToolStepCheckpoint(BaseModel):
     arguments_sha256: str
     status: ToolStepStatus
     result: dict[str, Any] | None = None
+    guardrail_decisions: tuple[dict[str, Any], ...] = ()
 
 
 class GuardrailDecision(BaseModel):

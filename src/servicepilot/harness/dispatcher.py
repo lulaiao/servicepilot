@@ -5,12 +5,26 @@ import json
 from collections.abc import Callable
 from typing import Any
 
-from servicepilot.harness.models import ToolStepCheckpoint, ToolStepStatus
+from servicepilot.harness.guardrails import GuardrailPipeline
+from servicepilot.harness.models import (
+    GuardrailStage,
+    HarnessTerminationReason,
+    ToolStepCheckpoint,
+    ToolStepStatus,
+)
 from servicepilot.mcp_gateway.gateway import ReliableToolGateway, ToolResult
 
 
 class SimulatedHarnessInterruption(RuntimeError):
     """Test-only interruption raised after a durable tool-result checkpoint."""
+
+
+class HarnessControlStop(RuntimeError):
+    def __init__(
+        self, reason: HarnessTerminationReason, message: str
+    ) -> None:
+        super().__init__(message)
+        self.reason = reason
 
 
 class CheckpointingToolDispatcher:
@@ -21,11 +35,19 @@ class CheckpointingToolDispatcher:
         existing_steps: tuple[ToolStepCheckpoint, ...] = (),
         persist: Callable[[ToolStepCheckpoint], None],
         interrupt_after_committed_tool: str | None = None,
+        guardrails: GuardrailPipeline | None = None,
+        max_tool_calls: int = 12,
+        max_retries: int = 2,
     ) -> None:
         self.gateway = gateway
         self.persist = persist
         self.interrupt_after_committed_tool = interrupt_after_committed_tool
         self._interrupted = False
+        self.guardrails = guardrails or GuardrailPipeline()
+        self.max_tool_calls = max_tool_calls
+        self.max_retries = max_retries
+        self.tool_calls_used = 0
+        self.retries_used = 0
         self._ordinals: dict[str, int] = {}
         self._committed = {
             step.call_key: step
@@ -48,6 +70,31 @@ class CheckpointingToolDispatcher:
             return ToolResult.model_validate(cached.result)
 
         sequence = len(self._committed) + ordinal
+        if self.tool_calls_used >= self.max_tool_calls:
+            self._persist_blocked(
+                sequence, call_key, tool_name, arguments_sha, ()
+            )
+            raise HarnessControlStop(
+                HarnessTerminationReason.TOOL_BUDGET_EXHAUSTED,
+                "Harness tool-call budget exhausted",
+            )
+        decisions = self.guardrails.evaluate(
+            GuardrailStage.TOOL,
+            {"tool_name": tool_name, "arguments": arguments},
+        )
+        if not self.guardrails.allowed(decisions):
+            self._persist_blocked(
+                sequence,
+                call_key,
+                tool_name,
+                arguments_sha,
+                tuple(item.model_dump(mode="json") for item in decisions),
+            )
+            raise HarnessControlStop(
+                HarnessTerminationReason.GUARDRAIL_STOP,
+                "TOOL-stage guardrail rejected dispatch",
+            )
+        self.tool_calls_used += 1
         self.persist(
             ToolStepCheckpoint(
                 sequence=sequence,
@@ -55,9 +102,13 @@ class CheckpointingToolDispatcher:
                 tool_name=tool_name,
                 arguments_sha256=arguments_sha,
                 status=ToolStepStatus.STARTED,
+                guardrail_decisions=tuple(
+                    item.model_dump(mode="json") for item in decisions
+                ),
             )
         )
         result = await self.gateway.call(tool_name, arguments, trace_id=trace_id)
+        self.retries_used += max(0, result.attempts - 1)
         committed = ToolStepCheckpoint(
             sequence=sequence,
             call_key=call_key,
@@ -65,9 +116,22 @@ class CheckpointingToolDispatcher:
             arguments_sha256=arguments_sha,
             status=ToolStepStatus.COMMITTED,
             result=result.model_dump(mode="json"),
+            guardrail_decisions=tuple(
+                item.model_dump(mode="json") for item in decisions
+            ),
         )
         self._committed[call_key] = committed
         self.persist(committed)
+        if (
+            not result.ok
+            and result.error is not None
+            and result.error.retryable
+            and result.attempts >= self.max_retries + 1
+        ):
+            raise HarnessControlStop(
+                HarnessTerminationReason.RETRY_BUDGET_EXHAUSTED,
+                "Harness retry budget exhausted",
+            )
         if (
             tool_name == self.interrupt_after_committed_tool
             and not self._interrupted
@@ -77,3 +141,22 @@ class CheckpointingToolDispatcher:
                 f"interrupted after checkpointing {tool_name} result"
             )
         return result
+
+    def _persist_blocked(
+        self,
+        sequence: int,
+        call_key: str,
+        tool_name: str,
+        arguments_sha: str,
+        decisions: tuple[dict[str, Any], ...],
+    ) -> None:
+        self.persist(
+            ToolStepCheckpoint(
+                sequence=sequence,
+                call_key=call_key,
+                tool_name=tool_name,
+                arguments_sha256=arguments_sha,
+                status=ToolStepStatus.BLOCKED,
+                guardrail_decisions=decisions,
+            )
+        )
