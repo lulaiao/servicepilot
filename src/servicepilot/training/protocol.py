@@ -48,6 +48,8 @@ class SFTExperimentProtocol(BaseModel):
     baseline: str
     required_metrics: tuple[str, ...]
     termination_conditions: tuple[str, ...]
+    screening_seed: int | None = None
+    screening_max_steps: int | None = Field(default=None, gt=0)
 
     @model_validator(mode="after")
     def validate_evidence_protocol(self) -> "SFTExperimentProtocol":
@@ -63,4 +65,8 @@ class SFTExperimentProtocol(BaseModel):
             raise ValueError("safety must be the first checkpoint-selection criterion")
         if "peak_vram_mib" not in self.required_metrics:
             raise ValueError("resource evidence must include peak VRAM")
+        if (self.screening_seed is None) != (self.screening_max_steps is None):
+            raise ValueError("screening seed and max steps must be declared together")
+        if self.screening_seed is not None and self.screening_seed not in self.seeds:
+            raise ValueError("screening seed must be one of the formal seeds")
         return self

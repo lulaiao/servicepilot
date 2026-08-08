@@ -88,6 +88,11 @@ def main() -> None:
     )
     if args.seed not in protocol.seeds:
         raise RuntimeError("seed is not declared in the frozen protocol")
+    if args.max_steps > 0 and (
+        args.seed != protocol.screening_seed
+        or args.max_steps != protocol.screening_max_steps
+    ):
+        raise RuntimeError("bounded screening run does not match the frozen protocol")
     data_path = Path(protocol.train_data)
     if file_sha256(data_path) != protocol.train_sha256:
         raise RuntimeError("dataset hash does not match the frozen protocol")
@@ -186,7 +191,11 @@ def main() -> None:
         checkpoints=tuple(checkpoints),
     )
     payload = {
-        "claim_scope": "training_run_requires_executable_dev_and_sealed_evaluation",
+        "claim_scope": (
+            "screening_only_not_formal_quality"
+            if args.max_steps > 0
+            else "training_run_requires_executable_dev_and_sealed_evaluation"
+        ),
         "protocol": str(args.protocol),
         "protocol_version": protocol.protocol_version,
         "model_revision": protocol.model_revision,

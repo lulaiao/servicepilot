@@ -23,3 +23,11 @@ def test_protocol_rejects_sealed_selection_and_insufficient_seeds() -> None:
 
     with pytest.raises(ValueError):
         SFTExperimentProtocol.model_validate(raw)
+
+
+def test_protocol_screening_must_use_a_formal_seed() -> None:
+    raw = json.loads(PROTOCOL.read_text())
+    raw.update({"screening_seed": 7, "screening_max_steps": 25})
+
+    with pytest.raises(ValueError, match="screening seed"):
+        SFTExperimentProtocol.model_validate(raw)
