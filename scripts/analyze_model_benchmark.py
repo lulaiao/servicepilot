@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from typing import Any
 
+from servicepilot.eval.models import Intent
 from servicepilot.eval.routing_dataset import DatasetSplit, build_routing_dataset
 
 
@@ -60,6 +61,19 @@ def main() -> None:
         )
     )
     count = len(records)
+    high_risk = {
+        Intent.CANCEL_ORDER,
+        Intent.FULL_REFUND,
+        Intent.PARTIAL_REFUND,
+        Intent.MISSING_OR_WRONG_ITEM,
+        Intent.DUPLICATE_CHARGE,
+        Intent.RESCHEDULE,
+    }
+    high_risk_records = [
+        item
+        for item in records
+        if gold[item["example_id"]].primary_intent in high_risk
+    ]
     metrics = {
         "source": str(args.input),
         "candidate": raw["candidate"],
@@ -91,6 +105,16 @@ def main() -> None:
                 for item in records
             )
             / count,
+            4,
+        ),
+        "high_risk_error_rate": round(
+            sum(
+                item["prediction"] is None
+                or item["prediction"]["primary_intent"]
+                != gold[item["example_id"]].primary_intent.value
+                for item in high_risk_records
+            )
+            / len(high_risk_records),
             4,
         ),
         "mean_latency_seconds": raw["mean_latency_seconds"],

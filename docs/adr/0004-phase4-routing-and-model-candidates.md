@@ -55,20 +55,28 @@ development inputs were classified as `order_query`, yielding Macro-F1 0.0140.
 Its lower 965.9 MiB peak allocated VRAM and 1.8602-second P95 latency do not
 compensate for that failure.
 
+Qwen2.5-7B-Instruct revision
+`a09a35458c702b33eeacc393d103063234e8bc28` passes the Apache-2.0, offline,
+runtime and resource hard gates on one RTX A6000. On development data it reaches
+Macro-F1 0.8909 and schema validity 1.0, exceeding the rule baseline's 0.8333
+Macro-F1. However, strict slot exact match is 0.5833 versus the rule baseline's
+1.0, high-risk error remains 0.1667, P95 latency is 2.4452 seconds and peak
+allocated VRAM is 14607.5 MiB. It is promoted to an end-to-end candidate, not
+accepted for deployment.
+
 ## Alternatives
 
 - Static single Agent: cheapest and equally successful on the current catalog,
   but it does not expose responsibility changes after observations.
 - LangGraph: deferred until checkpointing, durable pause/resume or graph
   composition becomes a measured need.
-- Larger local instruction model: deferred until GPU visibility is repaired
-  and identical-budget comparisons can measure quality per memory and latency.
+- Qwen2.5-7B-Instruct: passed component gates and awaits identical-budget
+  executable Agent evaluation.
 - Cached Qwen Coder 1.5B: rejected for this workload and CPU budget. Reconsider
   only with a task-appropriate prompt/model variant and usable GPU runtime.
 
 ## Gate
 
-The routing architecture remains provisional until a task-appropriate local
-instruction model can be compared on usable GPU hardware. The cached Coder
-candidate is rejected. No sealed result may be used to tune prompts, rules or
-select a model.
+The routing architecture remains provisional until the 7B candidate completes
+the executable Agent comparison. The smaller candidates are rejected. No
+sealed result may be used to tune prompts, rules or select a model.

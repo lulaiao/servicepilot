@@ -71,10 +71,12 @@ identical protocol. It used only 965.9 MiB peak allocated VRAM and reached
 primary accuracy 0.0833 and Macro-F1 0.0140. It is rejected. Full comparison
 and artifact hashes are in `phase4_gpu_model_comparison.md`.
 
-The remaining blocker is no longer GPU availability. Phase 4 still requires a
-task-appropriate medium instruction candidate and an end-to-end learned-model
-comparison. Downloading that candidate requires the separate model resource
-budget specified by the project plan.
+Qwen2.5-7B-Instruct revision
+`a09a35458c702b33eeacc393d103063234e8bc28` was downloaded under Apache-2.0
+and evaluated with the identical protocol. It reached primary accuracy 0.9167,
+Macro-F1 0.8909, schema validity 1.0 and high-risk error rate 0.1667.
+Mean/P95 latency was 2.1881/2.4452 seconds and peak allocated VRAM was
+14607.5 MiB. It advances to end-to-end evaluation, but is not yet selected.
 
 ## Reproduction
 
@@ -88,5 +90,5 @@ PYTHONPATH=src .venv/bin/python scripts/analyze_model_benchmark.py \
 .venv/bin/python -m mypy src/servicepilot
 ```
 
-Phase 4 remains open until a medium candidate and learned end-to-end Agent are
-compared or explicitly deferred with resource evidence.
+Phase 4 remains open until the 7B candidate is compared with the rule baseline
+inside the executable Agent loop under the same budgets.
