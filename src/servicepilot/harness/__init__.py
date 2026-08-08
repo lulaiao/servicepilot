@@ -3,6 +3,12 @@
 from servicepilot.harness.checkpoints import InMemoryCheckpointStore
 from servicepilot.harness.dispatcher import CheckpointingToolDispatcher
 from servicepilot.harness.evaluation import EvaluationHarness, TrialEnvironment
+from servicepilot.harness.evaluation_manifest import (
+    EvaluationRunManifest,
+    EvaluationTrialRecord,
+    EvaluationTrialStatus,
+    JsonEvaluationManifestStore,
+)
 from servicepilot.harness.guardrails import GuardrailPipeline
 from servicepilot.harness.models import (
     HarnessBudgets,
@@ -21,6 +27,9 @@ from servicepilot.harness.runtime import (
 __all__ = [
     "AgentRuntimeHarness",
     "EvaluationHarness",
+    "EvaluationRunManifest",
+    "EvaluationTrialRecord",
+    "EvaluationTrialStatus",
     "GuardrailPipeline",
     "HarnessBudgets",
     "HarnessEvent",
@@ -29,6 +38,7 @@ __all__ = [
     "HarnessSessionStatus",
     "HarnessTerminationReason",
     "InMemoryCheckpointStore",
+    "JsonEvaluationManifestStore",
     "CheckpointingToolDispatcher",
     "ReplayMode",
     "TrialEnvironment",

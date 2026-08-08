@@ -12,6 +12,7 @@ from servicepilot.harness.models import (
     ToolStepCheckpoint,
     ToolStepStatus,
 )
+from servicepilot.mcp_gateway.errors import ToolErrorCode
 from servicepilot.mcp_gateway.gateway import ReliableToolGateway, ToolResult
 
 
@@ -122,6 +123,20 @@ class CheckpointingToolDispatcher:
         )
         self._committed[call_key] = committed
         self.persist(committed)
+        if not result.ok and result.error is not None:
+            recovery_reason = {
+                ToolErrorCode.CONFIRMATION_REQUIRED: (
+                    HarnessTerminationReason.CONFIRMATION_RECOVERY_REQUIRED
+                ),
+                ToolErrorCode.VERSION_CONFLICT: (
+                    HarnessTerminationReason.VERSION_CONFLICT_RECOVERY_REQUIRED
+                ),
+            }.get(result.error.code)
+            if recovery_reason is not None:
+                raise HarnessControlStop(
+                    recovery_reason,
+                    f"recovery required after {result.error.code.value}",
+                )
         if (
             not result.ok
             and result.error is not None

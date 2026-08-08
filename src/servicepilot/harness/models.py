@@ -31,6 +31,8 @@ class HarnessTerminationReason(StrEnum):
     RETRY_BUDGET_EXHAUSTED = "retry_budget_exhausted"
     TIME_BUDGET_EXHAUSTED = "time_budget_exhausted"
     TOKEN_BUDGET_EXHAUSTED = "token_budget_exhausted"
+    CONFIRMATION_RECOVERY_REQUIRED = "confirmation_recovery_required"
+    VERSION_CONFLICT_RECOVERY_REQUIRED = "version_conflict_recovery_required"
 
 
 class ReplayMode(StrEnum):

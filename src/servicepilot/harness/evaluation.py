@@ -1,6 +1,8 @@
 """Evaluation Harness with isolated deterministic trial environments."""
 
+import asyncio
 import hashlib
+import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -30,6 +32,12 @@ from servicepilot.eval.models import (
     Trajectory,
 )
 from servicepilot.eval.simulator import FSMUserSimulator
+from servicepilot.harness.evaluation_manifest import (
+    EvaluationRunManifest,
+    EvaluationTrialRecord,
+    EvaluationTrialStatus,
+    JsonEvaluationManifestStore,
+)
 from servicepilot.harness.models import HarnessBudgets, HarnessRunConfig, HarnessSession
 from servicepilot.harness.runtime import AgentRuntimeHarness
 from servicepilot.mcp_gateway.faults import FaultPlan
@@ -110,6 +118,100 @@ class EvaluationHarness:
             tuple(results),
             build_report(scenarios, results),
         )
+
+    async def run_suite_resumable(
+        self,
+        scenarios: tuple[ScenarioSpec, ...],
+        *,
+        manifest_id: str,
+        manifest_store: JsonEvaluationManifestStore,
+        agent_factory: Callable[[], RuleBasedSingleAgent] = RuleBasedSingleAgent,
+        max_concurrency: int = 4,
+    ) -> EvaluationRunManifest:
+        if max_concurrency <= 0:
+            raise ValueError("max_concurrency must be positive")
+        scenario_set_sha256 = hashlib.sha256(
+            b"\n".join(item.model_dump_json().encode() for item in scenarios)
+        ).hexdigest()
+        config_fingerprint = hashlib.sha256(
+            json.dumps(
+                {
+                    "code_revision": self.code_revision,
+                    "model_revision": self.model_revision,
+                    "prompt_revision": self.prompt_revision,
+                    "budgets": self.budgets.model_dump(mode="json"),
+                },
+                sort_keys=True,
+            ).encode()
+        ).hexdigest()
+        existing = manifest_store.load()
+        if existing is not None and (
+            existing.manifest_id != manifest_id
+            or existing.config_fingerprint != config_fingerprint
+            or existing.scenario_set_sha256 != scenario_set_sha256
+        ):
+            raise ValueError("existing evaluation manifest does not match this run")
+        records = {
+            item.scenario_id: item
+            for item in (existing.records if existing is not None else ())
+        }
+        scenario_order = {item.scenario_id: index for index, item in enumerate(scenarios)}
+        semaphore = asyncio.Semaphore(max_concurrency)
+
+        def current_manifest() -> EvaluationRunManifest:
+            return EvaluationRunManifest(
+                manifest_id=manifest_id,
+                code_revision=self.code_revision,
+                config_fingerprint=config_fingerprint,
+                scenario_set_sha256=scenario_set_sha256,
+                max_concurrency=max_concurrency,
+                records=tuple(
+                    sorted(
+                        records.values(),
+                        key=lambda item: scenario_order[item.scenario_id],
+                    )
+                ),
+            )
+
+        manifest_store.save(current_manifest())
+
+        async def execute(scenario: ScenarioSpec) -> None:
+            previous = records.get(scenario.scenario_id)
+            if (
+                previous is not None
+                and previous.status is EvaluationTrialStatus.COMPLETED
+            ):
+                return
+            attempts = 1 if previous is None else previous.attempts + 1
+            scenario_sha256 = hashlib.sha256(
+                scenario.model_dump_json().encode()
+            ).hexdigest()
+            async with semaphore:
+                try:
+                    trajectory, result, _ = await self.run_scenario(
+                        scenario, agent=agent_factory()
+                    )
+                    record = EvaluationTrialRecord(
+                        scenario_id=scenario.scenario_id,
+                        scenario_sha256=scenario_sha256,
+                        status=EvaluationTrialStatus.COMPLETED,
+                        attempts=attempts,
+                        trajectory=trajectory,
+                        judge_result=result,
+                    )
+                except Exception as exc:
+                    record = EvaluationTrialRecord(
+                        scenario_id=scenario.scenario_id,
+                        scenario_sha256=scenario_sha256,
+                        status=EvaluationTrialStatus.FAILED,
+                        attempts=attempts,
+                        error=f"{type(exc).__name__}: {exc}",
+                    )
+                records[scenario.scenario_id] = record
+                manifest_store.save(current_manifest())
+
+        await asyncio.gather(*(execute(scenario) for scenario in scenarios))
+        return current_manifest()
 
 
 def build_report(

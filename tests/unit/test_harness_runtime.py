@@ -70,6 +70,50 @@ class SlowAgent(RuleBasedSingleAgent):
         return await super().run(*args, **kwargs)  # type: ignore[arg-type]
 
 
+class MissingConfirmationAgent(RuleBasedSingleAgent):
+    async def run(self, scenario, simulator, gateway):  # type: ignore[no-untyped-def]
+        await gateway.call(
+            "create_refund_request",
+            {
+                "order_id": scenario.order_id,
+                "reason": "missing_item",
+                "requested_amount": "12.00",
+                "confirmation_token": "invalid",
+                "idempotency_key": "missing-confirmation-test",
+                "expected_version": 1,
+            },
+            trace_id="missing-confirmation",
+        )
+        raise AssertionError("Harness should stop before Agent continues")
+
+
+class VersionConflictAgent(RuleBasedSingleAgent):
+    async def run(self, scenario, simulator, gateway):  # type: ignore[no-untyped-def]
+        preview = await gateway.call(
+            "preview_refund",
+            {
+                "order_id": scenario.order_id,
+                "reason": "missing_item",
+                "requested_amount": "12.00",
+            },
+            trace_id="version-conflict",
+        )
+        assert preview.data is not None
+        await gateway.call(
+            "create_refund_request",
+            {
+                "order_id": scenario.order_id,
+                "reason": "missing_item",
+                "requested_amount": "12.00",
+                "confirmation_token": preview.data["confirmation_token"],
+                "idempotency_key": "version-conflict-test",
+                "expected_version": 999,
+            },
+            trace_id="version-conflict",
+        )
+        raise AssertionError("Harness should stop before Agent continues")
+
+
 def config_for(scenario_id: str) -> HarnessRunConfig:
     return HarnessRunConfig(
         code_revision="test",
@@ -370,3 +414,47 @@ async def test_time_budget_has_explicit_termination() -> None:
     )
 
     assert session.termination_reason is HarnessTerminationReason.TIME_BUDGET_EXHAUSTED
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("agent", "expected_reason"),
+    [
+        (
+            MissingConfirmationAgent(),
+            HarnessTerminationReason.CONFIRMATION_RECOVERY_REQUIRED,
+        ),
+        (
+            VersionConflictAgent(),
+            HarnessTerminationReason.VERSION_CONFLICT_RECOVERY_REQUIRED,
+        ),
+    ],
+)
+async def test_transaction_conflicts_have_explicit_recovery_paths(
+    agent: RuleBasedSingleAgent,
+    expected_reason: HarnessTerminationReason,
+) -> None:
+    scenario = next(
+        item
+        for item in build_phase3_scenarios()
+        if item.intent is Intent.PARTIAL_REFUND and not item.faults
+    )
+    config = config_for(scenario.scenario_id)
+    environment = build_trial_environment(scenario, config.budgets)
+
+    session = await AgentRuntimeHarness().run(
+        scenario=scenario,
+        agent=agent,
+        simulator=FSMUserSimulator(scenario),
+        gateway=environment.gateway,
+        config=config,
+    )
+
+    assert session.termination_reason is expected_reason
+    assert session.trajectory is None
+    assert len(environment.repository.list_refunds(scenario.order_id)) == 0
+    assert session.tool_steps[-1].result is not None
+    assert session.tool_steps[-1].result["error"]["code"] in {
+        "CONFIRMATION_REQUIRED",
+        "VERSION_CONFLICT",
+    }
