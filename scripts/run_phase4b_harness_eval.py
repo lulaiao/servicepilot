@@ -5,13 +5,15 @@ import argparse
 import asyncio
 import hashlib
 import json
+import math
+import statistics
 import time
 from pathlib import Path
 
 from servicepilot.agents.routed_baseline import RoutedRuleAgent
 from servicepilot.eval.catalog import build_phase3_scenarios
 from servicepilot.eval.judge import DeterministicJudge
-from servicepilot.eval.models import JudgeResult, Trajectory
+from servicepilot.eval.models import EvalReport, JudgeResult, ScenarioSpec, Trajectory
 from servicepilot.eval.simulator import FSMUserSimulator
 from servicepilot.harness.evaluation import (
     EvaluationHarness,
@@ -25,6 +27,7 @@ from servicepilot.harness.runtime import AgentRuntimeHarness
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--code-revision", required=True)
+    parser.add_argument("--repetitions", type=int, default=10)
     parser.add_argument(
         "--output",
         type=Path,
@@ -60,22 +63,63 @@ async def run_direct(
     return tuple(trajectories), tuple(results), time.perf_counter() - started
 
 
+async def run_formal(
+    harness: EvaluationHarness,
+    scenarios: tuple[ScenarioSpec, ...],
+) -> tuple[tuple[Trajectory, ...], tuple[JudgeResult, ...], EvalReport, float]:
+    started = time.perf_counter()
+    trajectories, results, report = await harness.run_suite(
+        scenarios, agent_factory=RoutedRuleAgent
+    )
+    return trajectories, results, report, time.perf_counter() - started
+
+
 async def main_async() -> None:
     args = parse_args()
+    if args.repetitions <= 0:
+        raise SystemExit("--repetitions must be positive")
     scenarios = build_phase3_scenarios()
     budgets = HarnessBudgets(timeout_seconds=0.1)
-    direct_trajectories, direct_results, direct_elapsed = await run_direct(
-        budgets
-    )
-    harness = EvaluationHarness(
-        code_revision=args.code_revision,
-        budgets=budgets,
-    )
-    started = time.perf_counter()
-    harness_trajectories, harness_results, harness_report = (
-        await harness.run_suite(scenarios, agent_factory=RoutedRuleAgent)
-    )
-    harness_elapsed = time.perf_counter() - started
+    direct_times: list[float] = []
+    harness_times: list[float] = []
+    paired_overheads: list[float] = []
+    direct_trajectories: tuple[Trajectory, ...] = ()
+    direct_results: tuple[JudgeResult, ...] = ()
+    harness_trajectories: tuple[Trajectory, ...] = ()
+    harness_results: tuple[JudgeResult, ...] = ()
+    harness_report = None
+    harness = None
+    for repetition in range(args.repetitions):
+        current_harness = EvaluationHarness(
+            code_revision=args.code_revision,
+            budgets=budgets,
+        )
+
+        if repetition % 2 == 0:
+            direct_trajectories, direct_results, direct_elapsed = (
+                await run_direct(budgets)
+            )
+            (
+                harness_trajectories,
+                harness_results,
+                harness_report,
+                harness_elapsed,
+            ) = await run_formal(current_harness, scenarios)
+        else:
+            (
+                harness_trajectories,
+                harness_results,
+                harness_report,
+                harness_elapsed,
+            ) = await run_formal(current_harness, scenarios)
+            direct_trajectories, direct_results, direct_elapsed = (
+                await run_direct(budgets)
+            )
+        direct_times.append(direct_elapsed)
+        harness_times.append(harness_elapsed)
+        paired_overheads.append(harness_elapsed - direct_elapsed)
+        harness = current_harness
+    assert harness is not None and harness_report is not None
     direct_report = build_report(scenarios, list(direct_results))
     replay_runtime = AgentRuntimeHarness()
     replay_sessions = []
@@ -102,17 +146,28 @@ async def main_async() -> None:
             direct_results, harness_results, strict=True
         )
     )
+
+    def p95(values: list[float]) -> float:
+        ordered = sorted(values)
+        return ordered[math.ceil(0.95 * len(ordered)) - 1]
+
     payload = {
         "code_revision": args.code_revision,
         "scenario_count": len(scenarios),
         "scenario_sha256": hashlib.sha256(scenario_bytes).hexdigest(),
         "budgets": budgets.model_dump(mode="json"),
+        "repetitions": args.repetitions,
+        "ordering": "alternating direct-first and harness-first",
         "direct_loop": {
-            "elapsed_seconds": round(direct_elapsed, 6),
+            "elapsed_seconds": [round(item, 6) for item in direct_times],
+            "mean_elapsed_seconds": round(statistics.mean(direct_times), 6),
+            "p95_elapsed_seconds": round(p95(direct_times), 6),
             "report": direct_report.model_dump(mode="json"),
         },
         "formal_harness": {
-            "elapsed_seconds": round(harness_elapsed, 6),
+            "elapsed_seconds": [round(item, 6) for item in harness_times],
+            "mean_elapsed_seconds": round(statistics.mean(harness_times), 6),
+            "p95_elapsed_seconds": round(p95(harness_times), 6),
             "report": harness_report.model_dump(mode="json"),
             "session_count": len(harness.sessions),
             "event_count": sum(
@@ -121,11 +176,14 @@ async def main_async() -> None:
             "replay_session_count": len(replay_sessions),
         },
         "identical_judgments": identical_judgments,
-        "absolute_overhead_seconds": round(
-            harness_elapsed - direct_elapsed, 6
+        "paired_overhead_seconds": [
+            round(item, 6) for item in paired_overheads
+        ],
+        "mean_absolute_overhead_seconds": round(
+            statistics.mean(paired_overheads), 6
         ),
         "mean_overhead_milliseconds_per_scenario": round(
-            (harness_elapsed - direct_elapsed) * 1000 / len(scenarios), 4
+            statistics.mean(paired_overheads) * 1000 / len(scenarios), 4
         ),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
