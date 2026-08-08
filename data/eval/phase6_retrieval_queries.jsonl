@@ -1,0 +1,12 @@
+{"query_id":"q01","text":"刚接单的外卖可以取消吗","gold_evidence_ids":["policy_cancel_2026_1_section_2"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"accepted","city":"Shanghai"}
+{"query_id":"q02","text":"订单已经开始制作还能直接取消吗","gold_evidence_ids":["policy_cancel_2026_1_section_2"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"preparing","city":"Shanghai"}
+{"query_id":"q03","text":"少送一份菜想退十二元有什么金额限制","gold_evidence_ids":["policy_partial_refund_2026_1_section_3"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"delivered","city":"Shanghai"}
+{"query_id":"q04","text":"重复扣款退款能不能超过实付金额","gold_evidence_ids":["policy_partial_refund_2026_1_section_3"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"delivered","city":"Shanghai"}
+{"query_id":"q05","text":"取消订单后用掉的券怎么恢复","gold_evidence_ids":["policy_coupon_restore_2026_1_section_5"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"cancelled","city":"Shanghai"}
+{"query_id":"q06","text":"骑手还没取货我想改预约时间","gold_evidence_ids":["policy_reschedule_2026_1_section_6"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"preparing","city":"Shanghai"}
+{"query_id":"q07","text":"已经取货之后还能改送达时间吗","gold_evidence_ids":["policy_reschedule_2026_1_section_6"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"picked_up","city":"Shanghai"}
+{"query_id":"q08","text":"不可退款的本地预约只是改变主意能退吗","gold_evidence_ids":["policy_refund_exception_2026_1_section_8"],"policy_version":"2026.1","business_type":"local_service","order_status":"delivered","city":"Shanghai"}
+{"query_id":"q09","text":"本地服务没有按约提供是否仍然一律不能退款","gold_evidence_ids":["policy_refund_exception_2026_1_section_8"],"policy_version":"2026.1","business_type":"local_service","order_status":"delivered","city":"Shanghai"}
+{"query_id":"q10","text":"2026规则下制作中的订单取消要求","gold_evidence_ids":["policy_cancel_2026_1_section_2"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"preparing","city":"Shanghai"}
+{"query_id":"q11","text":"优惠券领取活动失败是不是取消订单返券","gold_evidence_ids":["policy_coupon_issue_2026_1_section_10"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"accepted","city":"Shanghai"}
+{"query_id":"q12","text":"外卖骑手超时应该记录什么规则","gold_evidence_ids":["policy_delivery_delay_2026_1_section_11"],"policy_version":"2026.1","business_type":"food_delivery","order_status":"picked_up","city":"Shanghai"}
