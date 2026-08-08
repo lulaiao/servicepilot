@@ -83,12 +83,13 @@ Executable evidence: `experiments/reports/phase4_agent_e2e_comparison.md`.
 
 ### Phase 4B — Harness Formalization
 
-Status: **in progress**. Milestones 1–2 provide the typed runtime/evaluation
+Status: **in progress**. Milestones 1–3 provide the typed runtime/evaluation
 boundaries, isolated trials, verify-only zero-write replay, completed-session
 resume, tool-step checkpoint recovery, a ten-repetition direct-loop comparison
-with identical outcomes and all four required ablations. Complete budget
-termination and TOOL-stage guardrail enforcement remain open, so the Phase 4B
-acceptance gate has not passed.
+with identical outcomes, all four required ablations, TOOL-stage Guardrail
+enforcement and explicit turn/tool/retry/time/token termination paths. Failure
+isolation and Harness-level missing-confirmation/version-conflict recovery
+remain open, so the Phase 4B acceptance gate has not passed.
 
 Formalize the existing execution and evaluation infrastructure as two typed,
 model-independent boundaries:

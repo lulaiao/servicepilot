@@ -1,7 +1,7 @@
 # Phase 4B Harness Formalization progress
 
 Date: 2026-08-08  
-Status: milestone 2 complete; Phase 4B acceptance not yet passed
+Status: milestone 3 complete; Phase 4B acceptance not yet passed
 
 ## Delivered
 
@@ -17,6 +17,11 @@ Status: milestone 2 complete; Phase 4B acceptance not yet passed
 - Ordered input guardrails and append-only, fingerprinted Harness events.
 - Transparent tool interception with started/committed step checkpoints and
   cached-result replay keyed by tool, argument fingerprint and call ordinal.
+- TOOL-stage Guardrail enforcement before Gateway dispatch, with every
+  decision persisted in the corresponding tool-step Checkpoint.
+- Explicit `tool_budget_exhausted`, `retry_budget_exhausted`,
+  `time_budget_exhausted`, `turn_budget_exhausted` and
+  `token_budget_exhausted` termination reasons and usage counters.
 
 ## Identical-budget comparison
 
@@ -84,6 +89,38 @@ PYTHONPATH=src .venv/bin/python scripts/run_phase4b_harness_ablations.py \
 - GPU required: no. These controlled deterministic-policy ablations are CPU
   experiments; adding the 7B model would change the tested variable.
 
+## TOOL Guardrail and budget regression
+
+TOOL decisions execute before Gateway dispatch. The blocking test targets
+`create_refund_request`, records the rejecting guardrail in a `BLOCKED` tool
+Checkpoint and proves the Repository contains zero refunds. Allowed decisions
+are also stored with `STARTED` and `COMMITTED` steps.
+
+The Harness has distinct tested termination paths for:
+
+- tool calls: Dispatcher stops before the call that would exceed the limit;
+- retries: a retryable ToolResult that exhausts the configured Gateway retry
+  allowance terminates with the observed retry count;
+- time: `asyncio.timeout` bounds the full Agent run;
+- turns: authoritative user/assistant events are counted from the trajectory;
+- tokens: the injected model/Agent reports actual `model_tokens_used`; the
+  deterministic rule Agent reports zero rather than an estimated value.
+
+Turn and token checks occur when the Agent returns a trajectory. They classify
+and reject an over-budget result but cannot pre-empt a monolithic model call;
+streaming adapters must enforce their own generation cap as well.
+
+After these controls were added, a ten-repetition regression retained 36/36
+success and identical direct-loop/Harness Judge outcomes. The Harness emitted
+184 events and measured 0.3181 ms mean overhead per scenario.
+
+- Code revision: `3ac510c`
+- Report SHA-256:
+  `4cd18c0692802348a4edaa39323b7a48f206f539b3930bb9192b54ceb7b8303b`
+- Trace SHA-256:
+  `395d55076dfea9afe7dd8aedd5a86dd73b2071f77394363f10b891a868b081a3`
+- Manifest: `experiments/manifests/phase4b_budget_guardrail_regression.json`
+
 ## Reproduction and provenance
 
 ```text
@@ -105,13 +142,12 @@ PYTHONPATH=src .venv/bin/python scripts/run_phase4b_harness_eval.py \
 
 ## Open acceptance work
 
-- Wire and test explicit termination/recovery for turn, tool, retry, time and
-  token budgets, missing confirmation and version conflict.
-- Apply TOOL-stage guardrail decisions to intercepted calls; the interception
-  and checkpoints exist, but only INPUT and OUTPUT decisions are enforced.
+- Add Harness-level recovery classifications for missing confirmation and
+  version conflict; these are currently typed Gateway results handled by the
+  Agent policy rather than Harness termination reasons.
 - Add failure isolation and resumable experiment manifests; bounded
   concurrency remains deferred until it has a measured need.
 
-ADR 0005 therefore remains **Proposed** until the remaining budget/termination
-and TOOL-guardrail paths pass. The narrow lost-response recovery claim above is
-now supported; a general durable-runtime claim is not.
+ADR 0005 remains **Proposed** until missing-confirmation/version-conflict
+recovery and evaluation failure isolation are formalized. TOOL Guardrails and
+the five requested budget paths are now implemented and tested.

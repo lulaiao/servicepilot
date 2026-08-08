@@ -95,7 +95,7 @@ exist:
 
 ## Implementation status
 
-Milestones 1–2 implement both typed boundaries, isolated evaluation trials,
+Milestones 1–3 implement both typed boundaries, isolated evaluation trials,
 fingerprinted events, verify-only zero-write replay and completed-session
 resume. The direct-loop comparison retains identical Judge outcomes with
 0.2736 ms mean measured overhead per scenario across ten paired repetitions.
@@ -104,6 +104,8 @@ Tool calls are now intercepted and checkpointed before and after dispatch. A
 lost-response refund test proves that a persisted committed result is replayed
 after interruption without another write. The four required ablations are also
 recorded. This is a narrow tested recovery boundary, not a general durable
-runtime claim; full budget termination and TOOL guardrail enforcement remain
-open. ADR 0005 remains Proposed. Current evidence is in
+runtime claim. TOOL Guardrails now stop dispatch before the Gateway and persist
+their decisions; turn/tool/retry/time/token budgets have separately tested
+termination reasons. ADR 0005 remains Proposed pending failure isolation and
+formal missing-confirmation/version-conflict recovery. Current evidence is in
 `experiments/reports/phase4b_harness_progress.md`.
