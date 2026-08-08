@@ -27,7 +27,37 @@
     "false_success_count": 0,
     "policy_violation_count": 0
   },
-  "next_gate": "generate_at_most_three_language_variants_after_split_and_export_canonical_trajectories",
+  "variant_export": {
+    "code_revision": "b022957cda25455304b794e00ba65b567e5b695a",
+    "family_count": 100,
+    "variant_count": 300,
+    "split_counts": {"train": 147, "dev": 33, "sealed_test": 120},
+    "split_family_counts": {"train": 49, "dev": 11, "sealed_test": 40},
+    "successful_variant_count": 300,
+    "failed_variant_count": 0,
+    "duplicate_count": 0,
+    "cross_split_family_overlap_count": 0,
+    "cross_split_content_overlap_count": 0,
+    "cross_split_near_duplicate_count": 0,
+    "privacy_violation_count": 0,
+    "variant_output_sha256": "029911ef639fd4f192ecf2edbf99f8265c666017ac08399646c1165321f51c9a",
+    "trajectory_output_sha256": "e44607f542a4caca34a383c44f847620adb6d18971fd569f2d1c34fa56718dc9",
+    "raw_report": "artifacts/reports/phase9_expanded_trajectory_candidates_v1.json",
+    "raw_report_sha256": "876ec465c31bbf6fe73715da59add7cfae5e233eb5116bd1493defb27f3e474a",
+    "admission_passed": true
+  },
+  "training_views": {
+    "sft_record_count": 300,
+    "sft_output_sha256": "f989fa1864c50ee476d8ed793ab907c41a359c54feaefc2a3d15e1ebcb86045e",
+    "preference_record_count": 471,
+    "preference_split_counts": {"train": 204, "dev": 60, "sealed_test": 207},
+    "preference_output_sha256": "a9b44a0dbf5242f0e1d43d64295341f9e42a0f2f3afacd4c3e7e1e04bdb07452",
+    "privacy_violation_count": 0,
+    "missing_source_provenance_count": 0,
+    "chosen_equals_rejected_count": 0,
+    "raw_report": "artifacts/reports/phase9_expanded_training_views_v1.json",
+    "raw_report_sha256": "c027d524b4c594835adf01af6bc1490d84a1a767095947c5baeb35324dc95336"
+  },
+  "next_gate": "add_at_least_151_train_and_29_dev_semantic_families_before_more_paraphrases",
   "formal_training_status": "blocked"
 }
-

@@ -77,6 +77,12 @@ from unique record counts.
 The first sealed catalog freezes 40 independently reserved families before
 train/dev generation. All 40 canonical scenarios pass the authoritative Judge.
 The first constrained train/dev batch adds 60 non-overlapping families: 49
-train and 11 development. All pass execution with zero false-success and policy
-violations. Language variants have not yet been generated, so current readiness
-counts must use canonical records only.
+train and 11 development. Three post-split utterance variants per family produce
+300/300 successful executable trajectories: 147 train, 33 development, and 120
+sealed. Exact, family, and near-duplicate cross-split overlap and privacy
+violations are all zero.
+
+The sealed record/family target is reached. Train and development remain below
+the semantic-family target by 151 and 29 families respectively. More paraphrase
+variants of the current families will not close that gap and must not be counted
+as the solution.

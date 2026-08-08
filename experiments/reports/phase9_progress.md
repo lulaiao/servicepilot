@@ -66,6 +66,13 @@ false-success and policy violations. The first constrained train/dev batch adds
 60 unique families (49 train, 11 dev), also with 100% authoritative success and
 zero semantic-signature overlap with sealed.
 
-This is progress toward the diversity gate, not completion. The next operation
-is to create at most three utterance variants per already assigned family and
-rerun every variant. The current formal SFT/GRPO block remains unchanged.
+Three post-split utterance variants per family now produce 300/300 successful
+runs: 147 train, 33 development, and 120 sealed. The canonical export passes
+privacy, exact leakage, family leakage, and cross-split near-duplicate gates.
+It derives 300 SFT and 471 preference records, of which 204 preferences are
+train split.
+
+This is progress toward the diversity gate, not completion. Sealed reaches its
+120-record/40-family target, but train/dev have only 49/11 families versus the
+200/40 target. Formal SFT and GRPO remain blocked; adding more paraphrases to
+existing families cannot satisfy the semantic diversity gate.
