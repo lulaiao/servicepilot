@@ -12,6 +12,7 @@ from servicepilot.harness.evaluation import EvaluationHarness
 from servicepilot.training import (
     ExpandedScenarioFamily,
     build_phase9_train_dev_families,
+    build_phase9_train_dev_families_v2,
 )
 
 
@@ -20,6 +21,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=20260808)
     parser.add_argument("--code-revision", required=True)
     parser.add_argument("--sealed-catalog", type=Path, required=True)
+    parser.add_argument("--reserved-catalog", type=Path, action="append", default=[])
+    parser.add_argument("--batch-version", choices=("v1", "v2"), default="v1")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     return parser.parse_args()
@@ -27,17 +30,23 @@ def parse_args() -> argparse.Namespace:
 
 async def main() -> None:
     args = parse_args()
-    sealed = tuple(
+    reserved_paths = (args.sealed_catalog, *args.reserved_catalog)
+    reserved = tuple(
         ExpandedScenarioFamily.model_validate_json(line)
-        for line in args.sealed_catalog.read_text(encoding="utf-8").splitlines()
+        for path in reserved_paths
+        for line in path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     )
-    families = build_phase9_train_dev_families(seed=args.seed)
-    overlap = {item.semantic_signature_sha256 for item in sealed} & {
+    families = (
+        build_phase9_train_dev_families(seed=args.seed)
+        if args.batch_version == "v1"
+        else build_phase9_train_dev_families_v2(seed=args.seed)
+    )
+    overlap = {item.semantic_signature_sha256 for item in reserved} & {
         item.semantic_signature_sha256 for item in families
     }
     if overlap:
-        raise RuntimeError(f"train/dev collides with {len(overlap)} sealed signatures")
+        raise RuntimeError(f"train/dev collides with {len(overlap)} reserved signatures")
     encoded = "".join(item.model_dump_json() + "\n" for item in families).encode()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(encoded)
@@ -59,11 +68,13 @@ async def main() -> None:
     split_counts = Counter(item.split.value for item in families)
     fault_counts = Counter(item.dimensions["fault_profile"] for item in families)
     payload = {
-        "experiment": "phase9_train_dev_family_batch_v1",
+        "experiment": f"phase9_train_dev_family_batch_{args.batch_version}",
+        "batch_version": args.batch_version,
         "code_revision": args.code_revision,
         "seed": args.seed,
         "sealed_catalog": str(args.sealed_catalog),
         "sealed_catalog_sha256": hashlib.sha256(args.sealed_catalog.read_bytes()).hexdigest(),
+        "reserved_catalogs": [str(path) for path in reserved_paths],
         "semantic_overlap_with_sealed": len(overlap),
         "family_count": len(families),
         "split_counts": dict(sorted(split_counts.items())),

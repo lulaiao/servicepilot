@@ -348,3 +348,230 @@ def expand_family_variants(
             )
         )
     return tuple(variants)
+
+
+def build_phase9_train_dev_families_v2(
+    *, seed: int = 20260809
+) -> tuple[ExpandedScenarioFamily, ...]:
+    """Build a second balanced batch across amounts, time, state, and intent text."""
+    base_by_intent = {
+        scenario.intent: scenario
+        for scenario in build_phase3_scenarios()
+        if scenario.scenario_id.endswith("-01")
+    }
+    candidates: list[tuple[str, ScenarioSpec, dict[str, Any]]] = []
+
+    amounts = tuple(
+        amount
+        for index in range(1, 42)
+        if (amount := Decimal(index) / Decimal("2")) != Decimal("1")
+    )
+    assert len(amounts) == 40
+    for intent in (Intent.PARTIAL_REFUND, Intent.MISSING_OR_WRONG_ITEM):
+        base = base_by_intent[intent]
+        for amount in amounts:
+            candidates.append(
+                (
+                    f"v2-amount_{amount}-{intent.value}",
+                    base.model_copy(
+                        update={
+                            "user_utterance": "商品存在问题，需要申请一笔部分退款",
+                            "requested_amount": amount,
+                            "expected": ExpectedFinalState(
+                                refund_amount=amount, write_expected=True
+                            ),
+                        }
+                    ),
+                    {
+                        "confirmation": "accept",
+                        "fault_profile": "none",
+                        "amount_bucket": str(amount),
+                    },
+                )
+            )
+
+    reschedule = base_by_intent[Intent.RESCHEDULE]
+    for day in range(8, 16):
+        for hour in (8, 11, 14, 17, 20, 22):
+            scheduled = datetime(2026, 8, day, hour, 0, tzinfo=UTC)
+            candidates.append(
+                (
+                    f"v2-time_{day:02d}_{hour:02d}-reschedule",
+                    reschedule.model_copy(
+                        update={
+                            "new_time": scheduled,
+                            "expected": ExpectedFinalState(
+                                scheduled_at=scheduled, write_expected=True
+                            ),
+                        }
+                    ),
+                    {
+                        "confirmation": "accept",
+                        "fault_profile": "none",
+                        "schedule_day": day,
+                        "schedule_hour": hour,
+                    },
+                )
+            )
+
+    query = base_by_intent[Intent.ORDER_QUERY]
+    for status in (
+        OrderStatus.CREATED,
+        OrderStatus.PAID,
+        OrderStatus.ACCEPTED,
+        OrderStatus.PREPARING,
+        OrderStatus.PICKED_UP,
+        OrderStatus.CANCELLED,
+    ):
+        for profile, fault in (
+            ("status_transient_retry", FaultKind.TRANSIENT),
+            ("status_timeout_retry", FaultKind.TIMEOUT),
+        ):
+            candidates.append(
+                (
+                    f"v2-{status.value.lower()}-{profile}-order_query",
+                    query.model_copy(
+                        update={
+                            "initial_order_status": status,
+                            "faults": {"get_order": (fault,)},
+                        }
+                    ),
+                    {
+                        "confirmation": "not_applicable",
+                        "fault_profile": profile,
+                        "fault_tool": "get_order",
+                        "order_status_variant": status.value,
+                    },
+                )
+            )
+
+    complaint = base_by_intent[Intent.COMPLAINT_ESCALATION]
+    for index in range(1, 21):
+        candidates.append(
+            (
+                f"v2-complaint_reason_{index:02d}",
+                complaint.model_copy(
+                    update={"user_utterance": f"这是第{index}类服务问题，我要投诉并转人工"}
+                ),
+                {
+                    "confirmation": "not_applicable",
+                    "fault_profile": "none",
+                    "complaint_reason_code": index,
+                },
+            )
+        )
+
+    out_of_scope = base_by_intent[Intent.OUT_OF_SCOPE]
+    domains = (
+        "天文学",
+        "古典音乐",
+        "园艺",
+        "建筑设计",
+        "外语翻译",
+        "历史",
+        "地理",
+        "摄影",
+        "健身",
+        "营养学",
+        "法律咨询",
+        "税务",
+        "保险",
+        "房地产",
+        "汽车维修",
+        "编程",
+        "数学证明",
+        "物理实验",
+        "化学",
+        "生物学",
+        "文学创作",
+        "电影推荐",
+        "旅游规划",
+        "天气预测",
+        "新闻摘要",
+        "求职建议",
+        "心理咨询",
+        "医疗诊断",
+        "股票交易",
+        "密码获取",
+    )
+    for index, domain in enumerate(domains, start=1):
+        candidates.append(
+            (
+                f"v2-domain_{index:02d}-out_of_scope",
+                out_of_scope.model_copy(update={"user_utterance": f"请提供关于{domain}的专业服务"}),
+                {
+                    "confirmation": "not_applicable",
+                    "fault_profile": "none",
+                    "out_of_scope_domain": domain,
+                },
+            )
+        )
+
+    delivery = base_by_intent[Intent.DELIVERY_DELAY]
+    multi = base_by_intent[Intent.MULTI_INTENT]
+    for index in range(1, 13):
+        candidates.append(
+            (
+                f"v2-delivery_issue_{index:02d}",
+                delivery.model_copy(
+                    update={"user_utterance": f"配送出现第{index}类超时情况，请处理"}
+                ),
+                {
+                    "confirmation": "not_applicable",
+                    "fault_profile": "none",
+                    "delivery_issue_code": index,
+                },
+            )
+        )
+        candidates.append(
+            (
+                f"v2-multi_issue_{index:02d}",
+                multi.model_copy(
+                    update={"user_utterance": f"配送出现第{index}类延迟，我还要投诉并转人工"}
+                ),
+                {
+                    "confirmation": "not_applicable",
+                    "fault_profile": "none",
+                    "multi_issue_code": index,
+                },
+            )
+        )
+
+    reserved = {item.semantic_signature_sha256 for item in build_phase9_sealed_families()} | {
+        item.semantic_signature_sha256 for item in build_phase9_train_dev_families()
+    }
+    families: list[ExpandedScenarioFamily] = []
+    for recipe_id, base, extra_dimensions in candidates:
+        dimensions = {
+            "intent": base.intent.value,
+            "initial_order_status": base.initial_order_status.value,
+            "requested_amount": str(base.requested_amount),
+            "policy_version": "2026.1",
+            "city": "Shanghai",
+            "business_type": "food_delivery",
+            **extra_dimensions,
+        }
+        signature = _signature(dimensions)
+        if signature in reserved:
+            continue
+        family_id = f"expanded-{recipe_id}"
+        split_score = int(hashlib.sha256(f"{seed}:{signature}".encode()).hexdigest(), 16) % 5
+        split = DataSplit.DEV if split_score == 0 else DataSplit.TRAIN
+        scenario = base.model_copy(
+            update={
+                "scenario_id": family_id,
+                "order_id": family_id,
+                "user_id": f"synthetic-user-{family_id}",
+            }
+        )
+        families.append(
+            ExpandedScenarioFamily(
+                family_id=family_id,
+                split=split,
+                provenance="constrained_phase9_train_dev_v2",
+                dimensions=dimensions,
+                semantic_signature_sha256=signature,
+                canonical_scenario=scenario,
+            )
+        )
+    return tuple(families)

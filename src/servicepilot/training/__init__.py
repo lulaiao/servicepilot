@@ -13,6 +13,7 @@ from servicepilot.training.expansion import (
     ExpandedScenarioVariant,
     build_phase9_sealed_families,
     build_phase9_train_dev_families,
+    build_phase9_train_dev_families_v2,
     expand_family_variants,
 )
 from servicepilot.training.readiness import (
@@ -63,5 +64,6 @@ __all__ = [
     "ExpandedScenarioVariant",
     "build_phase9_sealed_families",
     "build_phase9_train_dev_families",
+    "build_phase9_train_dev_families_v2",
     "expand_family_variants",
 ]
