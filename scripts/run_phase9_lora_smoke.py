@@ -13,7 +13,12 @@ import torch
 from peft import LoraConfig, PeftModel, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from servicepilot.training import DataSplit, SFTTrainingRecord, assistant_only_labels
+from servicepilot.training import (
+    DataSplit,
+    SFTExperimentProtocol,
+    SFTTrainingRecord,
+    assistant_only_labels,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -24,7 +29,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--code-revision", required=True)
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--max-length", type=int, default=512)
+    parser.add_argument("--protocol", type=Path)
+    parser.add_argument("--max-length", type=int)
+    parser.add_argument("--lora-r", type=int, default=8)
+    parser.add_argument("--lora-alpha", type=int, default=16)
+    parser.add_argument("--lora-dropout", type=float, default=0.0)
     parser.add_argument("--seed", type=int, default=20260808)
     return parser.parse_args()
 
@@ -40,6 +49,23 @@ def main() -> None:
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     torch.cuda.reset_peak_memory_stats()
+    protocol = (
+        SFTExperimentProtocol.model_validate_json(args.protocol.read_text(encoding="utf-8"))
+        if args.protocol
+        else None
+    )
+    if protocol and protocol.model_revision != args.model_revision:
+        raise RuntimeError("model revision does not match frozen protocol")
+    dataset_sha256 = file_sha256(args.dataset)
+    if protocol and protocol.train_sha256 != dataset_sha256:
+        raise RuntimeError("dataset hash does not match frozen protocol")
+    max_length = args.max_length or (protocol.budget.max_length if protocol else 512)
+    lora_r = protocol.lora.rank if protocol else args.lora_r
+    lora_alpha = protocol.lora.alpha if protocol else args.lora_alpha
+    lora_dropout = protocol.lora.dropout if protocol else args.lora_dropout
+    target_modules = (
+        protocol.lora.target_modules if protocol else ("q_proj", "k_proj", "v_proj", "o_proj")
+    )
     records = tuple(
         SFTTrainingRecord.model_validate_json(line)
         for line in args.dataset.read_text(encoding="utf-8").splitlines()
@@ -64,8 +90,8 @@ def main() -> None:
     input_ids, labels = assistant_only_labels(
         prefixes, tuple(message["role"] for message in record.messages)
     )
-    input_tensor = torch.tensor([input_ids[: args.max_length]], dtype=torch.long, device="cuda")
-    label_tensor = torch.tensor([labels[: args.max_length]], dtype=torch.long, device="cuda")
+    input_tensor = torch.tensor([input_ids[:max_length]], dtype=torch.long, device="cuda")
+    label_tensor = torch.tensor([labels[:max_length]], dtype=torch.long, device="cuda")
     labelled_tokens = int((label_tensor != -100).sum().item())
     if labelled_tokens == 0:
         raise RuntimeError("truncation removed every assistant label")
@@ -78,10 +104,10 @@ def main() -> None:
     model = get_peft_model(
         base,
         LoraConfig(
-            r=8,
-            lora_alpha=16,
-            lora_dropout=0.0,
-            target_modules=("q_proj", "k_proj", "v_proj", "o_proj"),
+            r=lora_r,
+            lora_alpha=lora_alpha,
+            lora_dropout=lora_dropout,
+            target_modules=target_modules,
             task_type="CAUSAL_LM",
         ),
     )
@@ -140,15 +166,17 @@ def main() -> None:
         "model_path": str(args.model_path),
         "model_revision": args.model_revision,
         "dataset": str(args.dataset),
-        "dataset_sha256": file_sha256(args.dataset),
+        "dataset_sha256": dataset_sha256,
         "source_record_id": record.source_record_id,
         "split": record.split.value,
         "seed": args.seed,
+        "protocol": str(args.protocol) if args.protocol else None,
         "dtype": "bfloat16",
         "lora": {
-            "r": 8,
-            "alpha": 16,
-            "targets": ["q_proj", "k_proj", "v_proj", "o_proj"],
+            "r": lora_r,
+            "alpha": lora_alpha,
+            "dropout": lora_dropout,
+            "targets": list(target_modules),
         },
         "metrics": {
             "loss": round(loss, 6),

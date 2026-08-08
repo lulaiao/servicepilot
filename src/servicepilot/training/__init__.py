@@ -16,6 +16,11 @@ from servicepilot.training.expansion import (
     build_phase9_train_dev_families_v2,
     expand_family_variants,
 )
+from servicepilot.training.protocol import (
+    LoraProtocol,
+    SFTBudget,
+    SFTExperimentProtocol,
+)
 from servicepilot.training.readiness import (
     ExperimentReadiness,
     TrainingExperiment,
@@ -60,6 +65,9 @@ __all__ = [
     "TrainingReadinessInput",
     "assess_training_readiness",
     "assistant_only_labels",
+    "LoraProtocol",
+    "SFTBudget",
+    "SFTExperimentProtocol",
     "ExpandedScenarioFamily",
     "ExpandedScenarioVariant",
     "build_phase9_sealed_families",

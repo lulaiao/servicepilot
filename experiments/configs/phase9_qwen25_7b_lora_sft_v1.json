@@ -1,0 +1,56 @@
+{
+  "protocol_version": "phase9-qwen25-7b-lora-sft-v1",
+  "model_repo": "Qwen/Qwen2.5-7B-Instruct",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "data_manifest": "experiments/manifests/phase9_expanded_dataset_v2.json",
+  "train_data": "data/generated/phase9_expanded_sft_v2.jsonl",
+  "train_sha256": "57c8c8da02b6b02bbd5126d04bff3b244336330184495dabf801c32c4afe7963",
+  "split_counts": {"train": 696, "dev": 126, "sealed_test": 120},
+  "seeds": [20260808, 20260809, 20260810, 20260811],
+  "lora": {
+    "rank": 8,
+    "alpha": 16,
+    "dropout": 0.05,
+    "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj"]
+  },
+  "budget": {
+    "dtype": "bfloat16",
+    "max_length": 1024,
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "max_epochs": 3,
+    "learning_rate": 0.0001,
+    "warmup_ratio": 0.05,
+    "max_gradient_norm": 1.0,
+    "checkpoint_every_steps": 25,
+    "early_stopping_patience": 1
+  },
+  "checkpoint_selection": [
+    "zero_high_risk_error",
+    "highest_executable_dev_task_success",
+    "lowest_dev_loss"
+  ],
+  "sealed_used_for_selection": false,
+  "sealed_execution": "once_per_predeclared_final_seed_after_configuration_freeze",
+  "baseline": "untrained_qwen25_7b_and_rule_agent_under_same_harness_judge",
+  "required_metrics": [
+    "executable_task_success",
+    "final_state_accuracy",
+    "policy_violation_rate",
+    "false_success_rate",
+    "high_risk_error_rate",
+    "schema_valid_rate",
+    "mean_latency_seconds",
+    "p95_latency_seconds",
+    "peak_vram_mib",
+    "wall_time_seconds"
+  ],
+  "termination_conditions": [
+    "non_finite_loss",
+    "non_finite_gradient",
+    "cuda_out_of_memory",
+    "checkpoint_reload_failure",
+    "privacy_or_split_manifest_mismatch",
+    "high_risk_error_above_untrained_baseline"
+  ]
+}
