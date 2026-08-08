@@ -13,10 +13,10 @@ build/
 artifacts/traces/*
 artifacts/reports/*
 artifacts/checkpoints/*
+artifacts/logs/*
 data/generated/*
 !artifacts/**/.gitkeep
 !data/generated/.gitkeep
 *.sqlite3
 postgres-data/
 models/
-
