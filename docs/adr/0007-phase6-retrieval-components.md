@@ -53,9 +53,22 @@ The cost is material: 2.30 GB versus 192 MB of Transformers snapshot files,
 peak allocated VRAM compared with BGE-small. The quality gain is accepted for
 the next research gate, not yet as a production deployment decision.
 
+## Reranker decision
+
+Reject both `BAAI/bge-reranker-base` and `BAAI/bge-reranker-v2-m3` for the
+mainline. With M3 dense top-six candidates fixed, both preserve Recall@3=1.0
+but reduce MRR@3, nDCG@3, rank-one citation accuracy and Policy Evidence Agent
+success. They also add 5.4638 and 8.7302 ms/query respectively. This is a
+measured negative result: adding a cross-encoder is not treated as an
+architectural improvement when downstream evidence quality declines.
+
+Keep M3 dense-only with metadata filtering as the selected pipeline for the
+transactional-Agent integration gate. Reconsider reranking only if a larger
+sealed set demonstrates a quality gain under a declared latency budget.
+
 ## Acceptance condition
 
-This ADR remains Proposed until the selected dense retriever is compared with
-hybrid+reranker and demonstrates downstream evidence benefit on a sealed set.
+This ADR remains Proposed until the selected dense retriever demonstrates
+downstream transactional-Agent benefit on a sealed set.
 The current small development corpus is insufficient for a final production
 choice even though the embedding-selection sub-gate is complete.

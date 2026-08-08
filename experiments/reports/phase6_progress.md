@@ -1,7 +1,7 @@
 # Phase 6 retrieval and evidence-verification progress
 
 Date: 2026-08-08  
-Status: Phase 6A–C complete; reranker and end-to-end gates remain open
+Status: Phase 6A–D complete; sealed and transactional-Agent gates remain open
 
 ## Delivered
 
@@ -147,3 +147,45 @@ CUDA_VISIBLE_DEVICES=4 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONPATH=src \
 
 The next gate compares the selected dense retriever with a reranker and then
 measures whether improved evidence ranking changes deterministic Agent success.
+
+## Phase 6D reranker screening
+
+The reranker receives exactly the top six metadata-applicable M3 dense
+candidates and may only reorder them. The final output remains top three. Two
+revision-pinned cross-encoders were compared on GPU 4 with FP16: the
+Chinese/English `bge-reranker-base` cost point and multilingual
+`bge-reranker-v2-m3` quality point.
+
+| Variant | Recall@3 | MRR@3 | nDCG@3 | Citation accuracy@1 | Evidence Agent top-1 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| M3 dense | 1.0000 | 0.9792 | 0.9813 | 0.9583 | 0.9444 |
+| M3 + reranker-base | 1.0000 | 0.9514 | 0.9538 | 0.9167 | 0.8889 |
+| M3 + reranker-v2-m3 | 1.0000 | 0.9583 | 0.9692 | 0.9167 | 0.8889 |
+
+| Pipeline | Dense latency | Added rerank latency | Peak allocated VRAM |
+| --- | ---: | ---: | ---: |
+| M3 + reranker-base | 1.3120 ms/query | 5.4638 ms/query | 1,648.05 MiB |
+| M3 + reranker-v2-m3 | 1.4742 ms/query | 8.7302 ms/query | 2,196.70 MiB |
+
+Both rerankers are rejected for the mainline. Neither changes Recall@3 or the
+all-query top-three verifier success of 1.0, while both reduce MRR, nDCG,
+rank-one citation accuracy and the Policy Evidence Agent's single-evidence
+top-one success. The base model moves q10's gold cancellation section from
+rank one to two and q15's coupon-restoration section from rank one to three.
+The v2-M3 model moves q02 and q10 cancellation evidence from rank one to two.
+
+The Evidence Agent result is an executable query -> candidate retrieval ->
+reranking -> citation -> deterministic Evidence Verifier loop. It is not yet
+the transactional Agent loop that performs previews and writes. Therefore the
+claim is limited to “no evidence-task benefit”; full business-Agent benefit
+remains `TBD` rather than being inferred from retrieval metrics.
+
+- Base report SHA-256:
+  `8add2647c0f28ef6c9544470e574bf56c52a14199aa8a527bb7b3aa8dbfec255`
+- v2-M3 report SHA-256:
+  `c20090c4b8229ffbbe89a800ea4a39afa850e39084d52568bd96a2b39620abf3`
+- Manifest: `experiments/manifests/phase6_reranker_comparison.json`
+
+The next gate integrates M3 dense-only into the transactional Agent policy
+step and freezes a sealed retrieval/business scenario set. Reranker remains
+out of the mainline unless new sealed evidence reverses this result.
