@@ -1,0 +1,43 @@
+{
+  "experiment": "phase4b_direct_loop_vs_internal_harness",
+  "status": "milestone_1_complete",
+  "code_revision": "2bf0cae",
+  "scenario_count": 36,
+  "scenario_sha256": "ea33cccc96eec2a877f204c00441ad73a6b8545784f39e98cdd55a8081e2cead",
+  "repetitions": 10,
+  "ordering": "alternating direct-first and harness-first",
+  "report": {
+    "path": "artifacts/reports/phase4b_harness_comparison.json",
+    "sha256": "2332c5ca9d24976778341ccc89511548aebf3da97f6f6466838e236c2cca91cb"
+  },
+  "trace": {
+    "path": "artifacts/traces/phase4b_harness_trajectories.jsonl",
+    "sha256": "3ad8a03fb3e2d8dbd3137e897e8954353752e4579135678079c605a65608f986"
+  },
+  "budgets": {
+    "max_turns": 24,
+    "max_tool_calls": 12,
+    "max_retries": 2,
+    "timeout_seconds": 0.1,
+    "max_model_tokens": null
+  },
+  "result": {
+    "identical_judgments": true,
+    "direct_success": "36/36",
+    "harness_success": "36/36",
+    "harness_false_success_rate": 0.0,
+    "harness_policy_violation_rate": 0.0,
+    "direct_mean_elapsed_seconds": 0.021923,
+    "harness_mean_elapsed_seconds": 0.031774,
+    "mean_overhead_milliseconds_per_scenario": 0.2736,
+    "harness_session_count": 36,
+    "harness_event_count": 72,
+    "replay_session_count": 36
+  },
+  "limitations": [
+    "Only completed-session idempotent resume is supported.",
+    "Mid-run tool-step recovery without repeating a committed write is not implemented.",
+    "Tool interception guardrails and all configured budgets are not fully wired.",
+    "Required ablations are not yet executed."
+  ]
+}

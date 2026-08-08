@@ -93,3 +93,14 @@ exist:
 - raw trace and Manifest hashes;
 - measured overhead and failure analysis.
 
+## Implementation status
+
+Milestone 1 implements both typed boundaries, isolated evaluation trials,
+fingerprinted events, verify-only zero-write replay and completed-session
+resume. The direct-loop comparison retains identical Judge outcomes with
+0.2736 ms mean measured overhead per scenario across ten paired repetitions.
+
+This is not durable tool-level resume: an in-progress checkpoint is rejected
+until tool interception, per-step persistence and committed-write recovery are
+implemented and tested. ADR 0005 remains Proposed. Current evidence is in
+`experiments/reports/phase4b_harness_progress.md`.

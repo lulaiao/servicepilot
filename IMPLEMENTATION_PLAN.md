@@ -63,8 +63,8 @@ Evidence: `experiments/reports/phase3_acceptance.md`.
 
 ## Phase 4 — intent and dynamic multi-agent routing
 
-Status: **in progress**. The deterministic routing baseline is complete; local
-model selection and Harness Formalization remain open.
+Status: **in progress**. Phase 4A is complete; Harness Formalization is in
+progress.
 
 ### Phase 4A — intent and dynamic routing
 
@@ -82,6 +82,12 @@ Evidence: `experiments/reports/phase4_progress.md`.
 Executable evidence: `experiments/reports/phase4_agent_e2e_comparison.md`.
 
 ### Phase 4B — Harness Formalization
+
+Status: **in progress**. Milestone 1 provides the typed runtime/evaluation
+boundaries, isolated trials, verify-only zero-write replay, completed-session
+resume and a ten-repetition direct-loop comparison with identical outcomes.
+Tool-step checkpoint recovery, complete budget enforcement and ablations remain
+open, so the Phase 4B acceptance gate has not passed.
 
 Formalize the existing execution and evaluation infrastructure as two typed,
 model-independent boundaries:
@@ -133,6 +139,8 @@ Acceptance:
   scenario hash, raw trace and report;
 - no external Harness framework is accepted until it beats the lightweight
   internal baseline on a measured requirement.
+
+Progress evidence: `experiments/reports/phase4b_harness_progress.md`.
 
 ## Phase 5 — layered memory
 

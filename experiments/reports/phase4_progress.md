@@ -98,4 +98,16 @@ PYTHONPATH=src .venv/bin/python scripts/analyze_model_benchmark.py \
 ```
 
 Phase 4A model comparison is complete: the rule classifier remains the MVP
-choice. Phase 4B Harness Formalization remains open.
+choice.
+
+## Phase 4B Harness Formalization milestone 1
+
+The typed runtime and evaluation Harness boundaries now preserve all 36/36
+authoritative outcomes and support verify-only replay with zero business
+writes. A ten-repetition alternating-order comparison measured 0.2736 ms mean
+Harness overhead per scenario. Completed sessions resume idempotently, while
+running-checkpoint resume is explicitly rejected rather than falsely claimed.
+
+Phase 4B remains in progress pending tool-step checkpoint recovery, full budget
+and guardrail wiring, and the required ablations. See
+`phase4b_harness_progress.md`.
