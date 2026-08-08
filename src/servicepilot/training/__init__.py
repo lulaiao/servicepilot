@@ -8,6 +8,10 @@ from servicepilot.training.data_models import (
     TrajectoryDatasetManifest,
     TrajectoryTrainingRecord,
 )
+from servicepilot.training.expansion import (
+    ExpandedScenarioFamily,
+    build_phase9_sealed_families,
+)
 from servicepilot.training.readiness import (
     ExperimentReadiness,
     TrainingExperiment,
@@ -52,4 +56,6 @@ __all__ = [
     "TrainingReadinessInput",
     "assess_training_readiness",
     "assistant_only_labels",
+    "ExpandedScenarioFamily",
+    "build_phase9_sealed_families",
 ]
