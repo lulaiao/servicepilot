@@ -27,11 +27,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-path", type=Path, required=True)
     parser.add_argument("--model-id", required=True)
     parser.add_argument("--revision", required=True)
+    parser.add_argument("--code-revision", required=True)
     parser.add_argument("--query-prefix", default="")
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
-    parser.add_argument(
-        "--dtype", choices=("float32", "float16", "bfloat16"), default="float16"
-    )
+    parser.add_argument("--dtype", choices=("float32", "float16", "bfloat16"), default="float16")
     parser.add_argument("--max-length", type=int, default=512)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--repetitions", type=int, default=3)
@@ -41,8 +40,18 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def directory_size(path: Path) -> int:
-    return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
+def transformers_snapshot_size(path: Path) -> int:
+    """Count only files required by the Transformers benchmark.
+
+    Some Hugging Face snapshots also contain optional ONNX exports and images. They
+    are excluded so a partially downloaded export cannot distort the comparison.
+    """
+    excluded_roots = {"onnx", "imgs"}
+    return sum(
+        item.stat().st_size
+        for item in path.rglob("*")
+        if item.is_file() and item.relative_to(path).parts[0] not in excluded_roots
+    )
 
 
 def main() -> None:
@@ -79,9 +88,9 @@ def main() -> None:
     print(f"loading {args.model_id} on {args.device}", file=sys.stderr, flush=True)
     load_started = perf_counter()
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, local_files_only=True)
-    model = AutoModel.from_pretrained(
-        args.model_path, local_files_only=True, torch_dtype=dtype
-    ).to(args.device)
+    model = AutoModel.from_pretrained(args.model_path, local_files_only=True, torch_dtype=dtype).to(
+        args.device
+    )
     model.eval()
     if args.device == "cuda":
         torch.cuda.synchronize()
@@ -147,9 +156,7 @@ def main() -> None:
         bm25 = lexical.search(query, now=now, top_k=6, metadata_filter=True)
         dense_results[query.query_id] = dense[: args.top_k]
         lexical_results[query.query_id] = bm25[: args.top_k]
-        hybrid_results[query.query_id] = reciprocal_rank_fusion(
-            (bm25, dense), top_k=args.top_k
-        )
+        hybrid_results[query.query_id] = reciprocal_rank_fusion((bm25, dense), top_k=args.top_k)
     result_sets = {
         "bm25_metadata": lexical_results,
         "dense_only": dense_results,
@@ -157,12 +164,10 @@ def main() -> None:
     }
     variants = {
         name: {
-            "metrics_at_3": evaluate_retrieval(
-                queries, results, top_k=args.top_k
-            ).model_dump(mode="json"),
-            "metrics_at_1": evaluate_retrieval(
-                queries, results, top_k=1
-            ).model_dump(mode="json"),
+            "metrics_at_3": evaluate_retrieval(queries, results, top_k=args.top_k).model_dump(
+                mode="json"
+            ),
+            "metrics_at_1": evaluate_retrieval(queries, results, top_k=1).model_dump(mode="json"),
         }
         for name, results in result_sets.items()
     }
@@ -176,21 +181,18 @@ def main() -> None:
             "dtype": args.dtype,
             "max_length": args.max_length,
             "batch_size": args.batch_size,
-            "model_disk_bytes": directory_size(args.model_path),
+            "transformers_snapshot_bytes": transformers_snapshot_size(args.model_path),
         },
         "runtime": {
+            "code_revision": args.code_revision,
             "torch_version": torch.__version__,
             "transformers_version": __import__("transformers").__version__,
             "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
-            "gpu_name": (
-                torch.cuda.get_device_name(0) if args.device == "cuda" else None
-            ),
+            "gpu_name": (torch.cuda.get_device_name(0) if args.device == "cuda" else None),
             "model_load_seconds": round(load_seconds, 4),
             "corpus_encode_ms": round(corpus_encode_ms, 4),
             "query_encode_ms": [round(item, 4) for item in query_latencies],
-            "mean_query_encode_ms": round(
-                sum(query_latencies) / len(query_latencies), 4
-            ),
+            "mean_query_encode_ms": round(sum(query_latencies) / len(query_latencies), 4),
             "mean_query_encode_ms_per_query": round(
                 sum(query_latencies) / len(query_latencies) / len(queries), 4
             ),
