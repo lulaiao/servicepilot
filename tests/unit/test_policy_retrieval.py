@@ -49,6 +49,17 @@ def test_metadata_filter_excludes_expired_and_wrong_city_documents() -> None:
     assert "policy_beijing_local_refund_2026_1_section_12" not in identifiers
 
 
+def test_metadata_filter_normalizes_domain_enum_casing() -> None:
+    corpus = load_policy_corpus(CORPUS_PATH) + load_policy_corpus(HARD_CORPUS_PATH)
+    query = load_retrieval_queries(QUERY_PATH)[0].model_copy(
+        update={"order_status": "ACCEPTED", "business_type": "FOOD_DELIVERY"}
+    )
+
+    hits = BM25PolicyRetriever(corpus).search(query, now=NOW, top_k=10)
+
+    assert "policy_cancel_2026_1_section_2" in {item.evidence_id for item in hits}
+
+
 def test_bm25_metrics_are_computed_from_ranked_evidence() -> None:
     corpus = load_policy_corpus(CORPUS_PATH)
     queries = load_retrieval_queries(QUERY_PATH)

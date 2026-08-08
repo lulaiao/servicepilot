@@ -2,6 +2,7 @@
 
 from datetime import datetime
 
+from servicepilot.retrieval.lexical import is_applicable
 from servicepilot.retrieval.models import (
     EvidenceVerdict,
     PolicyDocument,
@@ -39,19 +40,5 @@ class EvidenceVerifier:
         )
 
     @staticmethod
-    def _applicable(
-        document: PolicyDocument, query: RetrievalQuery, now: datetime
-    ) -> bool:
-        return (
-            document.policy_version == query.policy_version
-            and document.active_at(now)
-            and (
-                not document.business_types
-                or query.business_type in document.business_types
-            )
-            and (
-                not document.order_statuses
-                or query.order_status in document.order_statuses
-            )
-            and (not document.cities or query.city in document.cities)
-        )
+    def _applicable(document: PolicyDocument, query: RetrievalQuery, now: datetime) -> bool:
+        return is_applicable(document, query, now)

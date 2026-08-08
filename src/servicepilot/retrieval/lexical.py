@@ -63,9 +63,7 @@ class BM25PolicyRetriever:
             for rank, (score, document) in enumerate(scored[:top_k], start=1)
         )
 
-    def _score(
-        self, query_tokens: tuple[str, ...], document: PolicyDocument
-    ) -> float:
+    def _score(self, query_tokens: tuple[str, ...], document: PolicyDocument) -> float:
         tokens = self._tokens[document.evidence_id]
         frequencies = Counter(tokens)
         score = 0.0
@@ -76,36 +74,31 @@ class BM25PolicyRetriever:
                 continue
             document_frequency = self._document_frequency[token]
             inverse_document_frequency = math.log(
-                1
-                + (document_count - document_frequency + 0.5)
-                / (document_frequency + 0.5)
+                1 + (document_count - document_frequency + 0.5) / (document_frequency + 0.5)
             )
             denominator = frequency + self.k1 * (
                 1 - self.b + self.b * len(tokens) / self._average_length
             )
-            score += (
-                inverse_document_frequency
-                * frequency
-                * (self.k1 + 1)
-                / denominator
-            )
+            score += inverse_document_frequency * frequency * (self.k1 + 1) / denominator
         return score
 
 
-
-def is_applicable(
-    document: PolicyDocument, query: RetrievalQuery, now: datetime
-) -> bool:
+def is_applicable(document: PolicyDocument, query: RetrievalQuery, now: datetime) -> bool:
     return (
         document.policy_version == query.policy_version
         and document.active_at(now)
         and (
             not document.business_types
-            or query.business_type in document.business_types
+            or query.business_type.casefold()
+            in {item.casefold() for item in document.business_types}
         )
         and (
             not document.order_statuses
-            or query.order_status in document.order_statuses
+            or query.order_status.casefold()
+            in {item.casefold() for item in document.order_statuses}
         )
-        and (not document.cities or query.city in document.cities)
+        and (
+            not document.cities
+            or query.city.casefold() in {item.casefold() for item in document.cities}
+        )
     )
