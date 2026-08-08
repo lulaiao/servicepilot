@@ -1,7 +1,7 @@
 # ADR 0005: Formalize an internal Agent and evaluation Harness
 
-- Status: Proposed
-- Date: 2026-08-07
+- Status: Accepted
+- Date: 2026-08-08
 
 ## Context
 
@@ -56,7 +56,19 @@ Phase 7 rather than coupling the Phase 4 runtime to it.
 
 ## Acceptance evidence
 
-See `docs/harness_design.md` and Phase 4B in `IMPLEMENTATION_PLAN.md`. Change
-this ADR to Accepted only after identical-outcome, zero-write replay,
-checkpoint recovery, guardrail and overhead reports pass.
+The internal Harness passed the Phase 4B gate:
 
+- 36/36 identical authoritative outcomes against the direct loop;
+- verify-only replay with zero Repository writes;
+- typed tool-step recovery without repeating a committed refund after a lost
+  response;
+- explicit Prompt Injection, confirmation, version-conflict and budget paths;
+- TOOL-stage Guardrails before Gateway dispatch;
+- four required ablations and measured overhead;
+- bounded concurrency, per-Trial failure isolation and durable resume that
+  skips completed Trials.
+
+Evidence is linked from `experiments/reports/phase4b_harness_progress.md` and
+the three tracked Phase 4B manifests. This accepts the lightweight internal
+boundary, not an external Harness framework and not a claim that every future
+model adapter is automatically safe.

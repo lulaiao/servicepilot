@@ -1,0 +1,24 @@
+{
+  "experiment": "phase4b_resilience_acceptance",
+  "code_revision": "1b74a88",
+  "scenario_count": 36,
+  "scenario_sha256": "ea33cccc96eec2a877f204c00441ad73a6b8545784f39e98cdd55a8081e2cead",
+  "max_concurrency": 4,
+  "acceptance_report": {
+    "path": "artifacts/reports/phase4b_resilience_acceptance.json",
+    "sha256": "0045fb3dcffa74097adefb10a14655abf45080e8afa002a58398abc018270029"
+  },
+  "resumable_run_manifest": {
+    "path": "artifacts/reports/phase4b_resumable_run.json",
+    "sha256": "2e4753fe24e16dd2b877676f93af49e65b92021777c420c2ce96432dcf8f46e3"
+  },
+  "result": {
+    "completed": 36,
+    "failed": 0,
+    "task_success_rate": 1.0,
+    "false_success_rate": 0.0,
+    "policy_violation_rate": 0.0,
+    "completed_trials_skipped_on_resume": true,
+    "maximum_attempts_after_resume": 1
+  }
+}

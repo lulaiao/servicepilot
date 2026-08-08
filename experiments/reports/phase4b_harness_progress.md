@@ -1,7 +1,7 @@
 # Phase 4B Harness Formalization progress
 
 Date: 2026-08-08  
-Status: milestone 3 complete; Phase 4B acceptance not yet passed
+Status: **accepted and complete**
 
 ## Delivered
 
@@ -142,12 +142,36 @@ PYTHONPATH=src .venv/bin/python scripts/run_phase4b_harness_eval.py \
 
 ## Open acceptance work
 
-- Add Harness-level recovery classifications for missing confirmation and
-  version conflict; these are currently typed Gateway results handled by the
-  Agent policy rather than Harness termination reasons.
-- Add failure isolation and resumable experiment manifests; bounded
-  concurrency remains deferred until it has a measured need.
+Missing confirmation and version conflict now terminate with dedicated
+`confirmation_recovery_required` and `version_conflict_recovery_required`
+reasons while retaining the typed Gateway result in the committed tool step.
+Both paths prove zero refund writes in their recovery tests.
 
-ADR 0005 remains **Proposed** until missing-confirmation/version-conflict
-recovery and evaluation failure isolation are formalized. TOOL Guardrails and
-the five requested budget paths are now implemented and tested.
+`EvaluationHarness.run_suite_resumable` now provides isolated seeded Trials,
+bounded `asyncio.Semaphore` concurrency and an atomically replaced JSON
+Manifest. A controlled failure test proves two peer Trials complete when one
+fails; resume reruns only the failed Trial. A separate test measures peak
+concurrency equal to the configured bound of two.
+
+The final 36-scenario acceptance used concurrency four. All Trials completed,
+the deterministic success rate remained 1.0, and a second invocation skipped
+every completed Trial with attempts remaining one.
+
+```text
+PYTHONPATH=src .venv/bin/python scripts/run_phase4b_resilience_acceptance.py \
+  --code-revision 1b74a88 \
+  --max-concurrency 4 \
+  --manifest-output artifacts/reports/phase4b_resumable_run.json \
+  --output artifacts/reports/phase4b_resilience_acceptance.json
+```
+
+- Acceptance report SHA-256:
+  `0045fb3dcffa74097adefb10a14655abf45080e8afa002a58398abc018270029`
+- Durable run Manifest SHA-256:
+  `2e4753fe24e16dd2b877676f93af49e65b92021777c420c2ce96432dcf8f46e3`
+- Tracked provenance:
+  `experiments/manifests/phase4b_resilience_acceptance.json`
+
+All Phase 4B acceptance requirements now have executable evidence. ADR 0005 is
+**Accepted**. Future streaming model adapters must still enforce generation
+token caps internally; the Harness post-validates reported usage.

@@ -108,6 +108,7 @@ writes. A ten-repetition alternating-order comparison measured 0.2736 ms mean
 Harness overhead per scenario. Completed sessions resume idempotently, while
 running-checkpoint resume is explicitly rejected rather than falsely claimed.
 
-Phase 4B remains in progress pending tool-step checkpoint recovery, full budget
-and guardrail wiring, and the required ablations. See
-`phase4b_harness_progress.md`.
+Phase 4B subsequently completed tool-step recovery, full budget and TOOL
+Guardrail wiring, four ablations, confirmation/version-conflict recovery,
+failure isolation and durable bounded-concurrency resume. ADR 0005 is Accepted;
+see `phase4b_harness_progress.md`.
