@@ -9,6 +9,10 @@ from servicepilot.routing.models import (
     ToolObservation,
 )
 from servicepilot.routing.router import StatefulRouter
+from servicepilot.routing.structured_output import (
+    build_intent_prompt,
+    parse_intent_output,
+)
 
 
 def test_frozen_routing_dataset_has_disjoint_family_splits() -> None:
@@ -96,3 +100,26 @@ def test_router_changes_role_from_action_and_observation() -> None:
     assert router.route(recovery).role is AgentRole.COORDINATOR
     assert router.route(recovery).should_clarify is True
 
+
+def test_structured_model_contract_parses_fenced_json() -> None:
+    result = parse_intent_output(
+        """```json
+        {"primary_intent":"order_query","secondary_intents":[],
+        "slots":{"order_id":"ord-1","reason":null,
+        "requested_amount":null},"risk_level":"low","confidence":0.9,
+        "needs_clarification":false,"injection_detected":false}
+        ```"""
+    )
+
+    assert result.primary_intent is Intent.ORDER_QUERY
+    assert result.slots["order_id"] == "ord-1"
+    assert "只输出一个JSON对象" in build_intent_prompt("查订单")
+
+
+def test_routed_agent_accepts_classifier_dependency() -> None:
+    from servicepilot.agents.routed_baseline import RoutedRuleAgent
+
+    classifier = RuleIntentClassifier()
+    agent = RoutedRuleAgent(classifier=classifier)
+
+    assert agent.classifier is classifier

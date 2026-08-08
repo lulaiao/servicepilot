@@ -11,7 +11,10 @@ from pathlib import Path
 from typing import Any
 
 from servicepilot.eval.routing_dataset import DatasetSplit, build_routing_dataset
-from servicepilot.routing.models import IntentResult
+from servicepilot.routing.structured_output import (
+    build_intent_prompt,
+    parse_intent_output,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -38,30 +41,6 @@ def parse_args() -> argparse.Namespace:
         default=Path("artifacts/reports/local_model_dev.json"),
     )
     return parser.parse_args()
-
-
-def _json_object(text: str) -> dict[str, Any]:
-    start = text.find("{")
-    end = text.rfind("}")
-    if start < 0 or end <= start:
-        raise ValueError("no JSON object found")
-    value = json.loads(text[start : end + 1])
-    if not isinstance(value, dict):
-        raise ValueError("output is not an object")
-    return value
-
-
-def _prompt(text: str) -> str:
-    return (
-        "你是订单售后分类器。只输出一个JSON对象，不要解释。"
-        "primary_intent只能取 order_query,cancel_order,full_refund,"
-        "partial_refund,delivery_delay,missing_or_wrong_item,"
-        "duplicate_charge,coupon_issue,reschedule,complaint_escalation,"
-        "out_of_scope。secondary_intents是数组。slots必须包含order_id、"
-        "reason、requested_amount，未知用null。risk_level取low/medium/high；"
-        "confidence为0到1；needs_clarification和injection_detected为布尔值。"
-        f"\n用户输入：{text}"
-    )
 
 
 def main() -> None:
@@ -124,7 +103,7 @@ def main() -> None:
     )
 
     def prepare(text: str) -> tuple[dict[str, Any], int]:
-        messages = [{"role": "user", "content": _prompt(text)}]
+        messages = [{"role": "user", "content": build_intent_prompt(text)}]
         rendered = tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
@@ -181,9 +160,9 @@ def main() -> None:
             skip_special_tokens=True,
         )
         error: str | None = None
-        prediction: IntentResult | None = None
+        prediction = None
         try:
-            prediction = IntentResult.model_validate(_json_object(generated))
+            prediction = parse_intent_output(generated)
         except (ValueError, json.JSONDecodeError) as exc:
             error = f"{type(exc).__name__}: {exc}"
         records.append(

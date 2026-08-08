@@ -6,6 +6,7 @@ from servicepilot.agents.rule_baseline import RuleBasedSingleAgent
 from servicepilot.eval.models import Intent, TraceEvent, TraceRole
 from servicepilot.eval.simulator import FSMUserSimulator
 from servicepilot.mcp_gateway.gateway import ReliableToolGateway, ToolResult
+from servicepilot.routing.classifiers import IntentClassifier
 from servicepilot.routing.intent_rules import RuleIntentClassifier
 from servicepilot.routing.models import DialogueState, ToolObservation
 from servicepilot.routing.router import ROLE_INSTRUCTIONS, StatefulRouter
@@ -14,8 +15,8 @@ from servicepilot.routing.router import ROLE_INSTRUCTIONS, StatefulRouter
 class RoutedRuleAgent(RuleBasedSingleAgent):
     """Use one deterministic policy with explicit role-specific routing."""
 
-    def __init__(self) -> None:
-        self.classifier = RuleIntentClassifier()
+    def __init__(self, classifier: IntentClassifier | None = None) -> None:
+        self.classifier = classifier or RuleIntentClassifier()
         self.router = StatefulRouter()
         self.state: DialogueState | None = None
 
@@ -111,4 +112,3 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
         if self.state is None:
             raise RuntimeError("routing state has not been initialized")
         return self.state
-

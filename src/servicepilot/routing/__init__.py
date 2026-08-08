@@ -1,5 +1,6 @@
 """Stateful routing primitives."""
 
+from servicepilot.routing.classifiers import IntentClassifier
 from servicepilot.routing.intent_rules import RuleIntentClassifier
 from servicepilot.routing.models import (
     AgentRole,
@@ -13,6 +14,7 @@ __all__ = [
     "AgentRole",
     "DialogueState",
     "IntentResult",
+    "IntentClassifier",
     "RouteDecision",
     "RuleIntentClassifier",
     "StatefulRouter",
