@@ -12,6 +12,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--revision", default="main")
     parser.add_argument("--cache-dir", type=Path, required=True)
     parser.add_argument("--manifest-output", type=Path, required=True)
+    parser.add_argument(
+        "--ignore-pattern",
+        action="append",
+        default=[],
+        help="Repeatable Hugging Face snapshot ignore pattern.",
+    )
     return parser.parse_args()
 
 
@@ -27,6 +33,7 @@ def main() -> None:
         repo_id=args.repo_id,
         revision=resolved_revision,
         cache_dir=args.cache_dir,
+        ignore_patterns=args.ignore_pattern or None,
     )
     manifest = {
         "repo_id": args.repo_id,
@@ -34,6 +41,7 @@ def main() -> None:
         "resolved_revision": resolved_revision,
         "snapshot_path": snapshot,
         "license": info.card_data.get("license") if info.card_data else None,
+        "ignore_patterns": args.ignore_pattern,
     }
     args.manifest_output.parent.mkdir(parents=True, exist_ok=True)
     args.manifest_output.write_text(

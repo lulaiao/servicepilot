@@ -47,7 +47,7 @@ class BM25PolicyRetriever:
         query_tokens = tokenize(query.text)
         scored: list[tuple[float, PolicyDocument]] = []
         for document in self.documents:
-            if metadata_filter and not self._applicable(document, query, now):
+            if metadata_filter and not is_applicable(document, query, now):
                 continue
             score = self._score(query_tokens, document)
             if score > 0:
@@ -91,20 +91,21 @@ class BM25PolicyRetriever:
             )
         return score
 
-    @staticmethod
-    def _applicable(
-        document: PolicyDocument, query: RetrievalQuery, now: datetime
-    ) -> bool:
-        return (
-            document.policy_version == query.policy_version
-            and document.active_at(now)
-            and (
-                not document.business_types
-                or query.business_type in document.business_types
-            )
-            and (
-                not document.order_statuses
-                or query.order_status in document.order_statuses
-            )
-            and (not document.cities or query.city in document.cities)
+
+
+def is_applicable(
+    document: PolicyDocument, query: RetrievalQuery, now: datetime
+) -> bool:
+    return (
+        document.policy_version == query.policy_version
+        and document.active_at(now)
+        and (
+            not document.business_types
+            or query.business_type in document.business_types
         )
+        and (
+            not document.order_statuses
+            or query.order_status in document.order_statuses
+        )
+        and (not document.cities or query.city in document.cities)
+    )

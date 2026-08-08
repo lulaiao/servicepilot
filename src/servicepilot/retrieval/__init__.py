@@ -4,6 +4,7 @@ from servicepilot.retrieval.dataset import (
     load_policy_corpus,
     load_retrieval_queries,
 )
+from servicepilot.retrieval.hybrid import reciprocal_rank_fusion
 from servicepilot.retrieval.lexical import BM25PolicyRetriever
 from servicepilot.retrieval.metrics import evaluate_retrieval
 from servicepilot.retrieval.models import (
@@ -32,4 +33,5 @@ __all__ = [
     "evaluate_retrieval",
     "load_policy_corpus",
     "load_retrieval_queries",
+    "reciprocal_rank_fusion",
 ]

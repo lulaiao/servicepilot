@@ -9,6 +9,7 @@ from servicepilot.retrieval import (
     evaluate_retrieval,
     load_policy_corpus,
     load_retrieval_queries,
+    reciprocal_rank_fusion,
 )
 
 ROOT = Path(__file__).parents[2]
@@ -132,3 +133,21 @@ def test_multi_query_rrf_returns_unique_metadata_applicable_evidence() -> None:
     assert len(identifiers) == len(set(identifiers))
     assert "policy_beijing_local_refund_2026_1_section_12" in identifiers
     assert "policy_shanghai_local_cancel_2026_1_section_19" not in identifiers
+
+
+def test_hybrid_rrf_fuses_unique_results_without_gold_labels() -> None:
+    query = load_retrieval_queries(HARD_QUERY_PATH)[0]
+    corpus = load_policy_corpus(CORPUS_PATH) + load_policy_corpus(HARD_CORPUS_PATH)
+    lexical = BM25PolicyRetriever(corpus).search(query, now=NOW, top_k=3)
+    reversed_hits = tuple(
+        item.model_copy(update={"rank": rank})
+        for rank, item in enumerate(reversed(lexical), start=1)
+    )
+
+    fused = reciprocal_rank_fusion((lexical, reversed_hits), top_k=3)
+
+    assert len(fused) == len({item.evidence_id for item in fused})
+    assert [item.rank for item in fused] == [1, 2, 3]
+    assert {item.evidence_id for item in fused} == {
+        item.evidence_id for item in lexical
+    }
