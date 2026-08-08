@@ -1,0 +1,11 @@
+{
+  "repo_id": "BAAI/bge-reranker-base",
+  "requested_revision": "main",
+  "resolved_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+  "snapshot_path": "/data/ssd1/lla/cache/servicepilot-hf/models--BAAI--bge-reranker-base/snapshots/2cfc18c9415c912f9d8155881c133215df768a70",
+  "license": "mit",
+  "ignore_patterns": [
+    "onnx/*",
+    "imgs/*"
+  ]
+}

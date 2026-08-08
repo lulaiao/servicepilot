@@ -1,6 +1,8 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
+
 from servicepilot.retrieval import (
     BM25PolicyRetriever,
     DeterministicQueryRewriter,
@@ -9,8 +11,10 @@ from servicepilot.retrieval import (
     evaluate_retrieval,
     load_policy_corpus,
     load_retrieval_queries,
+    rank_by_cross_encoder,
     reciprocal_rank_fusion,
 )
+from servicepilot.retrieval.models import SearchHit
 
 ROOT = Path(__file__).parents[2]
 CORPUS_PATH = ROOT / "data/policies/phase6_corpus.jsonl"
@@ -151,3 +155,17 @@ def test_hybrid_rrf_fuses_unique_results_without_gold_labels() -> None:
     assert {item.evidence_id for item in fused} == {
         item.evidence_id for item in lexical
     }
+
+
+def test_cross_encoder_ranking_is_deterministic_and_validated() -> None:
+    candidates = (
+        SearchHit(evidence_id="b", score=0.9, rank=1, text="B"),
+        SearchHit(evidence_id="a", score=0.8, rank=2, text="A"),
+    )
+
+    ranked = rank_by_cross_encoder(candidates, (0.5, 0.5), top_k=2)
+
+    assert [item.evidence_id for item in ranked] == ["a", "b"]
+    assert [item.rank for item in ranked] == [1, 2]
+    with pytest.raises(ValueError, match="counts"):
+        rank_by_cross_encoder(candidates, (0.5,), top_k=2)

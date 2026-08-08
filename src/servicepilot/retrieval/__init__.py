@@ -14,6 +14,7 @@ from servicepilot.retrieval.models import (
     RetrievalQuery,
     SearchHit,
 )
+from servicepilot.retrieval.reranker import rank_by_cross_encoder
 from servicepilot.retrieval.rewrite import (
     DeterministicQueryRewriter,
     MultiQueryRRFRetriever,
@@ -34,4 +35,5 @@ __all__ = [
     "load_policy_corpus",
     "load_retrieval_queries",
     "reciprocal_rank_fusion",
+    "rank_by_cross_encoder",
 ]

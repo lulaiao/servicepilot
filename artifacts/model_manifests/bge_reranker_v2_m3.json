@@ -1,0 +1,11 @@
+{
+  "repo_id": "BAAI/bge-reranker-v2-m3",
+  "requested_revision": "main",
+  "resolved_revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+  "snapshot_path": "/data/ssd1/lla/cache/servicepilot-hf/models--BAAI--bge-reranker-v2-m3/snapshots/953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+  "license": "apache-2.0",
+  "ignore_patterns": [
+    "onnx/*",
+    "imgs/*"
+  ]
+}
