@@ -1,0 +1,25 @@
+{
+  "experiment": "phase7_monitor_calibration",
+  "code_revision": "657d314d9d91396d5331b102c917067200ef0bdc",
+  "monitor_version": "phase7-deterministic-v1",
+  "case_count": 26,
+  "fault_class_count": 13,
+  "case_manifest_sha256": "75a24f1b73cbf0c21e9c5bcd6651a5ffbc6856a5dc3ab1e66e11879b657e30cd",
+  "report": "artifacts/reports/phase7_monitor_calibration.json",
+  "report_sha256": "047bc686eac14805911456eb26ee97eea06d381f719cbdd685e21aed948776b6",
+  "metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "harmful_intervention_rate": 0.0,
+    "true_positive": 13,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "decision": {
+    "phase7a_status": "complete",
+    "phase7_status": "in_progress",
+    "monitor_authority": "advisory_only",
+    "next_gate": "at_least_1000_executable_trajectories"
+  }
+}
+

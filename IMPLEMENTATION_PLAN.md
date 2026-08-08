@@ -158,21 +158,24 @@ Decision: `docs/adr/0006-layered-memory-boundary.md`.
 
 ## Phase 6 — hybrid retrieval and evidence verification
 
-Status: **in progress**. Phase 6A froze an initial gold-evidence corpus/query
-set, added BM25, metadata filters, ranking metrics and deterministic evidence
-sufficiency checks. Phase 6B added active Hard Negatives, multi-evidence queries
-and a rejected query-rewrite/RRF ablation. Dense and reranker models remain
-`TBD`; the harder set now exposes a measurable Recall@1 gap.
-Freeze the corpus and compare lexical-only, dense-only, hybrid, and reranked
-variants under the same latency and retrieval budget before accepting components.
+Status: **complete**. The frozen sealed gate selected M3 dense top-six plus
+plain-query BGE-v2-M3 fixed 0.5/0.5 score fusion. Metadata-filtered BM25 remains
+the CPU fallback. The transactional Agent preserves 36/36 task success and
+fails closed without a business write when required evidence is incomplete.
 
-Progress: `experiments/reports/phase6_progress.md`.
-Proposed decision: `docs/adr/0007-phase6-retrieval-components.md`.
+Evidence: `experiments/reports/phase6_acceptance.md`.
+Decision: `docs/adr/0007-phase6-retrieval-components.md`.
 
 ## Phase 7 — monitors, recovery, and full evaluation
 
-Status: pending. Calibrate bounded deterministic/quality monitors, cover at
-least ten fault classes, and scale to at least 1,000 executable trajectories.
+Status: **in progress**. Phase 7A implements an advisory, least-privilege
+deterministic Monitor over redacted trace, Judge, and budget summaries. Its
+sync/async paths cover thirteen fault classes and pass a 26-case isolated
+calibration. Phase 7B must scale to at least 1,000 executable trajectories with
+mixed faults, recovery assertions, overhead metrics, and a no-Monitor ablation.
+
+Progress: `experiments/reports/phase7_progress.md`.
+Decision: `docs/adr/0008-phase7-monitor-boundary.md`.
 
 ## Phase 8 — trajectory data loop
 
