@@ -200,6 +200,7 @@ distribution, and hacking audits.
 Progress: `experiments/reports/phase9_progress.md`.
 Decision: `docs/adr/0010-phase9-training-stack-and-model-gates.md`.
 Data expansion: `docs/phase9_data_expansion_plan.md`.
+Expansion manifest: `experiments/manifests/phase9_scenario_expansion_v1.json`.
 
 ## Phase 10 — open-source delivery
 

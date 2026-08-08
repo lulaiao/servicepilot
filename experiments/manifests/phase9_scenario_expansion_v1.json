@@ -1,0 +1,33 @@
+{
+  "experiment": "phase9_scenario_expansion_v1",
+  "sealed": {
+    "code_revision": "61af3da36a325863246c69e62c56967189275749",
+    "provenance": "independently_authored_phase9_sealed_v1",
+    "family_count": 40,
+    "catalog": "data/generated/phase9_sealed_families.jsonl",
+    "catalog_sha256": "4d904392c2312a707c3952969c2700f6e7ce92053d206664e15ef0c000718228",
+    "semantic_signature_manifest_sha256": "d21f136d468f392e2c6197e86c936501af6ac1095f372854f1413ff844fb15f8",
+    "raw_report": "artifacts/reports/phase9_sealed_family_freeze.json",
+    "raw_report_sha256": "1dbec7501eff0909aa0e66d1a678606a0118c40078cc902a3dab5a3b7776d34d",
+    "task_success_count": 40,
+    "false_success_count": 0,
+    "policy_violation_count": 0
+  },
+  "train_dev_batch_v1": {
+    "code_revision": "54b9cbdb6720e20f3c4a06738c6110169c2e9339",
+    "seed": 20260808,
+    "family_count": 60,
+    "split_counts": {"train": 49, "dev": 11},
+    "catalog": "data/generated/phase9_train_dev_families_v1.jsonl",
+    "catalog_sha256": "e119e9032c279235a7668952606fb4191215ac29624c7e8e83e819029186eebc",
+    "raw_report": "artifacts/reports/phase9_train_dev_family_batch_v1.json",
+    "raw_report_sha256": "b7a1007b4d17a65604a540d39c97fc79e700ea5f456b46cc346e5adb16456173",
+    "semantic_overlap_with_sealed": 0,
+    "task_success_count": 60,
+    "false_success_count": 0,
+    "policy_violation_count": 0
+  },
+  "next_gate": "generate_at_most_three_language_variants_after_split_and_export_canonical_trajectories",
+  "formal_training_status": "blocked"
+}
+

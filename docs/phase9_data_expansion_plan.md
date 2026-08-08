@@ -72,3 +72,11 @@ Repeated copies and simple oversampling do not count toward readiness. Sampling
 weights may be used only inside the train loader and must be reported separately
 from unique record counts.
 
+## Current progress
+
+The first sealed catalog freezes 40 independently reserved families before
+train/dev generation. All 40 canonical scenarios pass the authoritative Judge.
+The first constrained train/dev batch adds 60 non-overlapping families: 49
+train and 11 development. All pass execution with zero false-success and policy
+violations. Language variants have not yet been generated, so current readiness
+counts must use canonical records only.

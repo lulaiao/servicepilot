@@ -57,3 +57,15 @@ The data-remediation design is frozen in `docs/phase9_data_expansion_plan.md`.
 Its target is 600/120/120 executable records across at least 200/40/40 semantic
 families, with independently authored sealed families and no duplicate-based
 count inflation.
+
+## Scenario-family expansion progress
+
+Forty independently reserved sealed families were frozen before train/dev
+generation. Their canonical runs reach 40/40 task success with zero
+false-success and policy violations. The first constrained train/dev batch adds
+60 unique families (49 train, 11 dev), also with 100% authoritative success and
+zero semantic-signature overlap with sealed.
+
+This is progress toward the diversity gate, not completion. The next operation
+is to create at most three utterance variants per already assigned family and
+rerun every variant. The current formal SFT/GRPO block remains unchanged.
