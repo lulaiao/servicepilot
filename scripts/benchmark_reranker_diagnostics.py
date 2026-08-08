@@ -158,7 +158,9 @@ def main() -> None:
             for rank, (score, document) in enumerate(scored[:10], start=1)
         )
 
-    variants: dict[str, dict[str, tuple[SearchHit, ...]]] = {}
+    variants: dict[str, dict[str, tuple[SearchHit, ...]]] = {
+        "dense_only": {query.query_id: dense_candidates[query.query_id][:3] for query in queries}
+    }
     latency: dict[str, list[float]] = {}
     for context_name, render in (("plain", lambda query: query.text), ("enriched", enriched_query)):
         for candidate_k in (3, 6, 10):
