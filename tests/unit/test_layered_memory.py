@@ -6,6 +6,7 @@ from servicepilot.memory import (
     DeterministicFactSummarizer,
     FactSource,
     InMemoryLongTermMemoryStore,
+    LayeredMemory,
     LongTermCategory,
     LongTermMemoryItem,
     LongTermMemoryPolicyError,
@@ -16,6 +17,7 @@ from servicepilot.memory import (
     RecentMessageWindow,
     WorkingMemory,
     WorkingMemoryManager,
+    run_memory_benchmark,
 )
 
 NOW = datetime(2026, 8, 8, 12, 0, tzinfo=UTC)
@@ -263,3 +265,85 @@ def test_wrong_memory_injection_cannot_override_tool_state() -> None:
 
     assert resolved.facts["refunded_amount"].value == "12.00"
     assert resolved.conflicts[-1].rejected_fact_id == "injected"
+
+
+def test_layered_service_applies_summary_without_overriding_tool_fact() -> None:
+    memory = LayeredMemory(
+        conversation_id="conv-1", user_id="user-1", recent_capacity=4
+    )
+    memory.remember_fact(
+        fact(
+            "tool-v4",
+            "order_status",
+            "refunded",
+            FactSource.TOOL,
+            version=4,
+        ),
+        now=NOW,
+    )
+    malicious_summary = DeterministicFactSummarizer().summarize(
+        WorkingMemory(
+            conversation_id="conv-1",
+            user_id="user-1",
+            facts={
+                "order_status": fact(
+                    "stale",
+                    "order_status",
+                    "accepted",
+                    FactSource.USER,
+                    minutes=10,
+                )
+            },
+        ),
+        summary_id="stale-summary",
+        now=NOW + timedelta(minutes=10),
+    )
+
+    memory.apply_summary(
+        malicious_summary, now=NOW + timedelta(minutes=10)
+    )
+
+    context = memory.context(now=NOW + timedelta(minutes=10))
+    assert context.working.facts["order_status"].value == "refunded"
+    assert context.working.conflicts[-1].rejected_fact_id.startswith(
+        "stale-summary:"
+    )
+
+
+def test_delete_user_memory_clears_all_four_layers() -> None:
+    memory = LayeredMemory(conversation_id="conv-1", user_id="user-1")
+    memory.record_message(
+        MemoryMessage(
+            message_id="message-1",
+            turn=1,
+            role=MemoryRole.USER,
+            content="remember this",
+            created_at=NOW,
+        )
+    )
+    memory.remember_fact(
+        fact("order", "order_id", "ord-delete", FactSource.USER), now=NOW
+    )
+    memory.create_summary(summary_id="summary-delete", now=NOW)
+    memory.grant_consent(consent())
+    memory.remember_long_term(long_term(), now=NOW)
+
+    deleted = memory.delete_user_memory()
+    context = memory.context(now=NOW)
+
+    assert deleted == 1
+    assert context.recent_messages == ()
+    assert context.working.facts == {}
+    assert context.summary is None
+    assert context.long_term == ()
+
+
+def test_layered_memory_benchmark_beats_no_memory_without_safety_regression() -> None:
+    results = run_memory_benchmark()
+
+    assert len(results) == 5
+    assert sum(item.no_memory_success for item in results) == 2
+    assert all(item.layered_memory_success for item in results)
+    assert all(
+        item.layered_memory_success for item in results if item.safety_case
+    )

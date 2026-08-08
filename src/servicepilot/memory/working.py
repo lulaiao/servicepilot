@@ -58,7 +58,12 @@ class DeterministicFactSummarizer:
         self, memory: WorkingMemory, *, summary_id: str, now: datetime
     ) -> FactSummary:
         facts = tuple(
-            fact.model_copy(update={"source": FactSource.SUMMARY})
+            fact.model_copy(
+                update={
+                    "fact_id": f"{summary_id}:{fact.key}",
+                    "source": FactSource.SUMMARY,
+                }
+            )
             for _, fact in sorted(memory.facts.items())
             if fact.is_valid(now) and not fact.sensitive
         )

@@ -1,5 +1,9 @@
 """Layered memory primitives."""
 
+from servicepilot.memory.benchmark import (
+    MemoryBenchmarkCaseResult,
+    run_memory_benchmark,
+)
 from servicepilot.memory.long_term import (
     InMemoryLongTermMemoryStore,
     LongTermMemoryPolicyError,
@@ -17,6 +21,7 @@ from servicepilot.memory.models import (
     ResolvedMemoryContext,
     WorkingMemory,
 )
+from servicepilot.memory.service import LayeredMemory
 from servicepilot.memory.window import RecentMessageWindow
 from servicepilot.memory.working import (
     DeterministicFactSummarizer,
@@ -32,7 +37,9 @@ __all__ = [
     "LongTermCategory",
     "LongTermMemoryItem",
     "LongTermMemoryPolicyError",
+    "LayeredMemory",
     "MemoryConsent",
+    "MemoryBenchmarkCaseResult",
     "MemoryFact",
     "MemoryMessage",
     "MemoryRole",
@@ -40,4 +47,5 @@ __all__ = [
     "ResolvedMemoryContext",
     "WorkingMemory",
     "WorkingMemoryManager",
+    "run_memory_benchmark",
 ]
