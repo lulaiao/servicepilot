@@ -95,6 +95,15 @@ async def test_real_harness_trajectory_converts_to_versioned_record() -> None:
 
 def test_privacy_scan_and_near_duplicate_audit() -> None:
     assert privacy_violation_count({"token": "raw", "text": "user@example.com"}) == 2
+    assert (
+        privacy_violation_count(
+            {
+                "record_id": "trajectory-014610729271500b6ec2",
+                "content_sha256": "014610729271500b6ec24eab2167ce6d",
+            }
+        )
+        == 0
+    )
 
     from servicepilot.training.data_models import TrajectoryTrainingRecord
 

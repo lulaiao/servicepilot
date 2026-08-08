@@ -258,6 +258,14 @@ def privacy_violation_count(value: Any) -> int:
     if isinstance(value, dict):
         violations = 0
         for key, child in value.items():
+            if key.lower().endswith("sha256"):
+                continue
+            if (
+                key.lower() in {"record_id", "source_record_id"}
+                and isinstance(child, str)
+                and re.fullmatch(r"(?:trajectory|sft|preference)-[0-9a-f]{20}", child)
+            ):
+                continue
             if key.lower() in _SECRET_KEYS and child != "[REDACTED_SECRET]":
                 violations += 1
             violations += privacy_violation_count(child)
