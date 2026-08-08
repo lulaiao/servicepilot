@@ -3,7 +3,9 @@ from pathlib import Path
 
 from servicepilot.retrieval import (
     BM25PolicyRetriever,
+    DeterministicQueryRewriter,
     EvidenceVerifier,
+    MultiQueryRRFRetriever,
     evaluate_retrieval,
     load_policy_corpus,
     load_retrieval_queries,
@@ -12,6 +14,8 @@ from servicepilot.retrieval import (
 ROOT = Path(__file__).parents[2]
 CORPUS_PATH = ROOT / "data/policies/phase6_corpus.jsonl"
 QUERY_PATH = ROOT / "data/eval/phase6_retrieval_queries.jsonl"
+HARD_CORPUS_PATH = ROOT / "data/policies/phase6_hard_negatives.jsonl"
+HARD_QUERY_PATH = ROOT / "data/eval/phase6_retrieval_queries_hard.jsonl"
 NOW = datetime(2026, 8, 8, tzinfo=UTC)
 
 
@@ -87,3 +91,44 @@ def test_evidence_verifier_rejects_expired_and_missing_required_sections() -> No
     )
     assert missing.sufficient is False
     assert missing.missing_required_ids == ("policy_cancel_2026_1_section_2",)
+
+
+def test_harder_dataset_adds_multi_evidence_and_active_hard_negatives() -> None:
+    corpus = load_policy_corpus(HARD_CORPUS_PATH)
+    queries = load_retrieval_queries(HARD_QUERY_PATH)
+
+    assert len(corpus) == 6
+    assert len(queries) == 12
+    assert sum(len(item.gold_evidence_ids) > 1 for item in queries) == 6
+    assert all(item.policy_version == "2026.1" for item in corpus)
+
+
+def test_query_rewrite_expands_colloquial_terms_deterministically() -> None:
+    query = next(
+        item
+        for item in load_retrieval_queries(HARD_QUERY_PATH)
+        if item.query_id == "q15"
+    )
+
+    variants = DeterministicQueryRewriter().rewrite(query)
+
+    assert variants[0] == query.text
+    assert any("优惠券" in item and "恢复" in item for item in variants[1:])
+    assert variants == DeterministicQueryRewriter().rewrite(query)
+
+
+def test_multi_query_rrf_returns_unique_metadata_applicable_evidence() -> None:
+    corpus = load_policy_corpus(CORPUS_PATH) + load_policy_corpus(HARD_CORPUS_PATH)
+    query = next(
+        item
+        for item in load_retrieval_queries(HARD_QUERY_PATH)
+        if item.query_id == "q18"
+    )
+    retriever = MultiQueryRRFRetriever(BM25PolicyRetriever(corpus))
+
+    hits = retriever.search(query, now=NOW, top_k=3)
+
+    identifiers = [item.evidence_id for item in hits]
+    assert len(identifiers) == len(set(identifiers))
+    assert "policy_beijing_local_refund_2026_1_section_12" in identifiers
+    assert "policy_shanghai_local_cancel_2026_1_section_19" not in identifiers

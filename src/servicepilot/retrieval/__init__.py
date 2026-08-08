@@ -13,12 +13,18 @@ from servicepilot.retrieval.models import (
     RetrievalQuery,
     SearchHit,
 )
+from servicepilot.retrieval.rewrite import (
+    DeterministicQueryRewriter,
+    MultiQueryRRFRetriever,
+)
 from servicepilot.retrieval.verifier import EvidenceVerifier
 
 __all__ = [
     "BM25PolicyRetriever",
     "EvidenceVerdict",
     "EvidenceVerifier",
+    "DeterministicQueryRewriter",
+    "MultiQueryRRFRetriever",
     "PolicyDocument",
     "RetrievalMetrics",
     "RetrievalQuery",
