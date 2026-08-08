@@ -26,6 +26,18 @@ class ExpandedScenarioFamily(BaseModel):
     canonical_scenario: ScenarioSpec
 
 
+class ExpandedScenarioVariant(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    family_id: str
+    variant_id: str
+    split: DataSplit
+    semantic_signature_sha256: str
+    utterance_provenance: str
+    utterance_sha256: str
+    scenario: ScenarioSpec
+
+
 def _signature(dimensions: dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(dimensions, sort_keys=True, default=str).encode()).hexdigest()
 
@@ -301,3 +313,38 @@ def build_phase9_train_dev_families(*, seed: int = 20260808) -> tuple[ExpandedSc
     if any(item.semantic_signature_sha256 in sealed_signatures for item in families):
         raise RuntimeError("train/dev semantic family collides with sealed catalog")
     return tuple(families)
+
+
+def expand_family_variants(
+    family: ExpandedScenarioFamily,
+) -> tuple[ExpandedScenarioVariant, ...]:
+    """Create at most three post-split language variants with stable semantics."""
+    canonical = family.canonical_scenario.user_utterance
+    utterances = (
+        canonical,
+        f"我想确认一下：{canonical}",
+        f"麻烦帮我处理这个问题：{canonical}",
+    )
+    variants: list[ExpandedScenarioVariant] = []
+    for index, utterance in enumerate(utterances, start=1):
+        variant_id = f"{family.family_id}-v{index:02d}"
+        scenario = family.canonical_scenario.model_copy(
+            update={
+                "scenario_id": variant_id,
+                "order_id": variant_id,
+                "user_id": f"synthetic-user-{family.family_id}",
+                "user_utterance": utterance,
+            }
+        )
+        variants.append(
+            ExpandedScenarioVariant(
+                family_id=family.family_id,
+                variant_id=variant_id,
+                split=family.split,
+                semantic_signature_sha256=family.semantic_signature_sha256,
+                utterance_provenance="deterministic_post_split_paraphrase_v1",
+                utterance_sha256=hashlib.sha256(utterance.encode()).hexdigest(),
+                scenario=scenario,
+            )
+        )
+    return tuple(variants)

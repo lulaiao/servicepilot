@@ -5,6 +5,7 @@ from servicepilot.training import (
     DataSplit,
     build_phase9_sealed_families,
     build_phase9_train_dev_families,
+    expand_family_variants,
 )
 
 
@@ -28,6 +29,26 @@ async def test_first_sealed_family_batch_is_executable() -> None:
             failures.append((family.family_id, judge.failure_reasons))
 
     assert failures == []
+
+
+@pytest.mark.asyncio
+async def test_variants_preserve_family_split_and_authoritative_outcome() -> None:
+    family = build_phase9_train_dev_families()[0]
+    variants = expand_family_variants(family)
+
+    assert len(variants) == 3
+    assert len({item.variant_id for item in variants}) == 3
+    assert len({item.utterance_sha256 for item in variants}) == 3
+    assert all(item.family_id == family.family_id for item in variants)
+    assert all(item.split is family.split for item in variants)
+    assert all(
+        item.semantic_signature_sha256 == family.semantic_signature_sha256 for item in variants
+    )
+
+    harness = EvaluationHarness()
+    for variant in variants:
+        _, judge, _ = await harness.run_scenario(variant.scenario)
+        assert judge.task_success, (variant.variant_id, judge.failure_reasons)
 
 
 @pytest.mark.asyncio
