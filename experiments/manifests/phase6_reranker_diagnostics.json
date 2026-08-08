@@ -1,0 +1,69 @@
+{
+  "experiment": "phase6_reranker_failure_diagnostics",
+  "code_revision": "7c3332ca58c30b71b1c9332342b213a9c22f3c7b",
+  "report": {
+    "path": "artifacts/reports/phase6_reranker_diagnostics.json",
+    "sha256": "15021013a95ffe689bf30e6f293d3d2d15f1c5d55512a8419dc146db61458409"
+  },
+  "data": {
+    "original_query_count": 24,
+    "diagnostic_query_count": 120,
+    "combined_query_count": 144,
+    "diagnostic_sha256": "a75b9c86e4c3c8c0116182de84786644cadf0dbdcfe4deb7d284bd9dd9d33ccd",
+    "required_label_count": 120,
+    "supporting_label_query_count": 100,
+    "contradictory_label_query_count": 90
+  },
+  "fixed_strategy_constants": {
+    "fusion_dense_weight": 0.5,
+    "fusion_reranker_weight": 0.5,
+    "confidence_gate_probability_margin": 0.15
+  },
+  "key_results": {
+    "dense_only": {
+      "mrr_at_3_all_144": 0.9491,
+      "ndcg_at_3_all_144": 0.9617,
+      "required_top1_diagnostic_120": 0.8917,
+      "contradictory_top1_diagnostic_120": 0.0083
+    },
+    "plain_k6_full_rerank": {
+      "mrr_at_3_all_144": 0.9398,
+      "ndcg_at_3_all_144": 0.9555,
+      "required_top1_diagnostic_120": 0.875,
+      "contradictory_top1_diagnostic_120": 0.0167
+    },
+    "plain_k6_fusion": {
+      "mrr_at_3_all_144": 0.9711,
+      "ndcg_at_3_all_144": 0.978,
+      "required_top1_diagnostic_120": 0.9333,
+      "required_complete_at_3_diagnostic_120": 1.0,
+      "contradictory_top1_diagnostic_120": 0.0083,
+      "supporting_recall_at_3_diagnostic_120": 0.96,
+      "reranker_latency_ms_per_query": 6.5964,
+      "q02_q10_q15_restored": true
+    },
+    "plain_k10_fusion": {
+      "mrr_at_3_all_144": 0.9711,
+      "required_top1_diagnostic_120": 0.9333,
+      "reranker_latency_ms_per_query": 7.3669,
+      "quality_gain_over_k6": 0.0
+    },
+    "enriched_k10_full": {
+      "mrr_at_3_all_144": 0.8553,
+      "required_top1_diagnostic_120": 0.725,
+      "contradictory_top1_diagnostic_120": 0.0667
+    }
+  },
+  "diagnosis": {
+    "fusion_algorithm": "full replacement was harmful; fixed-weight score fusion is the provisional best diagnostic strategy",
+    "candidate_depth": "k=6 is sufficient; k=10 adds latency without quality gain",
+    "metadata_context": "rejected because instruction-like enrichment harms this cross-encoder",
+    "model": "not rejected categorically; useful as a secondary signal but unsafe as sole ranking authority",
+    "test_size": "expanded diagnostics reduce single-query volatility but template clusters are not independent samples"
+  },
+  "decision": {
+    "mainline": "keep M3 dense-only pending sealed validation",
+    "sealed_candidate": "plain query, top-6, 0.5 dense + 0.5 reranker normalized-score fusion",
+    "phase6_acceptance": "open_pending_sealed_and_transactional_agent_tests"
+  }
+}

@@ -66,6 +66,17 @@ Keep M3 dense-only with metadata filtering as the selected pipeline for the
 transactional-Agent integration gate. Reconsider reranking only if a larger
 sealed set demonstrates a quality gain under a declared latency budget.
 
+Phase 6E refines, but does not yet reverse, that decision. On a correlated
+120-query diagnostic set, full reranking remains harmful while plain-query
+top-six 0.5/0.5 normalized score fusion improves required top-one accuracy
+from 0.8917 to 0.9333 and restores q02, q10 and q15. Top-ten yields no extra
+quality and metadata/instruction enrichment substantially degrades results.
+
+Consequently, M3 dense-only stays on the mainline. Plain top-six fixed-weight
+fusion is the only reranker configuration admitted to the sealed-test gate.
+The reranker must remain a secondary signal and may not fully replace dense
+ordering without new evidence.
+
 ## Acceptance condition
 
 This ADR remains Proposed until the selected dense retriever demonstrates

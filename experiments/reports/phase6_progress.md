@@ -1,7 +1,7 @@
 # Phase 6 retrieval and evidence-verification progress
 
 Date: 2026-08-08  
-Status: Phase 6A–D complete; sealed and transactional-Agent gates remain open
+Status: Phase 6A–E complete; sealed and transactional-Agent gates remain open
 
 ## Delivered
 
@@ -189,3 +189,48 @@ remains `TBD` rather than being inferred from retrieval metrics.
 The next gate integrates M3 dense-only into the transactional Agent policy
 step and freezes a sealed retrieval/business scenario set. Reranker remains
 out of the mainline unless new sealed evidence reverses this result.
+
+## Phase 6E reranker failure diagnostics
+
+A 120-query development diagnostic set adds explicit required, supporting and
+contradictory evidence roles across twelve policy families. Combined with the
+original 24 queries, the experiment evaluates 144 queries. The set is
+template-controlled and improves boundary coverage, but its ten paraphrases
+per family are correlated and must not be presented as 120 independent user
+samples.
+
+The predeclared matrix compares candidate depths 3/6/10, full replacement,
+0.5/0.5 min-max normalized score fusion, a 0.15 probability-margin gate, and
+plain versus metadata-enriched reranker input.
+
+| Variant | MRR@3 (144) | nDCG@3 (144) | Required top-1 (120) | Contradictory top-1 |
+| --- | ---: | ---: | ---: | ---: |
+| M3 dense-only | 0.9491 | 0.9617 | 0.8917 | 0.0083 |
+| Plain k6 full rerank | 0.9398 | 0.9555 | 0.8750 | 0.0167 |
+| Plain k6 0.5/0.5 fusion | 0.9711 | 0.9780 | 0.9333 | 0.0083 |
+| Enriched k10 full rerank | 0.8553 | 0.8894 | 0.7250 | 0.0667 |
+
+Plain k6 fusion restores q02, q10 and q15 and improves both aggregate ranking
+and required top-one accuracy over dense-only. Plain k10 fusion produces the
+same quality but increases reranker latency from 6.5964 to 7.3669 ms/query, so
+k6 dominates k10. Full reranking remains harmful. The enriched prompt is also
+rejected: this sequence-classification cross-encoder is not an instruction
+model, and adding policy/status/city plus a priority instruction increases
+contradictory rank-one errors.
+
+The diagnosis is therefore narrower than “the model is bad”: v2-M3 is useful
+as a secondary score but unsafe as the sole ordering authority on this corpus.
+The mainline remains M3 dense-only. Plain k6 fixed-weight fusion advances only
+as a sealed-test candidate; it is not selected for production from correlated
+development templates.
+
+- Diagnostic data SHA-256:
+  `a75b9c86e4c3c8c0116182de84786644cadf0dbdcfe4deb7d284bd9dd9d33ccd`
+- Raw report SHA-256:
+  `15021013a95ffe689bf30e6f293d3d2d15f1c5d55512a8419dc146db61458409`
+- Manifest: `experiments/manifests/phase6_reranker_diagnostics.json`
+- Label review: `experiments/reports/phase6_evidence_label_review.md`
+
+The next step is a separately authored sealed set followed by transactional
+Agent integration comparing dense-only with the single surviving fusion
+candidate.
