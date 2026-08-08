@@ -52,7 +52,13 @@ def main() -> None:
         f1_scores.append(
             2 * true_positive / denominator if denominator else 0
         )
-    latencies = sorted(float(item["latency_seconds"]) for item in records)
+    latencies = sorted(
+        float(latency)
+        for item in records
+        for latency in item.get(
+            "latency_repetitions_seconds", [item["latency_seconds"]]
+        )
+    )
     count = len(records)
     metrics = {
         "source": str(args.input),
@@ -88,11 +94,19 @@ def main() -> None:
             4,
         ),
         "mean_latency_seconds": raw["mean_latency_seconds"],
-        "p95_latency_seconds": latencies[math.ceil(0.95 * count) - 1],
+        "p95_latency_seconds": latencies[
+            math.ceil(0.95 * len(latencies)) - 1
+        ],
         "throughput_examples_per_second": round(
-            count / sum(latencies), 4
+            len(latencies) / sum(latencies), 4
+        ),
+        "mean_generation_tokens_per_second": raw.get(
+            "mean_generation_tokens_per_second"
         ),
         "peak_rss_mib": raw["peak_rss_mib"],
+        "peak_vram_allocated_mib": raw.get("peak_vram_allocated_mib"),
+        "peak_vram_reserved_mib": raw.get("peak_vram_reserved_mib"),
+        "runtime": raw.get("runtime"),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

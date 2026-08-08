@@ -39,11 +39,16 @@ an explicit `--include-sealed` flag. The incident is recorded so the early
 result is not represented as an untouched final holdout; model candidates use
 development data only.
 
-## Current blocker
+## GPU re-audit and formal model comparison
 
-`nvidia-smi` cannot communicate with the driver and
-`torch.cuda.is_available()` is false. The completed 12-example float32 CPU run
-for cached Qwen2.5-Coder-1.5B-Instruct produced:
+On 2026-08-08, multiple RTX A6000 cards were available. PyTorch 2.5.1+cu121
+successfully executed FP16 and BF16 CUDA smoke tests. The benchmark now records
+warm-up, repetitions, synchronized GPU latency, tokens/s, peak allocated and
+reserved VRAM, GPU identity, seed and exact runtime configuration.
+
+The earlier CPU result remains historical evidence. The formal FP16 GPU result
+for cached Qwen2.5-Coder-1.5B-Instruct uses three repetitions per development
+example:
 
 | Metric | Result |
 | --- | ---: |
@@ -51,28 +56,37 @@ for cached Qwen2.5-Coder-1.5B-Instruct produced:
 | Macro-F1 | 0.5000 |
 | Slot exact match | 0.3333 |
 | Schema validity | 0.9167 |
-| Mean / P95 latency | 12.8405 s / 57.8929 s |
-| Throughput | 0.0779 examples/s |
-| Peak RSS | 9378.3 MiB |
-| Linked model size | 2.9 GiB |
+| Mean / P95 latency | 1.6036 s / 1.9817 s |
+| Throughput | 0.6236 examples/s |
+| Peak allocated VRAM | 2967.1 MiB |
 
-This candidate is rejected for the current CPU workload because it is worse
-than the rule baseline on quality, latency and memory. The result does not
-reject other Qwen variants. A medium, task-appropriate instruction-model
-comparison remains blocked on GPU availability or a separately approved CPU
-budget.
+This candidate is rejected for the extractor role because it is worse than the
+rule baseline on quality despite acceptable GPU latency and memory. The result
+does not reject other Qwen variants.
+
+Qwen2.5-0.5B-Instruct revision
+`7ae557604adf67be50417f59c2c2f167def9a775` was then evaluated under the
+identical protocol. It used only 965.9 MiB peak allocated VRAM and reached
+1.8602-second P95 latency, but predicted `order_query` for every example:
+primary accuracy 0.0833 and Macro-F1 0.0140. It is rejected. Full comparison
+and artifact hashes are in `phase4_gpu_model_comparison.md`.
+
+The remaining blocker is no longer GPU availability. Phase 4 still requires a
+task-appropriate medium instruction candidate and an end-to-end learned-model
+comparison. Downloading that candidate requires the separate model resource
+budget specified by the project plan.
 
 ## Reproduction
 
 ```text
 PYTHONPATH=src .venv/bin/python scripts/run_phase4_routing_eval.py
 PYTHONPATH=src .venv/bin/python scripts/analyze_model_benchmark.py \
-  --input artifacts/reports/qwen25_coder_1_5b_dev.json \
-  --output artifacts/reports/qwen25_coder_1_5b_dev_metrics.json
+  --input artifacts/reports/qwen25_coder_1_5b_cuda_fp16_dev_r3.json \
+  --output artifacts/reports/qwen25_coder_1_5b_cuda_fp16_dev_r3_metrics.json
 .venv/bin/python -m pytest -q
 .venv/bin/python -m ruff check .
 .venv/bin/python -m mypy src/servicepilot
 ```
 
-Phase 4 remains open until the development benchmark is completed and compared
-with another viable candidate or a documented resource-based deferral.
+Phase 4 remains open until a medium candidate and learned end-to-end Agent are
+compared or explicitly deferred with resource evidence.

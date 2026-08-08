@@ -1,0 +1,7 @@
++{
+  "repo_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "requested_revision": "main",
+  "resolved_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "snapshot_path": "/data/ssd1/lla/cache/servicepilot-hf/models--Qwen--Qwen2.5-0.5B-Instruct/snapshots/7ae557604adf67be50417f59c2c2f167def9a775",
+  "license": "apache-2.0"
+}

@@ -42,6 +42,19 @@ peak RSS. Its linked snapshot occupies 2.9 GiB. One invalid output used
 primary intent. Raw report SHA256:
 `473e5f1252ad3ba2ae95b92667c866b6ac5ef60c85e9428f17a37ddbe8825a02`.
 
+After GPU recovery, the candidate was repeated in FP16 on an RTX A6000 with
+one warm-up and three repetitions per development example. Quality was
+unchanged; mean/P95 latency became 1.6036/1.9817 seconds and peak allocated
+VRAM was 2967.1 MiB. Raw report SHA256:
+`9b897befb8ba1fe38601fbeb9acfab6a18b57c56307f7cf368a4f29c3ea23502`.
+
+The smaller general-purpose Qwen2.5-0.5B-Instruct revision
+`7ae557604adf67be50417f59c2c2f167def9a775` passed license, offline, schema,
+runtime and resource gates. It was nevertheless rejected on quality: all 12
+development inputs were classified as `order_query`, yielding Macro-F1 0.0140.
+Its lower 965.9 MiB peak allocated VRAM and 1.8602-second P95 latency do not
+compensate for that failure.
+
 ## Alternatives
 
 - Static single Agent: cheapest and equally successful on the current catalog,
