@@ -30,6 +30,11 @@
     "sft_record_count": 36,
     "sft_output_sha256": "4d116d16826e41a78071ad983a94cabaebab58bb2b5a1a940153072ea3ea94dc",
     "preference_record_count": 56,
+    "preference_split_counts": {
+      "train": 33,
+      "dev": 11,
+      "sealed_test": 12
+    },
     "preference_output_sha256": "0e4699977c44b9907dff3455472115498e210945b582fc09d1ec0f39c9c721bd",
     "privacy_violation_count": 0,
     "cross_split_near_duplicate_count": 0,

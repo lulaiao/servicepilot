@@ -8,6 +8,12 @@ from servicepilot.training.data_models import (
     TrajectoryDatasetManifest,
     TrajectoryTrainingRecord,
 )
+from servicepilot.training.readiness import (
+    ExperimentReadiness,
+    TrainingExperiment,
+    TrainingReadinessInput,
+    assess_training_readiness,
+)
 from servicepilot.training.trajectory_data import (
     GENERATOR_VERSION,
     assign_family_splits,
@@ -40,4 +46,8 @@ __all__ = [
     "privacy_violation_count",
     "redact_value",
     "to_sft_record",
+    "ExperimentReadiness",
+    "TrainingExperiment",
+    "TrainingReadinessInput",
+    "assess_training_readiness",
 ]
