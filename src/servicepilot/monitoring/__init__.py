@@ -13,6 +13,11 @@ from servicepilot.monitoring.models import (
     MonitorScope,
     MonitorSeverity,
 )
+from servicepilot.monitoring.workload import (
+    FAULT_UPDATES,
+    PHASE7_FAULT_PROFILES,
+    inject_monitor_faults,
+)
 
 __all__ = [
     "AsyncMonitor",
@@ -26,4 +31,7 @@ __all__ = [
     "MonitorScope",
     "MonitorSeverity",
     "observation_from_run",
+    "FAULT_UPDATES",
+    "PHASE7_FAULT_PROFILES",
+    "inject_monitor_faults",
 ]

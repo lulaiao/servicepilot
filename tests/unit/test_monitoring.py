@@ -3,12 +3,14 @@ import pytest
 from servicepilot.eval.catalog import build_phase3_scenarios
 from servicepilot.harness.evaluation import EvaluationHarness
 from servicepilot.monitoring import (
+    PHASE7_FAULT_PROFILES,
     AsyncMonitor,
     DeterministicMonitor,
     MonitorFaultClass,
     MonitorObservation,
     MonitorPermissionError,
     MonitorScope,
+    inject_monitor_faults,
     observation_from_run,
 )
 
@@ -92,3 +94,17 @@ async def test_real_harness_run_is_projected_without_repository_access() -> None
     assert current.scenario_id == session.scenario_id
     assert current.available_scopes == ALL_SCOPES
     assert report.findings == ()
+
+
+def test_phase7_workload_profiles_cover_clean_single_and_mixed_faults() -> None:
+    assert len(PHASE7_FAULT_PROFILES) == 28
+    assert any(not profile for profile in PHASE7_FAULT_PROFILES)
+    assert {next(iter(profile)) for profile in PHASE7_FAULT_PROFILES if len(profile) == 1} == set(
+        MonitorFaultClass
+    )
+    assert any(len(profile) > 1 for profile in PHASE7_FAULT_PROFILES)
+
+    for profile in PHASE7_FAULT_PROFILES:
+        current = inject_monitor_faults(observation(), profile)
+        predicted = {item.fault_class for item in DeterministicMonitor().evaluate(current).findings}
+        assert predicted == set(profile)
