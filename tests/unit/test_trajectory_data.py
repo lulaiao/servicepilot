@@ -23,14 +23,18 @@ def test_redaction_is_recursive_and_counts_sensitive_values() -> None:
         {
             "email": "call user@example.com or 13812345678",
             "authorization": "Bearer should-not-survive",
-            "nested": {"api_key": "secret-value"},
+            "nested": {
+                "api_key": "secret-value",
+                "confirmation_token": "13812345678-secret",
+            },
         }
     )
 
-    assert count == 4
+    assert count == 5
     assert redacted["email"] == "call [REDACTED_EMAIL] or [REDACTED_PHONE]"
     assert redacted["authorization"] == "[REDACTED_SECRET]"
     assert redacted["nested"]["api_key"] == "[REDACTED_SECRET]"
+    assert redacted["nested"]["confirmation_token"] == "[REDACTED_SECRET]"
 
 
 def test_family_split_keeps_all_intent_variants_together() -> None:

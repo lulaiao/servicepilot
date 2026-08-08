@@ -16,7 +16,18 @@ from servicepilot.training.data_models import (
 )
 
 GENERATOR_VERSION = "phase8-data-v1"
-_SECRET_KEYS = frozenset({"authorization", "api_key", "apikey", "password", "secret", "token"})
+_SECRET_KEYS = frozenset(
+    {
+        "authorization",
+        "api_key",
+        "apikey",
+        "confirmation_token",
+        "idempotency_key",
+        "password",
+        "secret",
+        "token",
+    }
+)
 _PATTERNS = (
     (re.compile(r"(?i)bearer\s+[a-z0-9._~+/=-]+"), "[REDACTED_BEARER]"),
     (re.compile(r"(?<!\d)1[3-9]\d{9}(?!\d)"), "[REDACTED_PHONE]"),
