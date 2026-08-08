@@ -76,3 +76,24 @@ This is progress toward the diversity gate, not completion. Sealed reaches its
 120-record/40-family target, but train/dev have only 49/11 families versus the
 200/40 target. Formal SFT and GRPO remain blocked; adding more paraphrases to
 existing families cannot satisfy the semantic diversity gate.
+
+## Expanded data gate passed
+
+The second constrained batch raises the accepted dataset to 314 semantic
+families and 942 executable records:
+
+| Split | Families | SFT records | Preference records |
+| --- | ---: | ---: | ---: |
+| Train | 232 | 696 | 1,011 |
+| Development | 42 | 126 | 225 |
+| Sealed test | 40 | 120 | 207 |
+
+All 942 variants pass the Judge. Privacy violations, exact duplicates,
+cross-split family/content overlap, and cross-split near duplicates are zero.
+The first v2 split produced 86 near-duplicate pairs; the 0.9 threshold was kept,
+and generated order-query/out-of-scope template superfamilies were moved as
+units rather than individually hashed across train/dev.
+
+The readiness re-audit now allows LoRA SFT. Outcome and process GRPO remain
+blocked solely by missing reward unit, distribution, and reward-hacking audits.
+No formal 7B training has started.

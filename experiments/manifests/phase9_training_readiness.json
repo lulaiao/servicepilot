@@ -34,6 +34,19 @@
     "outcome_grpo": "blocked_by_data_and_reward_audits",
     "process_reward_grpo": "blocked_by_data_and_reward_audits"
   },
+  "expanded_data_reaudit": {
+    "code_revision": "f9e7de217579b4b31e43e1292a34dd461620a0ac",
+    "data_manifest": "experiments/manifests/phase9_expanded_dataset_v2.json",
+    "sft_split_counts": {"train": 696, "dev": 126, "sealed_test": 120},
+    "preference_split_counts": {"train": 1011, "dev": 225, "sealed_test": 207},
+    "readiness": {
+      "lora_smoke": "allowed",
+      "lora_sft": "allowed",
+      "outcome_grpo": "blocked_by_reward_audits",
+      "process_reward_grpo": "blocked_by_reward_audits"
+    },
+    "raw_report": "artifacts/reports/phase9_training_readiness_expanded_v2.json",
+    "raw_report_sha256": "bf01438c4aeef1d9afef1929f3215769acbeb08581cdcab113c49773460d18ee"
+  },
   "phase9_status": "in_progress"
 }
-

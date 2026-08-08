@@ -86,3 +86,10 @@ The sealed record/family target is reached. Train and development remain below
 the semantic-family target by 151 and 29 families respectively. More paraphrase
 variants of the current families will not close that gap and must not be counted
 as the solution.
+
+A second constrained batch adds 214 families. A first split attempt produced 86
+cross-split near-duplicate pairs, all within the generated order-query and
+out-of-scope templates. The threshold was not relaxed. Those template
+superfamilies are now kept entirely in train, leaving cumulative family counts
+of 232/42/40 and record counts of 696/126/120. The regenerated dataset passes
+all admission gates.

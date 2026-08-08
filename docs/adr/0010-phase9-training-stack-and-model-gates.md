@@ -50,3 +50,11 @@ learning minima:
 Only LoRA smoke currently passes. Formal SFT and both GRPO variants are blocked.
 No training improvement may be claimed from a smoke run.
 
+## Updated data decision
+
+The admitted expanded dataset now contains 696/126/120 SFT records across
+232/42/40 semantic families and 1,011 train preference pairs. A new readiness
+audit therefore advances LoRA SFT from blocked to allowed. GRPO remains blocked
+because reward unit tests, distribution audit, and reward-hacking audit do not
+exist. This update changes readiness only; Qwen2.5-7B remains provisional until
+a frozen, repeated LoRA experiment beats its untrained executable baseline.

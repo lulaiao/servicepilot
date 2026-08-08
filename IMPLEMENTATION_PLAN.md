@@ -190,11 +190,11 @@ Decision: `docs/adr/0009-phase8-trajectory-data-boundary.md`.
 
 ## Phase 9 — SFT and GRPO
 
-Status: **in progress; formal training blocked**. Phase 9A confirms RTX A6000
+Status: **in progress; LoRA SFT allowed, GRPO blocked**. Phase 9A confirms RTX A6000
 CUDA/BF16 compatibility and sufficient disk. Transformers+PEFT is the
-provisional minimal LoRA path and TRL remains a candidate loop. Only a
-non-claimable LoRA smoke test passes readiness; formal SFT is blocked by the
-24/6/6 dataset, and GRPO is additionally blocked by missing reward unit,
+provisional minimal LoRA path and TRL remains a candidate loop. The expanded
+dataset passes the 696/126/120 SFT and semantic-family gates, so a frozen LoRA
+SFT experiment may proceed. GRPO remains blocked by missing reward unit,
 distribution, and hacking audits.
 
 Progress: `experiments/reports/phase9_progress.md`.
