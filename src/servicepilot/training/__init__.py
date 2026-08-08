@@ -27,6 +27,12 @@ from servicepilot.training.readiness import (
     TrainingReadinessInput,
     assess_training_readiness,
 )
+from servicepilot.training.sft_run import (
+    CheckpointEvidence,
+    SeedRunState,
+    checkpoint_step,
+    select_checkpoint,
+)
 from servicepilot.training.smoke import assistant_only_labels
 from servicepilot.training.trajectory_data import (
     GENERATOR_VERSION,
@@ -65,6 +71,10 @@ __all__ = [
     "TrainingReadinessInput",
     "assess_training_readiness",
     "assistant_only_labels",
+    "CheckpointEvidence",
+    "SeedRunState",
+    "checkpoint_step",
+    "select_checkpoint",
     "LoraProtocol",
     "SFTBudget",
     "SFTExperimentProtocol",

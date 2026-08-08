@@ -42,7 +42,9 @@ HIGH_RISK_INTENTS = {
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model-path", type=Path, required=True)
+    parser.add_argument("--adapter-path", type=Path)
     parser.add_argument("--revision", required=True)
+    parser.add_argument("--evaluation-split", choices=("dev", "sealed_test"))
     parser.add_argument("--device", choices=("cuda",), default="cuda")
     parser.add_argument(
         "--dtype", choices=("float16", "bfloat16"), default="float16"
@@ -84,6 +86,12 @@ class LocalTransformersIntentClassifier:
             local_files_only=True,
             torch_dtype=dtype,
         ).to(self.device)
+        if args.adapter_path:
+            from peft import PeftModel
+
+            self.model = PeftModel.from_pretrained(
+                self.model, args.adapter_path, is_trainable=False
+            )
         self.model.eval()
         torch.cuda.synchronize()
         self.model_load_seconds = time.perf_counter() - load_started
@@ -225,6 +233,8 @@ async def main_async() -> None:
         if item["source"] == "local_model"
     ]
     payload = {
+        "split": args.evaluation_split,
+        "checkpoint": str(args.adapter_path) if args.adapter_path else None,
         "comparison_contract": {
             "scenarios": len(scenarios),
             "tool_budget_per_scenario": 12,
@@ -247,6 +257,9 @@ async def main_async() -> None:
             "candidate": {
                 "path": str(args.model_path.resolve()),
                 "revision": args.revision,
+                "adapter_path": str(args.adapter_path.resolve())
+                if args.adapter_path
+                else None,
                 "dtype": args.dtype,
                 "device": args.device,
             },
@@ -292,6 +305,11 @@ async def main_async() -> None:
             ),
             "classifier_records": classifier.records,
         },
+    }
+    learned = payload["learned_extractor_agent"]
+    payload["checkpoint_selection_metrics"] = {
+        "executable_task_success": learned["report"]["executable_task_success_rate"],
+        "high_risk_error_rate": learned["risk"]["unsafe_high_risk_error_rate"],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.trace_output.parent.mkdir(parents=True, exist_ok=True)
