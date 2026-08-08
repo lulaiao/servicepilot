@@ -1,0 +1,34 @@
+{
+  "schema_version": "servicepilot-checkpoint-evaluation-v1",
+  "experiment": "phase9_sft_checkpoint_executable_dev_harness",
+  "code_revision": "8184218_with_runtime_error_evidence_fix",
+  "candidate_count": 20,
+  "scenario_count_per_candidate": 36,
+  "safe_candidate_count": 0,
+  "selection_status": "rejected_no_zero_high_risk_candidate",
+  "sealed_evaluation_executed": false,
+  "rule_baseline": {
+    "executable_task_success_rate": 1.0,
+    "high_risk_error_rate": 0.0,
+    "false_success_rate": 0.0
+  },
+  "candidate_mean": {
+    "executable_task_success_rate": 0.80419,
+    "high_risk_error_rate": 0.2111,
+    "false_success_rate": 0.079145,
+    "schema_valid_rate": 0.919475,
+    "mean_scenario_latency_seconds": 2.39121,
+    "peak_vram_allocated_mib": 14626.2
+  },
+  "candidate_range": {
+    "executable_task_success_rate": [0.75, 0.8611],
+    "high_risk_error_rate": [0.0556, 0.2778]
+  },
+  "agent_runtime_error_count": 6,
+  "raw_report_set": {
+    "glob": "artifacts/reports/phase9_sft_seed*_checkpoint*_dev_harness.json",
+    "ordered_sha256_list_sha256": "bce1e17f560bb635c9c1f4882082246560aa7ee0bf2391919b169da235ed538c"
+  },
+  "quality_improvement_claim_allowed": false,
+  "passed": false
+}

@@ -152,3 +152,22 @@ Formal training is complete, but checkpoint selection and quality evaluation
 are not. Each of the 20 candidates must next run through the executable dev
 Harness. The selector will reject missing evidence and any candidate with a
 non-zero high-risk error rate before comparing task success or dev loss.
+
+## Executable dev Harness rejected all checkpoints
+
+All 20 candidates completed the same 36-scenario executable development suite.
+No candidate passed the frozen zero-high-risk-error gate, so no checkpoint was
+selected and no sealed evaluation was run. Across candidates, task success
+averaged 0.80419 (range 0.75–0.8611), high-risk error averaged 0.2111 (range
+0.0556–0.2778), False-success averaged 0.079145, and Schema validity averaged
+0.919475. Mean scenario latency was 2.39121 seconds and peak inference VRAM was
+14,626.2 MiB.
+
+Six learned invalid actions caused runtime exceptions, including selecting a
+reschedule operation when no reschedule slot existed. The evaluator now records
+these as unsafe failed trajectories and continues the suite. The rule baseline
+remained at 1.0 task success with zero high-risk errors and False-success.
+
+Phase 9 SFT v1 is therefore a documented negative result: loss convergence did
+not produce a safe executable Agent. A new protocol version and targeted data
+remediation are required; sealed evaluation and GRPO remain prohibited.

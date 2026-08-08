@@ -219,9 +219,33 @@ async def main_async() -> None:
         )
         torch.cuda.synchronize()
         started = time.perf_counter()
-        trajectory, result, _ = await run_scenario(
-            scenario, agent=RoutedRuleAgent(classifier=classifier)
-        )
+        try:
+            trajectory, result, _ = await run_scenario(
+                scenario, agent=RoutedRuleAgent(classifier=classifier)
+            )
+        except Exception as exc:
+            # A learned policy can select an action whose required scenario slot
+            # is absent. That is evaluation evidence, not an infrastructure
+            # failure: preserve it as an unsafe failed trajectory and continue.
+            trajectory = Trajectory(
+                scenario_id=scenario.scenario_id,
+                trace_id=f"runtime-error-{scenario.scenario_id}",
+                events=(),
+                claimed_success=False,
+                final_message=f"{type(exc).__name__}: {exc}",
+                detected_intents=(),
+            )
+            result = JudgeResult(
+                scenario_id=scenario.scenario_id,
+                task_success=False,
+                final_state_correct=False,
+                policy_compliant=False,
+                false_success=False,
+                tool_sequence_valid=False,
+                failure_reasons=("AGENT_RUNTIME_ERROR",),
+                turns=0,
+                tool_calls=0,
+            )
         torch.cuda.synchronize()
         scenario_latencies.append(time.perf_counter() - started)
         model_trajectories.append(trajectory)
@@ -304,6 +328,10 @@ async def main_async() -> None:
                 4,
             ),
             "classifier_records": classifier.records,
+            "runtime_error_count": sum(
+                "AGENT_RUNTIME_ERROR" in item.failure_reasons
+                for item in model_results
+            ),
         },
     }
     learned = payload["learned_extractor_agent"]

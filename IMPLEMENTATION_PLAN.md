@@ -208,6 +208,9 @@ SFT protocol decision: `docs/adr/0011-phase9-7b-lora-sft-protocol.md`.
 Formal runbook: `docs/phase9_sft_runbook.md`.
 Four-seed training manifest:
 `experiments/manifests/phase9_qwen25_7b_lora_sft_four_seed_training.json`.
+Checkpoint decision: **all v1 SFT checkpoints rejected at the dev safety gate**.
+Evidence: `experiments/manifests/phase9_sft_checkpoint_dev_harness.json` and
+`docs/adr/0012-phase9-sft-checkpoint-rejection.md`.
 
 ## Phase 10 — open-source delivery
 
