@@ -1,0 +1,38 @@
+{
+  "schema_version": "servicepilot-training-aggregate-v1",
+  "experiment": "phase9_qwen25_7b_lora_sft_four_seed_training",
+  "claim_scope": "training_complete_checkpoint_selection_and_quality_evaluation_pending",
+  "code_revision": "8184218",
+  "protocol_version": "phase9-qwen25-7b-lora-sft-v1",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset_sha256": "57c8c8da02b6b02bbd5126d04bff3b244336330184495dabf801c32c4afe7963",
+  "seeds": [20260808, 20260809, 20260810, 20260811],
+  "optimizer_steps_per_seed": [129, 129, 129, 129],
+  "checkpoint_count_per_seed": [5, 5, 5, 5],
+  "sealed_records_loaded_per_seed": [0, 0, 0, 0],
+  "train_loss": [0.32542227157265263, 0.3377411700047412, 0.32215958453144955, 0.32948601281458995],
+  "checkpoint_125_dev_loss": [0.0003758302191272378, 0.0004220877308398485, 0.00036151008680462837, 0.0004533181490842253],
+  "trainer_runtime_seconds": [831.3674, 836.3223, 825.8785, 836.0578],
+  "peak_vram_allocated_mib": [22384.76, 22337.26, 22384.76, 22381.76],
+  "mean": {
+    "train_loss": 0.3287022597308583,
+    "checkpoint_125_dev_loss": 0.000403186546463985,
+    "trainer_runtime_seconds": 832.4065,
+    "peak_vram_allocated_mib": 22372.135
+  },
+  "sample_stddev": {
+    "train_loss": 0.006730059160673409,
+    "checkpoint_125_dev_loss": 0.000042252133228896714,
+    "trainer_runtime_seconds": 4.911211464258769,
+    "peak_vram_allocated_mib": 23.292971042784558
+  },
+  "raw_report_sha256": {
+    "20260808": "c6db5385498982010cef5b36a708ad6f9602de9f03cc8b50bc11c75c9f281a33",
+    "20260809": "7f9284d6dc811b0961daafb8df2c8308530d6eb3d32f8fce2449e64baac8bb33",
+    "20260810": "1997d4f5147dd71706d65008f33770f2f8dd2099c93d518b0fb2e95eedc84768",
+    "20260811": "b7edf9845799706c3965414ce6e7f63476e972ff5ac9f3a10300cdca5e18e27d"
+  },
+  "checkpoint_selection_complete": false,
+  "executable_dev_evaluation_complete": false,
+  "sealed_evaluation_complete": false
+}

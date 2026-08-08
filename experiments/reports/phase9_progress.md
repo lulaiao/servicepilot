@@ -133,3 +133,22 @@ A one-step 7B control run processed a full 16-example accumulated batch in
 validation only. The four formal seeds remain unexecuted; the existing Phase 3
 scenario catalog is treated as development evidence, and a new frozen
 executable sealed catalog is required before final model claims.
+
+## Four-seed SFT training complete
+
+All four frozen seeds completed 129 optimizer steps and produced checkpoints at
+steps 25, 50, 75, 100, and 125. Every run used the same model revision and data
+hash, loaded zero sealed records, and ended in `awaiting_harness_eval` rather
+than selecting by loss.
+
+Across seeds, mean train loss was 0.328702 (sample standard deviation 0.006730).
+Checkpoint-125 dev loss averaged 0.000403 (standard deviation 0.000042). Mean
+Trainer runtime was 832.41 seconds per seed (standard deviation 4.91), and mean
+peak allocated VRAM was 22,372.14 MiB (standard deviation 23.29). The very low
+dev loss may reflect an easy/template-aligned dataset and is not evidence of
+Agent improvement.
+
+Formal training is complete, but checkpoint selection and quality evaluation
+are not. Each of the 20 candidates must next run through the executable dev
+Harness. The selector will reject missing evidence and any candidate with a
+non-zero high-risk error rate before comparing task success or dev loss.
