@@ -6,10 +6,11 @@
 ## Context
 
 ServicePilot must retrieve exact policy evidence under version, business type,
-order state, city and effective-time constraints. The current environment has
-no cached embedding model, Sentence Transformers, FAISS or BM25 dependency.
-Using the cached Qwen generation models as embedding models would not be a
-valid dense-retrieval comparison.
+order state, city and effective-time constraints. Phase 6A began without a
+cached embedding model, Sentence Transformers, FAISS or BM25 dependency.
+Using cached Qwen generation models as embedding models would not be a valid
+dense-retrieval comparison. Phase 6C therefore adds two purpose-built,
+MIT-licensed BGE embedding candidates at pinned revisions.
 
 ## Provisional decision
 
@@ -37,8 +38,24 @@ does not improve Recall, MRR or citation accuracy and approximately doubles
 latency, so it is rejected for the mainline. The remaining rank-one gap now
 provides a measurable target for dense/hybrid candidates.
 
+## Embedding decision
+
+Advance `BAAI/bge-m3` dense-only to the reranker and end-to-end evaluation
+gate. Retain BM25 with metadata filtering as the dependency-light CPU fallback.
+Do not add hybrid RRF to the M3 mainline at this gate because its results are
+identical to M3 dense-only. Do not select BGE-small-zh-v1.5: although its hybrid
+variant modestly improves BM25, its dense-only result does not.
+
+On the frozen 16-document/24-query development set, M3 dense improves
+Recall@1 from 0.7083 to 0.8333 and MRR@3 from 0.9167 to 0.9792 versus BM25.
+The cost is material: 2.30 GB versus 192 MB of Transformers snapshot files,
+1.3961 versus 0.4498 ms/query embedding latency, and 1,107.03 versus 63.95 MiB
+peak allocated VRAM compared with BGE-small. The quality gain is accepted for
+the next research gate, not yet as a production deployment decision.
+
 ## Acceptance condition
 
-This ADR remains Proposed until a harder frozen set supports an equal-budget
-lexical-only, dense-only, hybrid and hybrid+reranker comparison, including
-Recall@K, MRR/nDCG, citation accuracy, latency and downstream evidence benefit.
+This ADR remains Proposed until the selected dense retriever is compared with
+hybrid+reranker and demonstrates downstream evidence benefit on a sealed set.
+The current small development corpus is insufficient for a final production
+choice even though the embedding-selection sub-gate is complete.

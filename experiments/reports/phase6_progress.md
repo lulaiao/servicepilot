@@ -1,7 +1,7 @@
 # Phase 6 retrieval and evidence-verification progress
 
 Date: 2026-08-08  
-Status: Phase 6A–B complete; Phase 6 selection gate remains open
+Status: Phase 6A–C complete; reranker and end-to-end gates remain open
 
 ## Delivered
 
@@ -100,3 +100,50 @@ PYTHONPATH=src .venv/bin/python scripts/run_phase6_rewrite_eval.py \
 
 The next gate is embedding-model selection and an equal-budget dense/hybrid
 comparison. Reranking remains downstream of that result.
+
+## Phase 6C embedding selection
+
+Two MIT-licensed, revision-pinned BGE candidates were run offline with the
+same 16-document corpus, 24-query set, FP16 settings and RTX A6000 GPU. BM25,
+dense-only and reciprocal-rank-fusion hybrid results use the same metadata
+filter and deterministic evaluator.
+
+| Variant | Recall@3 | MRR@3 | nDCG@3 | Recall@1 |
+| --- | ---: | ---: | ---: | ---: |
+| BM25 + metadata | 1.0000 | 0.9167 | 0.9318 | 0.7083 |
+| BGE-small-zh-v1.5 dense | 1.0000 | 0.9097 | 0.9297 | 0.7083 |
+| BGE-small-zh-v1.5 hybrid | 1.0000 | 0.9306 | 0.9451 | 0.7500 |
+| BGE-M3 dense | 1.0000 | 0.9792 | 0.9813 | 0.8333 |
+| BGE-M3 hybrid | 1.0000 | 0.9792 | 0.9813 | 0.8333 |
+
+| Candidate | Snapshot | Query encode / query | Peak allocated VRAM |
+| --- | ---: | ---: | ---: |
+| BGE-small-zh-v1.5 | 192,250,118 bytes | 0.4498 ms | 63.95 MiB |
+| BGE-M3 | 2,295,564,334 bytes | 1.3961 ms | 1,107.03 MiB |
+
+BGE-M3 dense-only advances to the reranker and end-to-end gate. It improves
+Recall@1 by 0.1250 and MRR@3 by 0.0625 over BM25. BGE-small is cheaper, but its
+dense-only result does not improve BM25; its hybrid gain remains below M3.
+Hybrid is not selected for M3 because it produces identical ranking metrics
+while adding a second retrieval path. BM25 remains the CPU/offline fallback.
+
+This is a development-set decision, not a production claim. All variants have
+Recall@3=1.0 on only 16 documents and 24 queries; sealed-test generalization
+and downstream Agent evidence success remain `TBD`.
+
+```text
+CUDA_VISIBLE_DEVICES=4 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONPATH=src \
+  /data/ssd1/lla/conda_envs/mcp-sql-reflex-rl/bin/python \
+  scripts/benchmark_embedding_retrieval.py ... \
+  --device cuda --dtype float16 --repetitions 3 \
+  --code-revision 46f46301287b4567132b2ce14eee1f967df8c658
+```
+
+- Small report SHA-256:
+  `e15e07dc9301c59ffb2954189033a233f4bfc55122920d27b70b09ffad882210`
+- M3 report SHA-256:
+  `5b6182127d2abcc1aee7673792dc4ac7f5fadf5f19b60cba98409918904fee30`
+- Manifest: `experiments/manifests/phase6_embedding_comparison.json`
+
+The next gate compares the selected dense retriever with a reranker and then
+measures whether improved evidence ranking changes deterministic Agent success.

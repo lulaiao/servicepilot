@@ -1,0 +1,45 @@
+{
+  "experiment": "phase6_embedding_dense_bm25_hybrid_comparison",
+  "code_revision": "46f46301287b4567132b2ce14eee1f967df8c658",
+  "hardware": "NVIDIA RTX A6000 (CUDA_VISIBLE_DEVICES=4)",
+  "dtype": "float16",
+  "corpus_count": 16,
+  "query_count": 24,
+  "top_k": 3,
+  "reports": {
+    "bge_small_zh_v1_5": {
+      "path": "artifacts/reports/bge_small_zh_v1_5_retrieval.json",
+      "sha256": "e15e07dc9301c59ffb2954189033a233f4bfc55122920d27b70b09ffad882210",
+      "model_revision": "7999e1d3359715c523056ef9478215996d62a620"
+    },
+    "bge_m3": {
+      "path": "artifacts/reports/bge_m3_retrieval.json",
+      "sha256": "5b6182127d2abcc1aee7673792dc4ac7f5fadf5f19b60cba98409918904fee30",
+      "model_revision": "5617a9f61b028005a4858fdac845db406aefb181"
+    }
+  },
+  "metrics": {
+    "bm25_metadata": {"recall_at_3": 1.0, "mrr_at_3": 0.9167, "ndcg_at_3": 0.9318, "recall_at_1": 0.7083},
+    "bge_small_dense": {"recall_at_3": 1.0, "mrr_at_3": 0.9097, "ndcg_at_3": 0.9297, "recall_at_1": 0.7083},
+    "bge_small_hybrid": {"recall_at_3": 1.0, "mrr_at_3": 0.9306, "ndcg_at_3": 0.9451, "recall_at_1": 0.75},
+    "bge_m3_dense": {"recall_at_3": 1.0, "mrr_at_3": 0.9792, "ndcg_at_3": 0.9813, "recall_at_1": 0.8333},
+    "bge_m3_hybrid": {"recall_at_3": 1.0, "mrr_at_3": 0.9792, "ndcg_at_3": 0.9813, "recall_at_1": 0.8333}
+  },
+  "cost": {
+    "bge_small_zh_v1_5": {"transformers_snapshot_bytes": 192250118, "mean_query_encode_ms_per_query": 0.4498, "peak_allocated_vram_mib": 63.95},
+    "bge_m3": {"transformers_snapshot_bytes": 2295564334, "mean_query_encode_ms_per_query": 1.3961, "peak_allocated_vram_mib": 1107.03}
+  },
+  "decision": {
+    "embedding_candidate_for_next_gate": "BAAI/bge-m3 dense-only",
+    "lexical_fallback": "BM25 with metadata filtering",
+    "hybrid_rrf": "not_selected_for_bge-m3 because it produced no quality gain",
+    "bge_small_zh_v1_5": "not_selected because its dense-only quality did not exceed BM25",
+    "reranker_model": "TBD",
+    "phase6_acceptance": "open"
+  },
+  "limitations": [
+    "The development set contains only 16 documents and 24 queries.",
+    "All candidates reached Recall@3=1.0, so this evidence distinguishes ranking quality more than candidate coverage.",
+    "End-to-end agent evidence success and sealed-test generalization remain unmeasured."
+  ]
+}
