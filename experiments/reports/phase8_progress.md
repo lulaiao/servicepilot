@@ -1,7 +1,7 @@
 # Phase 8 progress: canonical privacy-safe trajectory data
 
 Date: 2026-08-08  
-Status: Phase 8A complete; Phase 8 overall in progress
+Status: Superseded by `phase8_acceptance.md`
 
 ## Completed
 
@@ -31,7 +31,5 @@ API-key values.
 
 ## Next gate
 
-Phase 8B will mine provenance-linked hard negatives, add near-duplicate and
-privacy audits, and derive SFT/preference exports. Dataset scale and class
-balance must be reported rather than inferred from the 36-record baseline.
-
+Phase 8B has passed. Final hashes, audits, negative-distribution limitations,
+and training-view counts are recorded in `phase8_acceptance.md`.

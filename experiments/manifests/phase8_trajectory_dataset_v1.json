@@ -1,17 +1,17 @@
 {
   "schema_version": "servicepilot-trajectory-v1",
   "generator_version": "phase8-data-v1",
-  "code_revision": "a1d452eb64bafad7ec23873ea69f924f214e9e2e",
+  "code_revision": "c68433a0a1ad8579d9acc109a865873f2d980075",
   "seed": 20260808,
   "source_scenario_sha256": "ea33cccc96eec2a877f204c00441ad73a6b8545784f39e98cdd55a8081e2cead",
   "output": "data/generated/phase8_trajectories.jsonl",
-  "output_sha256": "ec191ef328da99675a0944a2a432649098fc96a726dc1c93565897674eb54503",
+  "output_sha256": "ea1b1184515eace7736080a7fdd653e6e198e54e18f566ff36873d15fa45d244",
   "raw_manifest": "artifacts/reports/phase8_trajectory_manifest.json",
-  "raw_manifest_sha256": "9298d48c24a4b3098e56ed3619c2233785f178137a9c383071d51a96cf6f84a7",
+  "raw_manifest_sha256": "1fae8500ba8d09f3812913234dc26da64d679ada1cc2f3de1716aeee2da5d464",
   "raw_record_count": 36,
   "deduplicated_record_count": 36,
   "duplicate_count": 0,
-  "redaction_count": 0,
+  "redaction_count": 73,
   "split_counts": {
     "train": 24,
     "dev": 6,
@@ -24,6 +24,17 @@
   },
   "cross_split_family_overlap_count": 0,
   "cross_split_content_overlap_count": 0,
-  "phase8_status": "in_progress"
+  "training_views": {
+    "manifest": "artifacts/reports/phase8_training_views_manifest.json",
+    "manifest_sha256": "ffb95e8dba9eac7bb2b11d08e7e93b0c4db4d63c63c9c77a87cbebdbdac7a91a",
+    "sft_record_count": 36,
+    "sft_output_sha256": "4d116d16826e41a78071ad983a94cabaebab58bb2b5a1a940153072ea3ea94dc",
+    "preference_record_count": 56,
+    "preference_output_sha256": "0e4699977c44b9907dff3455472115498e210945b582fc09d1ec0f39c9c721bd",
+    "privacy_violation_count": 0,
+    "cross_split_near_duplicate_count": 0,
+    "missing_source_provenance_count": 0,
+    "chosen_equals_rejected_count": 0
+  },
+  "phase8_status": "accepted"
 }
-

@@ -1,6 +1,6 @@
 # ADR 0009: Version trajectory data before training exports
 
-- Status: Accepted for Phase 8A
+- Status: Accepted
 - Date: 2026-08-08
 
 ## Context
@@ -35,8 +35,9 @@ cover all declared patterns.
 
 ## Limitations and next gate
 
-Intent-level families are intentionally conservative but leave only twelve
-groups. Phase 8B must add provenance-preserving hard negatives, explicit
-near-duplicate checks, privacy scanning of generated outputs, and separate SFT
-and preference exports before Phase 8 can be accepted.
-
+Phase 8B adds provenance-preserving confusable-tool negatives, a character
+shingle near-duplicate gate, post-export privacy scanning, and separate SFT and
+preference views. Intent-level families are intentionally conservative but
+leave only twelve groups. The 36-record dataset and rule-derived, imbalanced
+preferences are pipeline evidence, not evidence that training will improve the
+Agent.
