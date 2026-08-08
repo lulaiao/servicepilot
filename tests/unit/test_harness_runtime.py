@@ -7,7 +7,10 @@ from servicepilot.eval.catalog import build_phase3_scenarios
 from servicepilot.eval.models import Intent
 from servicepilot.eval.simulator import FSMUserSimulator
 from servicepilot.harness.checkpoints import InMemoryCheckpointStore
-from servicepilot.harness.evaluation import EvaluationHarness
+from servicepilot.harness.evaluation import (
+    EvaluationHarness,
+    build_trial_environment,
+)
 from servicepilot.harness.guardrails import GuardrailPipeline
 from servicepilot.harness.models import (
     GuardrailDecision,
@@ -126,6 +129,56 @@ async def test_running_checkpoint_resume_is_explicitly_unsupported() -> None:
 
 
 @pytest.mark.asyncio
+async def test_resume_after_checkpointed_high_risk_write_does_not_repeat_refund() -> None:
+    scenario = next(
+        item
+        for item in build_phase3_scenarios()
+        if item.intent is Intent.PARTIAL_REFUND and not item.faults
+    )
+    config = config_for(scenario.scenario_id)
+    store = InMemoryCheckpointStore()
+    runtime = AgentRuntimeHarness(checkpoint_store=store)
+    environment = build_trial_environment(scenario, config.budgets)
+
+    interrupted = await runtime.run(
+        scenario=scenario,
+        agent=RuleBasedSingleAgent(),
+        simulator=FSMUserSimulator(scenario),
+        gateway=environment.gateway,
+        config=config,
+        interrupt_after_committed_tool="create_refund_request",
+    )
+
+    assert interrupted.status is HarnessSessionStatus.INTERRUPTED
+    assert interrupted.termination_reason is HarnessTerminationReason.INTERRUPTED
+    assert len(environment.repository.list_refunds(scenario.order_id)) == 1
+    audits_after_commit = environment.repository.list_audit_events()
+    committed_writes = [
+        step
+        for step in interrupted.tool_steps
+        if step.tool_name == "create_refund_request"
+        and step.status.value == "committed"
+    ]
+    assert len(committed_writes) == 1
+
+    resumed = await runtime.run(
+        scenario=scenario,
+        agent=RuleBasedSingleAgent(),
+        simulator=FSMUserSimulator(scenario),
+        gateway=environment.gateway,
+        config=config,
+        resume=True,
+    )
+
+    assert resumed.status is HarnessSessionStatus.COMPLETED
+    assert resumed.trajectory is not None
+    assert resumed.trajectory.claimed_success is True
+    assert len(environment.repository.list_refunds(scenario.order_id)) == 1
+    assert environment.repository.list_audit_events() == audits_after_commit
+    assert any(event.kind == "session_resumed" for event in resumed.events)
+
+
+@pytest.mark.asyncio
 async def test_input_guardrail_stops_before_agent_or_tools() -> None:
     scenario = build_phase3_scenarios()[0]
     runtime = AgentRuntimeHarness(
@@ -143,4 +196,3 @@ async def test_input_guardrail_stops_before_agent_or_tools() -> None:
     assert session.status is HarnessSessionStatus.FAILED
     assert session.termination_reason is HarnessTerminationReason.GUARDRAIL_STOP
     assert session.trajectory is None
-

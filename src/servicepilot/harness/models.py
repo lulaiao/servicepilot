@@ -16,6 +16,7 @@ class HarnessSessionStatus(StrEnum):
     COMPLETED = "completed"
     FAILED = "failed"
     REPLAYED = "replayed"
+    INTERRUPTED = "interrupted"
 
 
 class HarnessTerminationReason(StrEnum):
@@ -24,6 +25,7 @@ class HarnessTerminationReason(StrEnum):
     BUDGET_EXHAUSTED = "budget_exhausted"
     RUNTIME_ERROR = "runtime_error"
     REPLAY_COMPLETED = "replay_completed"
+    INTERRUPTED = "interrupted"
 
 
 class ReplayMode(StrEnum):
@@ -97,6 +99,23 @@ class HarnessSession(BaseModel):
     events: tuple[HarnessEvent, ...] = ()
     trajectory: Trajectory | None = None
     error: str | None = None
+    tool_steps: tuple["ToolStepCheckpoint", ...] = ()
+
+
+class ToolStepStatus(StrEnum):
+    STARTED = "started"
+    COMMITTED = "committed"
+
+
+class ToolStepCheckpoint(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    sequence: int
+    call_key: str
+    tool_name: str
+    arguments_sha256: str
+    status: ToolStepStatus
+    result: dict[str, Any] | None = None
 
 
 class GuardrailDecision(BaseModel):
@@ -105,4 +124,3 @@ class GuardrailDecision(BaseModel):
     allowed: bool
     guardrail: str
     reason: str
-

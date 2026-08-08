@@ -1,6 +1,7 @@
 """Typed ServicePilot Agent and evaluation Harnesses."""
 
 from servicepilot.harness.checkpoints import InMemoryCheckpointStore
+from servicepilot.harness.dispatcher import CheckpointingToolDispatcher
 from servicepilot.harness.evaluation import EvaluationHarness, TrialEnvironment
 from servicepilot.harness.guardrails import GuardrailPipeline
 from servicepilot.harness.models import (
@@ -28,6 +29,7 @@ __all__ = [
     "HarnessSessionStatus",
     "HarnessTerminationReason",
     "InMemoryCheckpointStore",
+    "CheckpointingToolDispatcher",
     "ReplayMode",
     "TrialEnvironment",
     "UnsupportedResumeError",

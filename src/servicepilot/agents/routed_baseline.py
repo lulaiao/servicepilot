@@ -15,10 +15,16 @@ from servicepilot.routing.router import ROLE_INSTRUCTIONS, StatefulRouter
 class RoutedRuleAgent(RuleBasedSingleAgent):
     """Use one deterministic policy with explicit role-specific routing."""
 
-    def __init__(self, classifier: IntentClassifier | None = None) -> None:
+    def __init__(
+        self,
+        classifier: IntentClassifier | None = None,
+        *,
+        observation_rerouting: bool = True,
+    ) -> None:
         self.classifier = classifier or RuleIntentClassifier()
         self.router = StatefulRouter()
         self.state: DialogueState | None = None
+        self.observation_rerouting = observation_rerouting
 
     def detect_intents(self, text: str) -> tuple[Intent, ...]:
         intent = self.classifier.classify(text)
@@ -99,13 +105,14 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
                 "tool_budget_remaining": state.tool_budget_remaining - 1,
             }
         )
-        observation_route = self.router.route(self.state)
-        self._event(
-            events,
-            TraceRole.ASSISTANT,
-            "reroute_after_observation",
-            f"{observation_route.role.value}: {observation_route.reason}",
-        )
+        if self.observation_rerouting:
+            observation_route = self.router.route(self.state)
+            self._event(
+                events,
+                TraceRole.ASSISTANT,
+                "reroute_after_observation",
+                f"{observation_route.role.value}: {observation_route.reason}",
+            )
         return result
 
     def _require_state(self) -> DialogueState:

@@ -5,6 +5,10 @@ import hashlib
 from servicepilot.eval.models import ScenarioSpec, Trajectory
 from servicepilot.eval.simulator import FSMUserSimulator
 from servicepilot.harness.checkpoints import InMemoryCheckpointStore
+from servicepilot.harness.dispatcher import (
+    CheckpointingToolDispatcher,
+    SimulatedHarnessInterruption,
+)
 from servicepilot.harness.guardrails import GuardrailPipeline
 from servicepilot.harness.models import (
     GuardrailStage,
@@ -46,6 +50,7 @@ class AgentRuntimeHarness:
         gateway: ReliableToolGateway,
         config: HarnessRunConfig,
         resume: bool = False,
+        interrupt_after_committed_tool: str | None = None,
     ) -> HarnessSession:
         session_id = self.session_id(scenario, config)
         existing = self.checkpoints.load(session_id)
@@ -55,21 +60,54 @@ class AgentRuntimeHarness:
                 and existing.trajectory is not None
             ):
                 return existing
-            raise UnsupportedResumeError(
-                "only completed session checkpoints are currently resumable"
+            if existing.status is not HarnessSessionStatus.INTERRUPTED:
+                raise UnsupportedResumeError(
+                    "checkpoint is not at a safe resumable boundary"
+                )
+            session = self._append(
+                existing,
+                "session_resumed",
+                {"tool_steps": len(existing.tool_steps)},
+                status=HarnessSessionStatus.RUNNING,
             )
-        session = HarnessSession(
-            session_id=session_id,
-            scenario_id=scenario.scenario_id,
-            config=config,
+        else:
+            session = HarnessSession(
+                session_id=session_id,
+                scenario_id=scenario.scenario_id,
+                config=config,
+            )
+            session = self._append(
+                session,
+                "session_initialized",
+                {"scenario_id": scenario.scenario_id},
+                status=HarnessSessionStatus.RUNNING,
+            )
+        session_holder = [session]
+        self.checkpoints.save(session_holder[0])
+
+        def persist_step(step: object) -> None:
+            from servicepilot.harness.models import ToolStepCheckpoint
+
+            assert isinstance(step, ToolStepCheckpoint)
+            current = session_holder[0]
+            steps = tuple(
+                old for old in current.tool_steps if old.call_key != step.call_key
+            ) + (step,)
+            current = self._append(
+                current.model_copy(update={"tool_steps": steps}),
+                f"tool_{step.status.value}",
+                {"call_key": step.call_key, "tool_name": step.tool_name},
+                status=HarnessSessionStatus.RUNNING,
+            )
+            session_holder[0] = current
+            self.checkpoints.save(current)
+
+        dispatcher = CheckpointingToolDispatcher(
+            gateway,
+            existing_steps=session_holder[0].tool_steps,
+            persist=persist_step,
+            interrupt_after_committed_tool=interrupt_after_committed_tool,
         )
-        session = self._append(
-            session,
-            "session_initialized",
-            {"scenario_id": scenario.scenario_id},
-            status=HarnessSessionStatus.RUNNING,
-        )
-        self.checkpoints.save(session)
         input_decisions = self.guardrails.evaluate(
             GuardrailStage.INPUT, {"text": scenario.user_utterance}
         )
@@ -89,7 +127,19 @@ class AgentRuntimeHarness:
             self.checkpoints.save(stopped)
             return stopped
         try:
-            trajectory = await agent.run(scenario, simulator, gateway)
+            trajectory = await agent.run(scenario, simulator, dispatcher)  # type: ignore[arg-type]
+            session = session_holder[0]
+        except SimulatedHarnessInterruption as exc:
+            interrupted = self._append(
+                session_holder[0],
+                "session_interrupted",
+                {"error_type": type(exc).__name__},
+                status=HarnessSessionStatus.INTERRUPTED,
+                termination=HarnessTerminationReason.INTERRUPTED,
+                error=str(exc),
+            )
+            self.checkpoints.save(interrupted)
+            return interrupted
         except Exception as exc:
             failed = self._append(
                 session,
@@ -186,4 +236,3 @@ class AgentRuntimeHarness:
                 "error": error,
             }
         )
-
