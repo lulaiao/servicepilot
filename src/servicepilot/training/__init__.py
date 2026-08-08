@@ -14,6 +14,7 @@ from servicepilot.training.readiness import (
     TrainingReadinessInput,
     assess_training_readiness,
 )
+from servicepilot.training.smoke import assistant_only_labels
 from servicepilot.training.trajectory_data import (
     GENERATOR_VERSION,
     assign_family_splits,
@@ -50,4 +51,5 @@ __all__ = [
     "TrainingExperiment",
     "TrainingReadinessInput",
     "assess_training_readiness",
+    "assistant_only_labels",
 ]
