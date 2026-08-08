@@ -1,0 +1,36 @@
+{
+  "experiment": "phase9_lora_smoke",
+  "claim_scope": "pipeline_validation_only_not_model_quality",
+  "code_revision": "39a76d0c050c6a5017ef1f23460f9c8f29c3e865",
+  "model_repo": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "dataset": "data/generated/phase8_sft.jsonl",
+  "dataset_sha256": "4d116d16826e41a78071ad983a94cabaebab58bb2b5a1a940153072ea3ea94dc",
+  "split": "train",
+  "optimizer_steps": 1,
+  "dtype": "bfloat16",
+  "lora": {
+    "r": 8,
+    "alpha": 16,
+    "targets": ["q_proj", "k_proj", "v_proj", "o_proj"]
+  },
+  "metrics": {
+    "loss": 1.094936,
+    "gradient_norm_before_clip": 3.495921,
+    "input_tokens": 512,
+    "labelled_assistant_tokens": 83,
+    "optimizer_step_seconds": 1.9796,
+    "peak_vram_allocated_mib": 2692.32,
+    "peak_vram_reserved_mib": 2740.0
+  },
+  "checkpoint": {
+    "adapter_sha256": "0d6003053ab1a65b57b74ddd7d5fdfa4593b1141c5a5995db169647e3dad65bc",
+    "optimizer_sha256": "903fa79bcd9eb2a6a4bcad4a10a9f42b42ea90489577de802a3052176458497e",
+    "reload_succeeded": true,
+    "trainable_parameters": 1081344
+  },
+  "raw_report": "artifacts/reports/phase9_lora_smoke_qwen05b.json",
+  "raw_report_sha256": "ad886c178ad5d7bdadaf125034da97098b75c04e9a22ea546b29033292991fd6",
+  "decision": "smoke_passed_formal_training_remains_blocked"
+}
+

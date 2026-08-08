@@ -44,3 +44,16 @@ must grow past the declared data gates before formal SFT. GRPO remains prohibite
 until deterministic reward tests and offline reward-distribution/hacking audits
 exist.
 
+## LoRA smoke result
+
+The bounded Qwen2.5-0.5B BF16 run completed one optimizer step on one train
+record. Assistant-only masking retained 83 of 512 tokens. Loss was finite at
+1.094936, peak allocated VRAM was 2,692.32 MiB, and the saved Adapter and
+optimizer states both reloaded successfully. This validates plumbing only; the
+0.5B model remains rejected as a quality candidate and no evaluation metric was
+claimed.
+
+The data-remediation design is frozen in `docs/phase9_data_expansion_plan.md`.
+Its target is 600/120/120 executable records across at least 200/40/40 semantic
+families, with independently authored sealed families and no duplicate-based
+count inflation.
