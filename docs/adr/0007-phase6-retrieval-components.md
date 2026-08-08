@@ -1,6 +1,6 @@
 # ADR 0007: Select Phase 6 retrieval components by downstream evidence quality
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-08-08
 
 ## Context
@@ -77,9 +77,23 @@ fusion is the only reranker configuration admitted to the sealed-test gate.
 The reranker must remain a secondary signal and may not fully replace dense
 ordering without new evidence.
 
+## Final decision
+
+The frozen 36-query sealed gate selects plain-query top-six fixed 0.5/0.5
+normalized score fusion over dense-only: MRR@3 is 0.9861 versus 0.9722 and
+required top-one accuracy is 0.9722 versus 0.9444, with equal Recall@3 and no
+contradictory rank-one results.
+
+Adopt this fusion pipeline for the GPU policy path and keep metadata-filtered
+BM25 as the CPU fallback. Transactional actions fail closed when required
+evidence is incomplete. On the existing 36 business scenarios, the gate
+preserves 100% task success and adds a tested no-write boundary for missing
+evidence. Metadata comparison is case-normalized at the shared retrieval and
+verification boundary.
+
 ## Acceptance condition
 
-This ADR remains Proposed until the selected dense retriever demonstrates
-downstream transactional-Agent benefit on a sealed set.
-The current small development corpus is insufficient for a final production
-choice even though the embedding-selection sub-gate is complete.
+The acceptance condition is met by the frozen sealed comparison and the
+transactional Harness/Judge integration. This is a project-level component
+decision, not a claim of production generalization beyond the documented
+sixteen-section corpus and internally authored sealed set.

@@ -1,0 +1,58 @@
+{
+  "experiment": "phase6_sealed_selection_and_transactional_integration",
+  "sealed_gate": {
+    "code_revision": "cd7f76e663bee0fa8a8471d2a4f76ed3e6bf8240",
+    "dataset": "data/eval/phase6_retrieval_sealed.jsonl",
+    "dataset_sha256": "3ed5480c7d52fcbc2216cc238d2aeab41fa74d76a54ca1f74301715579c92096",
+    "query_count": 36,
+    "report": "artifacts/reports/phase6_sealed_retrieval.json",
+    "report_sha256": "4b66252248ca428b0bda3876451a61e59fdc3adc332a3ee2e24e4f58818866f9"
+  },
+  "sealed_results": {
+    "m3_dense_only": {
+      "recall_at_3": 0.9861,
+      "mrr_at_3": 0.9722,
+      "ndcg_at_3": 0.9683,
+      "required_top1_accuracy": 0.9444,
+      "required_complete_at_3": 0.9722,
+      "contradictory_top1_rate": 0.0
+    },
+    "plain_k6_fusion_050_050": {
+      "recall_at_3": 0.9861,
+      "mrr_at_3": 0.9861,
+      "ndcg_at_3": 0.9807,
+      "required_top1_accuracy": 0.9722,
+      "required_complete_at_3": 0.9722,
+      "contradictory_top1_rate": 0.0,
+      "mean_incremental_reranker_ms_per_query": 8.2225,
+      "peak_pipeline_vram_mib": 2199.74
+    }
+  },
+  "transactional_gate": {
+    "code_revision": "8d9b8728d2e46006e8d13a220c101c8f0bd28211",
+    "scenario_sha256": "ea33cccc96eec2a877f204c00441ad73a6b8545784f39e98cdd55a8081e2cead",
+    "scenario_count": 36,
+    "policy_scenario_count": 21,
+    "evidence_complete_count": 21,
+    "report": "artifacts/reports/phase6_transactional_agent_retrieval.json",
+    "report_sha256": "e9f03e554fcff6c84f17185596aefccc707018bba7360a212bc8ff6dc5ff0cea",
+    "baseline_task_success_rate": 1.0,
+    "retrieval_gated_task_success_rate": 1.0,
+    "retrieval_gated_final_state_accuracy": 1.0,
+    "retrieval_gated_policy_violation_rate": 0.0,
+    "retrieval_gated_false_success_rate": 0.0,
+    "baseline_average_tool_calls": 1.556,
+    "retrieval_gated_average_tool_calls": 2.139
+  },
+  "safety_regression": {
+    "missing_evidence_blocks_write": true,
+    "blocked_cancel_write_count": 0,
+    "test": "tests/e2e/test_retrieval_gated_agent.py"
+  },
+  "decision": {
+    "selected_pipeline": "M3 dense top-6 plus plain-query BGE-v2-M3 normalized-score fusion at fixed 0.5/0.5 weights",
+    "cpu_fallback": "BM25 with metadata filtering",
+    "transaction_policy": "fail closed when required evidence is incomplete",
+    "phase6_status": "accepted"
+  }
+}

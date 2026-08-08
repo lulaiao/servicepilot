@@ -1,7 +1,7 @@
 # Phase 6 retrieval and evidence-verification progress
 
 Date: 2026-08-08  
-Status: Phase 6A–E complete; sealed and transactional-Agent gates remain open
+Status: Phase 6A–F complete; Phase 6 accepted
 
 ## Delivered
 
@@ -234,3 +234,22 @@ development templates.
 The next step is a separately authored sealed set followed by transactional
 Agent integration comparing dense-only with the single surviving fusion
 candidate.
+
+## Phase 6F sealed selection and transactional integration
+
+The sealed set was frozen at commit `cd7f76e` with SHA-256 `3ed5480c...` before
+execution. Under the unchanged plain-query k6 0.5/0.5 configuration, fusion
+beats dense-only on MRR@3 (0.9861 vs 0.9722), nDCG@3 (0.9807 vs 0.9683) and
+required top-one accuracy (0.9722 vs 0.9444), with identical Recall@3=0.9861
+and contradictory top-one rate=0.
+
+The fusion winner is integrated as a fail-closed transaction evidence gate.
+It obtains complete evidence on all 21 policy-sensitive Phase 3 scenarios and
+preserves 36/36 task success, final-state accuracy=1, policy violations=0 and
+False-success=0. A missing-evidence regression proves that no write is issued.
+The added safety boundary increases average tool calls from 1.556 to 2.139.
+
+An initial integration run exposed uppercase domain statuses versus lowercase
+retrieval metadata. The applicability boundary now normalizes casing and is
+shared with the Evidence Verifier. Phase 6 is accepted with the limitations in
+`experiments/reports/phase6_acceptance.md`.
