@@ -64,19 +64,29 @@ Macro-F1. However, strict slot exact match is 0.5833 versus the rule baseline's
 allocated VRAM is 14607.5 MiB. It is promoted to an end-to-end candidate, not
 accepted for deployment.
 
+The executable comparison at code revision `07a984a` changes only the
+classifier inside the same routed Agent and uses the same 36 scenarios,
+budgets, tools and deterministic Judge. The rule Agent succeeds on 36/36 with
+zero policy violation and false-success. The 7B learned-extractor Agent reaches
+32/36 (0.8889), with 0.0556 policy violation, 0.0556 false-success and 0.1111
+high-risk control error. Mean scenario latency is 2.0935 seconds and peak
+allocated VRAM is 14607.0 MiB. Therefore the 7B candidate is rejected as a
+direct replacement despite its stronger component Macro-F1.
+
 ## Alternatives
 
 - Static single Agent: cheapest and equally successful on the current catalog,
   but it does not expose responsibility changes after observations.
 - LangGraph: deferred until checkpointing, durable pause/resume or graph
   composition becomes a measured need.
-- Qwen2.5-7B-Instruct: passed component gates and awaits identical-budget
-  executable Agent evaluation.
+- Qwen2.5-7B-Instruct: rejected as a direct rule-classifier replacement after
+  identical-budget executable Agent evaluation.
 - Cached Qwen Coder 1.5B: rejected for this workload and CPU budget. Reconsider
   only with a task-appropriate prompt/model variant and usable GPU runtime.
 
 ## Gate
 
-The routing architecture remains provisional until the 7B candidate completes
-the executable Agent comparison. The smaller candidates are rejected. No
-sealed result may be used to tune prompts, rules or select a model.
+The explicit router and rule classifier remain the accepted Phase 4 MVP
+baseline. All measured learned extractor candidates are rejected for direct
+deployment. No sealed result may be used to tune a future cascade, prompt or
+schema revision.

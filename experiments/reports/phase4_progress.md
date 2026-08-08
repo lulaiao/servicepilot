@@ -78,6 +78,13 @@ Macro-F1 0.8909, schema validity 1.0 and high-risk error rate 0.1667.
 Mean/P95 latency was 2.1881/2.4452 seconds and peak allocated VRAM was
 14607.5 MiB. It advances to end-to-end evaluation, but is not yet selected.
 
+The identical-budget executable comparison subsequently rejected the 7B model
+as a direct classifier replacement. The rule Agent retained 36/36 success,
+zero policy violations and zero false-success. The learned-extractor Agent
+reached 32/36 success, 0.0556 policy violation, 0.0556 false-success and 0.1111
+high-risk control error, with 2.3769-second P95 scenario latency and
+14607.0 MiB peak allocated VRAM. See `phase4_agent_e2e_comparison.md`.
+
 ## Reproduction
 
 ```text
@@ -90,5 +97,5 @@ PYTHONPATH=src .venv/bin/python scripts/analyze_model_benchmark.py \
 .venv/bin/python -m mypy src/servicepilot
 ```
 
-Phase 4 remains open until the 7B candidate is compared with the rule baseline
-inside the executable Agent loop under the same budgets.
+Phase 4A model comparison is complete: the rule classifier remains the MVP
+choice. Phase 4B Harness Formalization remains open.

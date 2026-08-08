@@ -68,12 +68,18 @@ model selection and Harness Formalization remain open.
 
 ### Phase 4A — intent and dynamic routing
 
+Status: **complete for the MVP baseline**. Three learned candidates were
+compared at component level; the surviving 7B candidate was then rejected as a
+direct replacement by the identical-budget executable Agent comparison. The
+explicit Router plus rule classifier remains selected for the MVP.
+
 - Compare rule and local structured-output baselines.
 - Route from full dialogue/tool state on every turn and material tool result.
 - Select any local model using `docs/model_selection_protocol.md`; report
   quality, schema validity, latency, throughput, memory and disk together.
 
 Evidence: `experiments/reports/phase4_progress.md`.
+Executable evidence: `experiments/reports/phase4_agent_e2e_comparison.md`.
 
 ### Phase 4B — Harness Formalization
 

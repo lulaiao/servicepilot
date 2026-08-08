@@ -139,3 +139,23 @@ The user simulator owns the scenario and releases order ID, refund details or
 new schedule only through explicit response methods after the Agent asks. It can
 reject an unexplained or undesired write. The Agent does not read the Judge's
 expected final state.
+
+## Phase 4 model decision
+
+### Why did the project keep rules after the 7B model had better Macro-F1?
+
+Component accuracy was not the deployment objective. Qwen2.5-7B-Instruct
+improved development Macro-F1 from 0.8333 to 0.8909, but when substituted into
+the same routed Agent it reduced executable success from 36/36 to 32/36,
+introduced 0.0556 false-success and 0.1111 high-risk control error, added about
+2.09 seconds per scenario, and required 14.3 GiB peak VRAM. The deterministic
+Judge exposed errors that an intent leaderboard would hide, so the rule
+classifier remained the smallest candidate satisfying the MVP safety and task
+requirements.
+
+### Is the 7B comparison a full LLM Agent comparison?
+
+No. It is intentionally a learned-extractor comparison. Both variants share
+the deterministic action policy, Router, Gateway, confirmation protocol and
+Judge; only intent/slot extraction changes. Claiming autonomous 7B planning or
+tool use from this experiment would overstate the implementation.
