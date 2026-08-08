@@ -1,0 +1,36 @@
+{
+  "schema_version": "servicepilot-trajectory-v1",
+  "generator_version": "phase9-expanded-v2",
+  "code_revision": "f413b9e1319cc472eb3bf538d8eede10ba10c059",
+  "seed": 20260809,
+  "deduplicated_record_count": 942,
+  "split_counts": {"train": 696, "dev": 126, "sealed_test": 120},
+  "split_family_counts": {"train": 232, "dev": 42, "sealed_test": 40},
+  "family_count": 314,
+  "duplicate_count": 0,
+  "cross_split_family_overlap_count": 0,
+  "cross_split_content_overlap_count": 0,
+  "cross_split_near_duplicate_count": 0,
+  "privacy_violation_count": 0,
+  "family_catalog_v2_sha256": "8915ded77106a459bea9b5d448a387a791fda8088f8ebf52965c70e5938756f3",
+  "variant_output_sha256": "ddd6fd5c5a2cd45bee461771cacfcbae89cf73551471b9ad0146ca684ae12bcb",
+  "trajectory_output": "data/generated/phase9_expanded_trajectories_v2.jsonl",
+  "trajectory_output_sha256": "6043240cc0ad3c1914805ad5945a4e9075202dcfb3105a8d10990bb597e04129",
+  "training_views": {
+    "sft_record_count": 942,
+    "sft_output": "data/generated/phase9_expanded_sft_v2.jsonl",
+    "sft_output_sha256": "57c8c8da02b6b02bbd5126d04bff3b244336330184495dabf801c32c4afe7963",
+    "preference_record_count": 1443,
+    "preference_split_counts": {"train": 1011, "dev": 225, "sealed_test": 207},
+    "preference_output": "data/generated/phase9_expanded_preferences_v2.jsonl",
+    "preference_output_sha256": "6ef40c84453a675522da5248018dde28323cbb54566d17cc45ca02c22ba4c5e6",
+    "missing_source_provenance_count": 0,
+    "chosen_equals_rejected_count": 0
+  },
+  "raw_reports": {
+    "family_batch_v2_sha256": "62a998173cd13b33b0c30e88f63287e69e38ea8ea41a2d74114e66e19bcfd5fa",
+    "trajectory_admission_sha256": "4e5a921d1df7c9ffa9cef63126dd9356b8a1d9022af6222f8b1e31f2fe68b708",
+    "training_views_sha256": "a1c25c78cfe7c2c1215267ca026ba913d42e03a6ccb48d51c2aa9a4ffed6247d"
+  },
+  "admission_passed": true
+}

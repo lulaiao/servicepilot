@@ -18,7 +18,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--code-revision", required=True)
     parser.add_argument(
+        "--data-manifest",
         "--phase8-manifest",
+        dest="data_manifest",
         type=Path,
         default=Path("experiments/manifests/phase8_trajectory_dataset_v1.json"),
     )
@@ -35,7 +37,7 @@ def package_version(name: str) -> str | None:
 
 def main() -> None:
     args = parse_args()
-    phase8 = json.loads(args.phase8_manifest.read_text(encoding="utf-8"))
+    dataset = json.loads(args.data_manifest.read_text(encoding="utf-8"))
     gpu_rows = subprocess.run(
         [
             "nvidia-smi",
@@ -63,7 +65,7 @@ def main() -> None:
             }
         )
     disk = shutil.disk_usage("/data/ssd1/lla")
-    training_views = phase8["training_views"]
+    training_views = dataset["training_views"]
     readiness_input = TrainingReadinessInput(
         cuda_available=torch.cuda.is_available(),
         gpu_vram_mib=(
@@ -72,9 +74,9 @@ def main() -> None:
             else 0
         ),
         free_disk_gib=disk.free / 1024**3,
-        train_sft_records=phase8["split_counts"]["train"],
-        dev_sft_records=phase8["split_counts"]["dev"],
-        sealed_sft_records=phase8["split_counts"]["sealed_test"],
+        train_sft_records=dataset["split_counts"]["train"],
+        dev_sft_records=dataset["split_counts"]["dev"],
+        sealed_sft_records=dataset["split_counts"]["sealed_test"],
         train_preference_records=training_views["preference_split_counts"]["train"],
     )
     packages = {
@@ -113,10 +115,10 @@ def main() -> None:
             "total_gib": round(disk.total / 1024**3, 2),
         },
         "packages": packages,
-        "phase8_input": {
-            "manifest": str(args.phase8_manifest),
-            "canonical_records": phase8["deduplicated_record_count"],
-            "sft_split_counts": phase8["split_counts"],
+        "data_input": {
+            "manifest": str(args.data_manifest),
+            "canonical_records": dataset["deduplicated_record_count"],
+            "sft_split_counts": dataset["split_counts"],
             "preference_records": training_views["preference_record_count"],
             "preference_split_counts": training_views["preference_split_counts"],
         },
