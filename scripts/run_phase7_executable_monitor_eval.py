@@ -59,6 +59,7 @@ async def main() -> None:
     async_latencies: list[float] = []
     parity_failures = state_mutations = 0
     task_successes = 0
+    natural_fault_trajectories = successful_recoveries = 0
     records: list[dict[str, object]] = []
     harness_started = time.perf_counter()
     for index, (scenario, injected_faults) in enumerate(schedule):
@@ -68,6 +69,9 @@ async def main() -> None:
         task_successes += int(judge.task_success)
         base = observation_from_run(session, trajectory, judge)
         baseline_faults = {item.fault_class for item in monitor.evaluate(base).findings}
+        if baseline_faults:
+            natural_fault_trajectories += 1
+            successful_recoveries += int(judge.task_success)
         gold = baseline_faults | set(injected_faults)
         current = inject_monitor_faults(
             base,
@@ -95,6 +99,7 @@ async def main() -> None:
                 "workload_id": current.scenario_id,
                 "base_scenario_id": scenario.scenario_id,
                 "injected": sorted(item.value for item in injected_faults),
+                "natural_faults": sorted(item.value for item in baseline_faults),
                 "gold": sorted(item.value for item in gold),
                 "predicted": sorted(item.value for item in sync_found),
                 "task_success": judge.task_success,
@@ -117,6 +122,8 @@ async def main() -> None:
             "sync_async_parity_rate": round(1 - parity_failures / args.trajectory_count, 4),
             "monitor_state_mutation_count": state_mutations,
             "authoritative_task_success_rate": round(task_successes / args.trajectory_count, 4),
+            "natural_fault_trajectory_count": natural_fault_trajectories,
+            "successful_recovery_count": successful_recoveries,
             "mean_sync_monitor_latency_ms": round(statistics.mean(sync_latencies), 4),
             "p95_sync_monitor_latency_ms": round(
                 sorted(sync_latencies)[int(len(sync_latencies) * 0.95) - 1], 4
