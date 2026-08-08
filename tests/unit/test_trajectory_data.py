@@ -10,7 +10,11 @@ from servicepilot.training import (
     build_training_record,
     cross_split_overlap_count,
     deduplicate_records,
+    mine_hard_negatives,
+    near_duplicate_pairs,
+    privacy_violation_count,
     redact_value,
+    to_sft_record,
 )
 
 
@@ -75,3 +79,43 @@ async def test_real_harness_trajectory_converts_to_versioned_record() -> None:
     assert record.task_success
     assert record.events
     assert record.content_sha256
+
+    sft = to_sft_record(record)
+    negatives = mine_hard_negatives(record)
+    assert sft.source_record_id == record.record_id
+    assert negatives
+    assert all(item.source_record_id == record.record_id for item in negatives)
+    assert all(item.chosen_tool != item.rejected_tool for item in negatives)
+    assert privacy_violation_count(sft.model_dump(mode="json")) == 0
+
+
+def test_privacy_scan_and_near_duplicate_audit() -> None:
+    assert privacy_violation_count({"token": "raw", "text": "user@example.com"}) == 2
+
+    from servicepilot.training.data_models import TrajectoryTrainingRecord
+
+    base = TrajectoryTrainingRecord(
+        record_id="near-1",
+        source_scenario_id="scenario-1",
+        source_trace_id="trace-1",
+        scenario_family_sha256="family-1",
+        split=DataSplit.TRAIN,
+        events=(),
+        detected_intents=("order_query",),
+        final_message="订单已经处理完成，请查看结果。",
+        task_success=True,
+        false_success=False,
+        policy_compliant=True,
+        content_sha256="near-content-1",
+        redaction_count=0,
+    )
+    similar = base.model_copy(
+        update={
+            "record_id": "near-2",
+            "split": DataSplit.DEV,
+            "final_message": "订单已经处理完成，请查看结果！",
+            "content_sha256": "near-content-2",
+        }
+    )
+
+    assert near_duplicate_pairs((base, similar), threshold=0.8)

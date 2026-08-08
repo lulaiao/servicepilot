@@ -59,3 +59,29 @@ class TrajectoryDatasetManifest(BaseModel):
     split_family_counts: dict[DataSplit, int]
     cross_split_family_overlap_count: int
     cross_split_content_overlap_count: int
+
+
+class SFTTrainingRecord(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    schema_version: str = "servicepilot-sft-v1"
+    record_id: str
+    source_record_id: str
+    split: DataSplit
+    messages: tuple[dict[str, str], ...]
+
+
+class PreferenceTrainingRecord(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    schema_version: str = "servicepilot-preference-v1"
+    record_id: str
+    source_record_id: str
+    split: DataSplit
+    decision_index: int
+    context: tuple[dict[str, str], ...]
+    chosen: dict[str, Any]
+    rejected: dict[str, Any]
+    negative_type: str = "confusable_wrong_tool"
+    chosen_tool: str
+    rejected_tool: str
