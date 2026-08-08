@@ -1,0 +1,27 @@
+{
+  "schema_version": "servicepilot-classifier-sft-v2",
+  "decision": "replace_misaligned_full_trajectory_target_with_deployed_classifier_target",
+  "source": "data/generated/phase9_scenario_variants_v2.jsonl",
+  "source_sha256": "ddd6fd5c5a2cd45bee461771cacfcbae89cf73551471b9ad0146ca684ae12bcb",
+  "output": "data/generated/phase9_classifier_sft_v2.jsonl",
+  "output_sha256": "3104486b256907684bd0b4b3c4436af38a3b7a5232127f49fa870762372fb3a5",
+  "record_count": 1002,
+  "base_record_count": 942,
+  "train_only_failure_remediation_count": 60,
+  "split_counts": {"train": 756, "dev": 126, "sealed_test": 120},
+  "cross_split_family_overlap_count": 0,
+  "message_count_per_record": [2],
+  "deployment_prompt": "servicepilot.routing.structured_output.build_intent_prompt",
+  "deployment_output_schema": "servicepilot.routing.models.IntentResult",
+  "remediation_categories": [
+    "missing_vs_refund",
+    "partial_vs_full",
+    "complaint_vs_delivery",
+    "coupon_vs_reschedule",
+    "injection_stop"
+  ],
+  "dev_failure_instances_copied_into_train": 0,
+  "sealed_train_access_allowed": false,
+  "raw_report_sha256": "33bad81554013691ef5cc57c475d197ff3c985c29082d24491650003d030c572",
+  "passed": true
+}

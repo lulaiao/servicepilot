@@ -211,6 +211,9 @@ Four-seed training manifest:
 Checkpoint decision: **all v1 SFT checkpoints rejected at the dev safety gate**.
 Evidence: `experiments/manifests/phase9_sft_checkpoint_dev_harness.json` and
 `docs/adr/0012-phase9-sft-checkpoint-rejection.md`.
+SFT v2 data remediation:
+`experiments/manifests/phase9_classifier_sft_v2_dataset.json` and
+`docs/adr/0013-phase9-task-aligned-classifier-sft-v2.md`.
 
 ## Phase 10 — open-source delivery
 

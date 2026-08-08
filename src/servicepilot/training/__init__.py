@@ -1,5 +1,12 @@
 """Privacy-safe trajectory data and deferred post-training experiments."""
 
+from servicepilot.training.classifier_data import (
+    build_failure_remediation_sft,
+    classifier_target,
+    risk_for_intent,
+    to_classifier_sft,
+    visible_slots,
+)
 from servicepilot.training.data_models import (
     DataSplit,
     PreferenceTrainingRecord,
@@ -51,6 +58,11 @@ from servicepilot.training.trajectory_data import (
 __all__ = [
     "GENERATOR_VERSION",
     "DataSplit",
+    "classifier_target",
+    "build_failure_remediation_sft",
+    "risk_for_intent",
+    "to_classifier_sft",
+    "visible_slots",
     "PreferenceTrainingRecord",
     "SFTTrainingRecord",
     "TrainingEvent",

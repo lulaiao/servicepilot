@@ -171,3 +171,16 @@ remained at 1.0 task success with zero high-risk errors and False-success.
 Phase 9 SFT v1 is therefore a documented negative result: loss convergence did
 not produce a safe executable Agent. A new protocol version and targeted data
 remediation are required; sealed evaluation and GRPO remain prohibited.
+
+## SFT v2 task-aligned data remediation
+
+Root-cause review found an objective/deployment mismatch: v1 trained full Agent
+trajectory text, but the deployed learned component is a single-turn structured
+intent/slot classifier. The v2 data view now uses the exact deployment Prompt
+and `IntentResult` JSON schema. Labels expose only slots literally present in
+the user utterance, preventing hidden scenario-state leakage.
+
+The exported v2 view contains 1,002 records: 942 family-preserving base records
+plus 60 train-only failure-remediation examples. Split counts are 756/126/120,
+cross-split family overlap is zero, and no dev failure instance or sealed record
+was copied into train. Training remains paused until a new protocol is frozen.
