@@ -190,10 +190,15 @@ Decision: `docs/adr/0009-phase8-trajectory-data-boundary.md`.
 
 ## Phase 9 — SFT and GRPO
 
-Status: pending and blocked on GPU re-audit. Run small-model LoRA SFT, outcome
-GRPO, process-reward experiments, reward-hacking audits, and repeated trials.
-Training model/framework choices require a new ADR backed by measured fit,
-throughput, peak VRAM, disk, stability, license, and downstream task quality.
+Status: **in progress; formal training blocked**. Phase 9A confirms RTX A6000
+CUDA/BF16 compatibility and sufficient disk. Transformers+PEFT is the
+provisional minimal LoRA path and TRL remains a candidate loop. Only a
+non-claimable LoRA smoke test passes readiness; formal SFT is blocked by the
+24/6/6 dataset, and GRPO is additionally blocked by missing reward unit,
+distribution, and hacking audits.
+
+Progress: `experiments/reports/phase9_progress.md`.
+Decision: `docs/adr/0010-phase9-training-stack-and-model-gates.md`.
 
 ## Phase 10 — open-source delivery
 
