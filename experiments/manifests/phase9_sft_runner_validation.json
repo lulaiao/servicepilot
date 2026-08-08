@@ -1,0 +1,20 @@
+{
+  "schema_version": "servicepilot-training-run-v1",
+  "experiment": "phase9_sft_runner_validation",
+  "claim_scope": "runner_validation_only_not_model_quality",
+  "code_revision": "11af3aee7c51ec0956e8a9cb6b5f9a12ef9e08a7",
+  "protocol_version": "phase9-qwen25-7b-lora-sft-v1",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset_sha256": "57c8c8da02b6b02bbd5126d04bff3b244336330184495dabf801c32c4afe7963",
+  "seed": 20260808,
+  "optimizer_steps": 1,
+  "gradient_accumulation_steps": 16,
+  "trainer_runtime_seconds": 6.8178,
+  "train_loss": 2.648930311203003,
+  "peak_vram_allocated_mib": 22346.19,
+  "peak_vram_reserved_mib": 23318.0,
+  "sealed_records_loaded_into_trainer": 0,
+  "raw_report": "artifacts/reports/phase9_sft_runner_validation_seed20260808.json",
+  "raw_report_sha256": "2ff38b9230814a006000cb462fe10aaa04ac8cb6c96c1335ce2ac40cefa11041",
+  "passed": true
+}

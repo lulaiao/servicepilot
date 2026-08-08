@@ -117,3 +117,19 @@ This removes the 7B memory and resume uncertainty without making a quality
 claim. Formal SFT has not run, and the sealed split has not been inspected for
 model selection. The next gate is the predeclared four-seed experiment against
 the untrained 7B and rule-Agent baselines under the same executable Judge.
+
+## Phase 9C runner readiness
+
+The per-seed runner now supports frozen-seed validation, data hash and split
+checks, assistant-only multi-turn masking, gradient accumulation, periodic
+dev-loss evaluation, resumable PEFT/optimizer checkpoints, and resource
+reporting. Checkpoint selection is a separate fail-closed step: every candidate
+must have executable dev evidence, safety is evaluated first, and sealed reports
+are rejected for selection.
+
+A one-step 7B control run processed a full 16-example accumulated batch in
+6.8178 seconds of Trainer runtime. Peak allocated/reserved VRAM was
+22,346.19/23,318 MiB, and Trainer loaded zero sealed records. This is runner
+validation only. The four formal seeds remain unexecuted; the existing Phase 3
+scenario catalog is treated as development evidence, and a new frozen
+executable sealed catalog is required before final model claims.

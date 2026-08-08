@@ -205,6 +205,7 @@ Data expansion: `docs/phase9_data_expansion_plan.md`.
 Expansion manifest: `experiments/manifests/phase9_scenario_expansion_v1.json`.
 SFT protocol decision: `docs/adr/0011-phase9-7b-lora-sft-protocol.md`.
 7B dry-run manifest: `experiments/manifests/phase9_qwen25_7b_lora_dryrun.json`.
+Formal runbook: `docs/phase9_sft_runbook.md`.
 
 ## Phase 10 — open-source delivery
 
