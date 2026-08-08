@@ -32,11 +32,9 @@ def parse_args() -> argparse.Namespace:
 
 def repository_fingerprint(repository: object, scenario: object) -> str:
     payload = {
-        "order": repository.get_order(scenario.order_id).model_dump(mode="json"),
-        "refunds": [
-            item.model_dump(mode="json") for item in repository.list_refunds(scenario.order_id)
-        ],
-        "audits": [item.model_dump(mode="json") for item in repository.list_audit_events()],
+        "order": repr(repository.get_order(scenario.order_id)),
+        "refunds": [repr(item) for item in repository.list_refunds(scenario.order_id)],
+        "audits": [repr(item) for item in repository.list_audit_events()],
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
 
