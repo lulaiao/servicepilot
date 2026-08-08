@@ -214,6 +214,9 @@ Evidence: `experiments/manifests/phase9_sft_checkpoint_dev_harness.json` and
 SFT v2 data remediation:
 `experiments/manifests/phase9_classifier_sft_v2_dataset.json` and
 `docs/adr/0013-phase9-task-aligned-classifier-sft-v2.md`.
+SFT v2 screening decision: **stopped before four-seed training**. Evidence:
+`experiments/manifests/phase9_classifier_sft_v2_screening.json` and
+`docs/adr/0014-phase9-classifier-sft-v2-screening.md`.
 
 ## Phase 10 — open-source delivery
 

@@ -1,0 +1,40 @@
+{
+  "schema_version": "servicepilot-sft-screening-v1",
+  "protocol_version": "phase9-qwen25-7b-classifier-lora-sft-v2",
+  "code_revision": "1ee4fbd8027c54c19c7bc830ba34ab1887227d03",
+  "seed": 20260808,
+  "optimizer_steps": 25,
+  "dataset_sha256": "3104486b256907684bd0b4b3c4436af38a3b7a5232127f49fa870762372fb3a5",
+  "training": {
+    "train_loss": 0.49410212635993955,
+    "dev_loss": 0.09953118860721588,
+    "trainer_runtime_seconds": 82.7747,
+    "peak_vram_allocated_mib": 16426.9,
+    "sealed_records_loaded": 0
+  },
+  "executable_dev": {
+    "scenario_count": 36,
+    "task_success_rate": 0.8056,
+    "final_state_accuracy": 0.8056,
+    "policy_violation_rate": 0.0556,
+    "false_success_rate": 0.1667,
+    "high_risk_error_rate": 0.0556,
+    "schema_valid_rate": 1.0,
+    "runtime_error_count": 0,
+    "mean_scenario_latency_seconds": 2.2266,
+    "p95_scenario_latency_seconds": 3.2983,
+    "peak_vram_allocated_mib": 14626.2
+  },
+  "baselines": {
+    "untrained_7b_task_success_rate": 0.8889,
+    "rule_agent_task_success_rate": 1.0,
+    "rule_agent_high_risk_error_rate": 0.0,
+    "rejected_sft_v1_mean_high_risk_error_rate": 0.2111
+  },
+  "training_report_sha256": "8f1cd75727b23ec67b41ca66c9548c69aabaf47d045f44feac7c004b5dc7b09e",
+  "harness_report_sha256": "93ad6be7c9079bc4bffe056282bbc1a7c35f2f9ec9e8ca3633f74cd6a42cea8c",
+  "formal_four_seed_training_allowed": false,
+  "sealed_evaluation_executed": false,
+  "decision": "stop_task_success_below_untrained_baseline_and_false_success_regression",
+  "passed": false
+}

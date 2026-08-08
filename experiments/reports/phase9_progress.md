@@ -184,3 +184,17 @@ The exported v2 view contains 1,002 records: 942 family-preserving base records
 plus 60 train-only failure-remediation examples. Split counts are 756/126/120,
 cross-split family overlap is zero, and no dev failure instance or sealed record
 was copied into train. Training remains paused until a new protocol is frozen.
+
+## SFT v2 bounded screening stopped
+
+The frozen 25-step classifier screening completed with dev loss 0.09953,
+82.77-second Trainer runtime, 16,426.9 MiB peak training VRAM, and zero sealed
+records loaded. Executable dev Schema validity improved to 1.0 and runtime
+errors fell to zero. High-risk error fell to 0.0556 versus the v1 candidate mean
+of 0.2111.
+
+The screening nevertheless failed its utility gate: task success was 0.8056,
+below the untrained 7B baseline of 0.8889, while False-success rose to 0.1667.
+All three multi-intent scenarios failed. Four-seed v2 training and sealed
+evaluation are therefore not authorized. The next remediation must target
+multi-intent execution and honest non-completion before another GPU run.
