@@ -147,8 +147,14 @@ Progress evidence: `experiments/reports/phase4b_harness_progress.md`.
 
 ## Phase 5 — layered memory
 
-Status: pending. Add recent-window, typed working, factual summary, and
-consented long-term memory with conflict, expiry, deletion, and privacy tests.
+Status: **complete**. Added recent-window, typed working memory, deterministic
+factual summaries and consented long-term memory with source precedence,
+conflict records, expiry, revocation, deletion and privacy tests. The 20-turn
+and stale-summary gates pass; the no-memory ablation is evidence-scoped as a
+Memory capability metric.
+
+Evidence: `experiments/reports/phase5_acceptance.md`.
+Decision: `docs/adr/0006-layered-memory-boundary.md`.
 
 ## Phase 6 — hybrid retrieval and evidence verification
 

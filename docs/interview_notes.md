@@ -159,3 +159,30 @@ No. It is intentionally a learned-extractor comparison. Both variants share
 the deterministic action policy, Router, Gateway, confirmation protocol and
 Judge; only intent/slot extraction changes. Claiming autonomous 7B planning or
 tool use from this experiment would overstate the implementation.
+
+## Phase 5 memory decisions
+
+### Why not start with a vector database or LLM-generated memory?
+
+Neither similarity search nor generation defines consent, expiry, deletion or
+transactional freshness. The deterministic baseline first makes every fact
+typed and source-attributed. Tool facts outrank summaries, conflicts remain
+auditable, and expired state is removed. A vector backend belongs to Phase 6;
+a learned summarizer must beat this baseline on fact precision, privacy,
+latency and downstream value before selection.
+
+### How does memory avoid overriding real business state?
+
+Memory never authorizes writes and never replaces the Repository. Facts carry
+source, observation time, validity and optional entity version. Tool facts have
+the highest source authority; a newer contradictory summary is rejected and a
+conflict record preserves both fact IDs. The Agent must still read live state
+before a high-risk preview or execution.
+
+### What does the 1.0 layered-memory score mean?
+
+It is five deterministic Memory capability cases, not an end-to-end Agent
+success rate. The no-memory/recent-only baseline passes 2/5 and layered memory
+passes 5/5, covering 20-turn reference, consented preference, stale-summary
+conflict, expiry abstention and sensitive-data rejection. It does not claim
+learned summarization quality or token savings.

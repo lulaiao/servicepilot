@@ -1,0 +1,20 @@
+{
+  "experiment": "phase5_no_memory_vs_layered_memory",
+  "code_revision": "8c3d0dc",
+  "case_count": 5,
+  "case_sha256": "5b28690db77ff01fe9d4227200f958f2563c11a8618d68c18394bcf244d3e9c7",
+  "report": {
+    "path": "artifacts/reports/phase5_memory_eval.json",
+    "sha256": "25bdd39c63c5960f5e5d60dadaed98eb8266e19ba9a8dfc40d0281df450afb64"
+  },
+  "result": {
+    "no_memory_success_count": 2,
+    "no_memory_success_rate": 0.4,
+    "layered_memory_success_count": 5,
+    "layered_memory_success_rate": 1.0,
+    "safety_case_count": 3,
+    "safety_regressions": 0
+  },
+  "gpu_required": false,
+  "metric_scope": "deterministic memory capability; not end-to-end Agent task success"
+}

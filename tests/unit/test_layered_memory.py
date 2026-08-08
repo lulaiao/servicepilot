@@ -219,6 +219,9 @@ def test_long_term_memory_expiry_revoke_view_and_delete() -> None:
     store.grant_consent(consent())
     store.put(long_term(), now=NOW)
     assert store.list_user("user-1", now=NOW)[0].value == "afternoon"
+    assert store.delete("memory-preferred_contact_time", user_id="user-1")
+    assert store.list_user("user-1", now=NOW) == ()
+    store.put(long_term(), now=NOW)
 
     removed = store.revoke_consent("consent-1", now=NOW + timedelta(minutes=1))
     assert removed == 1
