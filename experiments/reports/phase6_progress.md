@@ -1,7 +1,7 @@
 # Phase 6 retrieval and evidence-verification progress
 
 Date: 2026-08-08  
-Status: Phase 6A complete; Phase 6 selection gate remains open
+Status: Phase 6A–B complete; Phase 6 selection gate remains open
 
 ## Delivered
 
@@ -67,3 +67,36 @@ PYTHONPATH=src .venv/bin/python scripts/run_phase6_lexical_eval.py \
 - Measure citation verification and end-to-end Agent benefit.
 
 Dense and reranker metrics remain `TBD`; Phase 6 is not accepted yet.
+
+## Phase 6B harder set and query-rewrite ablation
+
+The extension freezes six additional active-policy Hard Negatives and twelve
+queries, including six multi-evidence questions and colloquial paraphrases.
+The combined development set contains 16 documents and 24 queries.
+
+| Variant | Recall@3 | MRR | nDCG@3 | Citation accuracy@3 | Recall@1 | Mean latency |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| BM25 + metadata | 1.0000 | 0.9167 | 0.9318 | 0.4167 | 0.7083 | 0.1717 ms |
+| Rewrite + BM25 + RRF | 1.0000 | 0.9167 | 0.9351 | 0.4167 | 0.7083 | 0.3564 ms |
+
+The harder set creates a real rank-one gap. Deterministic rewrite plus RRF does
+not improve Recall, MRR, citation accuracy or Recall@1. Its small nDCG gain
+comes with roughly twice the mean latency, so it is rejected for the mainline.
+This negative result prevents more calls from being mislabeled as progress.
+
+```text
+PYTHONPATH=src .venv/bin/python scripts/run_phase6_rewrite_eval.py \
+  --code-revision 341f4bf \
+  --output artifacts/reports/phase6_rewrite_eval.json
+```
+
+- Hard corpus SHA-256:
+  `6c21e4c32392449b2a6bb8a5cc1770c5ab708e139d28d143e5c208e8f4ed041c`
+- Hard query SHA-256:
+  `0b70aacea267265b5c9ca364b7348981bb5f2a9564889ccdfc439228f6b9ef40`
+- Report SHA-256:
+  `54efbee8459a9988e765a346f69cbf20dcb384bfb2591f726377c74ddcfd2f1d`
+- Manifest: `experiments/manifests/phase6_rewrite_eval.json`
+
+The next gate is embedding-model selection and an equal-budget dense/hybrid
+comparison. Reranking remains downstream of that result.

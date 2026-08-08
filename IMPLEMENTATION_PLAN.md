@@ -160,8 +160,9 @@ Decision: `docs/adr/0006-layered-memory-boundary.md`.
 
 Status: **in progress**. Phase 6A froze an initial gold-evidence corpus/query
 set, added BM25, metadata filters, ranking metrics and deterministic evidence
-sufficiency checks. Dense and reranker models remain `TBD`; the initial set is
-too small/easy to justify them.
+sufficiency checks. Phase 6B added active Hard Negatives, multi-evidence queries
+and a rejected query-rewrite/RRF ablation. Dense and reranker models remain
+`TBD`; the harder set now exposes a measurable Recall@1 gap.
 Freeze the corpus and compare lexical-only, dense-only, hybrid, and reranked
 variants under the same latency and retrieval budget before accepting components.
 

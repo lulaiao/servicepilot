@@ -1,0 +1,19 @@
+{
+  "experiment": "phase6_hard_set_query_rewrite_rrf",
+  "code_revision": "341f4bf",
+  "corpus_count": 16,
+  "query_count": 24,
+  "multi_evidence_query_count": 6,
+  "top_k": 3,
+  "hard_corpus_sha256": "6c21e4c32392449b2a6bb8a5cc1770c5ab708e139d28d143e5c208e8f4ed041c",
+  "hard_query_sha256": "0b70aacea267265b5c9ca364b7348981bb5f2a9564889ccdfc439228f6b9ef40",
+  "report": {
+    "path": "artifacts/reports/phase6_rewrite_eval.json",
+    "sha256": "54efbee8459a9988e765a346f69cbf20dcb384bfb2591f726377c74ddcfd2f1d"
+  },
+  "decision": {
+    "query_rewrite_rrf": "rejected_for_mainline",
+    "dense_model": "TBD",
+    "reranker_model": "TBD"
+  }
+}

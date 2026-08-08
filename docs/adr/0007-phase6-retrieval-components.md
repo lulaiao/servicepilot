@@ -31,6 +31,12 @@ Recall@3, MRR and nDCG of 1.0 at approximately 0.119 ms/query, but citation
 accuracy@3 is only 0.3333. The set is therefore useful for metadata safety but
 too small/easy to justify a dense model.
 
+Phase 6B expands to 16 documents and 24 queries, including six multi-evidence
+questions. BM25+metadata Recall@1 falls to 0.7083. Deterministic rewrite+RRF
+does not improve Recall, MRR or citation accuracy and approximately doubles
+latency, so it is rejected for the mainline. The remaining rank-one gap now
+provides a measurable target for dense/hybrid candidates.
+
 ## Acceptance condition
 
 This ADR remains Proposed until a harder frozen set supports an equal-budget
