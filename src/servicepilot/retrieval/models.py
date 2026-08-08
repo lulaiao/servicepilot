@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class PolicyDocument(BaseModel):
@@ -29,10 +29,24 @@ class RetrievalQuery(BaseModel):
     query_id: str
     text: str
     gold_evidence_ids: tuple[str, ...]
+    required_evidence_ids: tuple[str, ...] = ()
+    supporting_evidence_ids: tuple[str, ...] = ()
+    contradictory_evidence_ids: tuple[str, ...] = ()
     policy_version: str
     business_type: str
     order_status: str
     city: str
+
+    @model_validator(mode="after")
+    def validate_evidence_labels(self) -> "RetrievalQuery":
+        required = set(self.required_evidence_ids or self.gold_evidence_ids)
+        supporting = set(self.supporting_evidence_ids)
+        contradictory = set(self.contradictory_evidence_ids)
+        if required != set(self.gold_evidence_ids):
+            raise ValueError("required evidence must equal gold evidence")
+        if required & supporting or required & contradictory or supporting & contradictory:
+            raise ValueError("required, supporting and contradictory evidence must be disjoint")
+        return self
 
 
 class SearchHit(BaseModel):

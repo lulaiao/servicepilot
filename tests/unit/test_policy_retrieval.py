@@ -21,6 +21,7 @@ CORPUS_PATH = ROOT / "data/policies/phase6_corpus.jsonl"
 QUERY_PATH = ROOT / "data/eval/phase6_retrieval_queries.jsonl"
 HARD_CORPUS_PATH = ROOT / "data/policies/phase6_hard_negatives.jsonl"
 HARD_QUERY_PATH = ROOT / "data/eval/phase6_retrieval_queries_hard.jsonl"
+DIAGNOSTIC_QUERY_PATH = ROOT / "data/eval/phase6_reranker_diagnostic_queries.jsonl"
 NOW = datetime(2026, 8, 8, tzinfo=UTC)
 
 
@@ -37,9 +38,7 @@ def test_frozen_retrieval_data_loads_with_hard_negatives() -> None:
 
 def test_metadata_filter_excludes_expired_and_wrong_city_documents() -> None:
     corpus = load_policy_corpus(CORPUS_PATH)
-    query = next(
-        item for item in load_retrieval_queries(QUERY_PATH) if item.query_id == "q10"
-    )
+    query = next(item for item in load_retrieval_queries(QUERY_PATH) if item.query_id == "q10")
 
     hits = BM25PolicyRetriever(corpus).search(query, now=NOW, top_k=10)
     identifiers = {item.evidence_id for item in hits}
@@ -52,10 +51,7 @@ def test_bm25_metrics_are_computed_from_ranked_evidence() -> None:
     corpus = load_policy_corpus(CORPUS_PATH)
     queries = load_retrieval_queries(QUERY_PATH)
     retriever = BM25PolicyRetriever(corpus)
-    results = {
-        query.query_id: retriever.search(query, now=NOW, top_k=3)
-        for query in queries
-    }
+    results = {query.query_id: retriever.search(query, now=NOW, top_k=3) for query in queries}
 
     metrics = evaluate_retrieval(queries, results, top_k=3)
 
@@ -68,9 +64,7 @@ def test_bm25_metrics_are_computed_from_ranked_evidence() -> None:
 
 def test_evidence_verifier_rejects_expired_and_missing_required_sections() -> None:
     corpus = load_policy_corpus(CORPUS_PATH)
-    query = next(
-        item for item in load_retrieval_queries(QUERY_PATH) if item.query_id == "q10"
-    )
+    query = next(item for item in load_retrieval_queries(QUERY_PATH) if item.query_id == "q10")
     verifier = EvidenceVerifier(corpus)
 
     verdict = verifier.verify(
@@ -108,12 +102,24 @@ def test_harder_dataset_adds_multi_evidence_and_active_hard_negatives() -> None:
     assert all(item.policy_version == "2026.1" for item in corpus)
 
 
-def test_query_rewrite_expands_colloquial_terms_deterministically() -> None:
-    query = next(
-        item
-        for item in load_retrieval_queries(HARD_QUERY_PATH)
-        if item.query_id == "q15"
+def test_diagnostic_dataset_has_reviewable_disjoint_evidence_labels() -> None:
+    queries = load_retrieval_queries(DIAGNOSTIC_QUERY_PATH)
+
+    assert len(queries) == 120
+    assert len({item.text for item in queries}) == 120
+    assert all(item.required_evidence_ids == item.gold_evidence_ids for item in queries)
+    assert all(
+        not (
+            set(item.required_evidence_ids) & set(item.supporting_evidence_ids)
+            or set(item.required_evidence_ids) & set(item.contradictory_evidence_ids)
+            or set(item.supporting_evidence_ids) & set(item.contradictory_evidence_ids)
+        )
+        for item in queries
     )
+
+
+def test_query_rewrite_expands_colloquial_terms_deterministically() -> None:
+    query = next(item for item in load_retrieval_queries(HARD_QUERY_PATH) if item.query_id == "q15")
 
     variants = DeterministicQueryRewriter().rewrite(query)
 
@@ -124,11 +130,7 @@ def test_query_rewrite_expands_colloquial_terms_deterministically() -> None:
 
 def test_multi_query_rrf_returns_unique_metadata_applicable_evidence() -> None:
     corpus = load_policy_corpus(CORPUS_PATH) + load_policy_corpus(HARD_CORPUS_PATH)
-    query = next(
-        item
-        for item in load_retrieval_queries(HARD_QUERY_PATH)
-        if item.query_id == "q18"
-    )
+    query = next(item for item in load_retrieval_queries(HARD_QUERY_PATH) if item.query_id == "q18")
     retriever = MultiQueryRRFRetriever(BM25PolicyRetriever(corpus))
 
     hits = retriever.search(query, now=NOW, top_k=3)
@@ -152,9 +154,7 @@ def test_hybrid_rrf_fuses_unique_results_without_gold_labels() -> None:
 
     assert len(fused) == len({item.evidence_id for item in fused})
     assert [item.rank for item in fused] == [1, 2, 3]
-    assert {item.evidence_id for item in fused} == {
-        item.evidence_id for item in lexical
-    }
+    assert {item.evidence_id for item in fused} == {item.evidence_id for item in lexical}
 
 
 def test_cross_encoder_ranking_is_deterministic_and_validated() -> None:
