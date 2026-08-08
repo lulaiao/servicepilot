@@ -69,7 +69,8 @@ async def main() -> None:
         task_successes += int(judge.task_success)
         base = observation_from_run(session, trajectory, judge)
         baseline_faults = {item.fault_class for item in monitor.evaluate(base).findings}
-        if baseline_faults:
+        natural_fault_seen = base.retries_used > 0 or bool(base.tool_error_codes)
+        if natural_fault_seen:
             natural_fault_trajectories += 1
             successful_recoveries += int(judge.task_success)
         gold = baseline_faults | set(injected_faults)
@@ -99,7 +100,8 @@ async def main() -> None:
                 "workload_id": current.scenario_id,
                 "base_scenario_id": scenario.scenario_id,
                 "injected": sorted(item.value for item in injected_faults),
-                "natural_faults": sorted(item.value for item in baseline_faults),
+                "natural_monitor_findings": sorted(item.value for item in baseline_faults),
+                "natural_retry_count": base.retries_used,
                 "gold": sorted(item.value for item in gold),
                 "predicted": sorted(item.value for item in sync_found),
                 "task_success": judge.task_success,
