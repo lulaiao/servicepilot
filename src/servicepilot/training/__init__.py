@@ -11,6 +11,7 @@ from servicepilot.training.data_models import (
 from servicepilot.training.expansion import (
     ExpandedScenarioFamily,
     build_phase9_sealed_families,
+    build_phase9_train_dev_families,
 )
 from servicepilot.training.readiness import (
     ExperimentReadiness,
@@ -58,4 +59,5 @@ __all__ = [
     "assistant_only_labels",
     "ExpandedScenarioFamily",
     "build_phase9_sealed_families",
+    "build_phase9_train_dev_families",
 ]
