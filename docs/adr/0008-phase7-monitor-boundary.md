@@ -33,10 +33,13 @@ class and thirteen clean controls. Revision `657d314` reaches precision 1.0,
 recall 1.0, and harmful-intervention rate 0.0. A real clean Harness trajectory
 also passes through the read-only adapter without a finding.
 
-These are implementation-calibration results, not evidence of production
-generalization. Phase 7 acceptance still requires at least 1,000 executable
-trajectories, mixed and correlated failures, recovery assertions, and measured
-sync/async overhead.
+The final gate executes 1,008 Harness trajectories with clean, single-fault,
+and mixed-fault boundary profiles. Sync/async parity is 1.0, all 308 naturally
+retried Gateway trajectories recover successfully, Monitor-caused state
+mutation count is zero, and P95 synchronous rule latency is 0.0251 ms.
+
+These remain internal deterministic workload results, not evidence of
+production generalization or natural fault incidence.
 
 ## Rejected alternatives
 
@@ -47,4 +50,3 @@ sync/async overhead.
   latency, nondeterminism, or a second model-safety surface.
 - Treating recommendations as direct enforcement is rejected because it blurs
   ownership between observation and execution controls.
-

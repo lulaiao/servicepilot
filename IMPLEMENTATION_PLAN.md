@@ -168,13 +168,12 @@ Decision: `docs/adr/0007-phase6-retrieval-components.md`.
 
 ## Phase 7 — monitors, recovery, and full evaluation
 
-Status: **in progress**. Phase 7A implements an advisory, least-privilege
-deterministic Monitor over redacted trace, Judge, and budget summaries. Its
-sync/async paths cover thirteen fault classes and pass a 26-case isolated
-calibration. Phase 7B must scale to at least 1,000 executable trajectories with
-mixed faults, recovery assertions, overhead metrics, and a no-Monitor ablation.
+Status: **complete**. The advisory, least-privilege deterministic Monitor covers
+thirteen fault classes. Its frozen 1,008-trajectory workload includes clean,
+single-fault and mixed-fault profiles, 308 successful natural retry recoveries,
+sync/async parity, latency measurement, and zero Monitor-caused state changes.
 
-Progress: `experiments/reports/phase7_progress.md`.
+Evidence: `experiments/reports/phase7_acceptance.md`.
 Decision: `docs/adr/0008-phase7-monitor-boundary.md`.
 
 ## Phase 8 — trajectory data loop

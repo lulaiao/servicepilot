@@ -1,0 +1,29 @@
+{
+  "experiment": "phase7_executable_monitor_eval",
+  "code_revision": "2f1314a42d31ab7d10559964a7a843929e608723",
+  "seed": 20260808,
+  "trajectory_count": 1008,
+  "base_scenario_count": 36,
+  "fault_profile_count": 28,
+  "schedule_sha256": "bd37f5705b1842006a9ab9fdf66e16068591fe88b504ab84647f3dae512df2c7",
+  "report": "artifacts/reports/phase7_executable_monitor_eval.json",
+  "report_sha256": "b5511faa171a97ba4b3b70320177be2c1b5fcf088d73300832a16c96d9155bcd",
+  "metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "sync_async_parity_rate": 1.0,
+    "monitor_state_mutation_count": 0,
+    "authoritative_task_success_rate": 1.0,
+    "natural_fault_trajectory_count": 308,
+    "successful_recovery_count": 308,
+    "mean_sync_monitor_latency_ms": 0.0145,
+    "p95_sync_monitor_latency_ms": 0.0251,
+    "mean_async_roundtrip_latency_ms": 0.0172
+  },
+  "decision": {
+    "phase7_status": "accepted",
+    "monitor_authority": "advisory_only",
+    "next_phase": "phase8_trajectory_data_loop"
+  }
+}
+

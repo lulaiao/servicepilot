@@ -1,7 +1,7 @@
 # Phase 7 progress: least-privilege deterministic Monitor
 
 Date: 2026-08-08  
-Status: Phase 7A complete; Phase 7 overall in progress
+Status: Superseded by `phase7_acceptance.md`
 
 ## Completed
 
@@ -42,9 +42,5 @@ recommendations on these clean controls, not production traffic.
 
 ## Next gate
 
-Phase 7B will create a reproducible generator and manifest for at least 1,000
-executable trajectories. It will include clean runs, all fault classes,
-multi-fault combinations, sync/async parity, recovery-state assertions,
-latency/backpressure metrics, and no-Monitor ablation. Phase 7 is not accepted
-until that gate passes.
-
+This gate has passed with 1,008 executable trajectories. Final results and
+limitations are recorded in `experiments/reports/phase7_acceptance.md`.
