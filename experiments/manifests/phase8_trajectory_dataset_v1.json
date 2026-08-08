@@ -1,0 +1,29 @@
+{
+  "schema_version": "servicepilot-trajectory-v1",
+  "generator_version": "phase8-data-v1",
+  "code_revision": "a1d452eb64bafad7ec23873ea69f924f214e9e2e",
+  "seed": 20260808,
+  "source_scenario_sha256": "ea33cccc96eec2a877f204c00441ad73a6b8545784f39e98cdd55a8081e2cead",
+  "output": "data/generated/phase8_trajectories.jsonl",
+  "output_sha256": "ec191ef328da99675a0944a2a432649098fc96a726dc1c93565897674eb54503",
+  "raw_manifest": "artifacts/reports/phase8_trajectory_manifest.json",
+  "raw_manifest_sha256": "9298d48c24a4b3098e56ed3619c2233785f178137a9c383071d51a96cf6f84a7",
+  "raw_record_count": 36,
+  "deduplicated_record_count": 36,
+  "duplicate_count": 0,
+  "redaction_count": 0,
+  "split_counts": {
+    "train": 24,
+    "dev": 6,
+    "sealed_test": 6
+  },
+  "split_family_counts": {
+    "train": 8,
+    "dev": 2,
+    "sealed_test": 2
+  },
+  "cross_split_family_overlap_count": 0,
+  "cross_split_content_overlap_count": 0,
+  "phase8_status": "in_progress"
+}
+

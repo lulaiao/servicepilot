@@ -50,3 +50,13 @@ deterministically in code and addressed by SHA256.
 completion claim and final message. Tool events preserve arguments and the full
 typed Gateway result. Generated JSONL is excluded from Git but reproducible from
 the tracked catalog, code revision and manifest.
+
+## Phase 8 canonical training record
+
+`servicepilot-trajectory-v1` is the privacy-safe intermediate representation.
+It contains redacted events, source provenance, authoritative outcome labels,
+scenario-family and content hashes, split, and redaction count. Family splitting
+precedes export; exact post-redaction duplicates are removed, and any family or
+content overlap across train, development, and sealed test fails the export.
+Model-specific SFT or preference records must be derived from this canonical
+record and retain its `record_id` as provenance.

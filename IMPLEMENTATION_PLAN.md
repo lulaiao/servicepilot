@@ -178,8 +178,15 @@ Decision: `docs/adr/0008-phase7-monitor-boundary.md`.
 
 ## Phase 8 — trajectory data loop
 
-Status: pending. Add redaction, deduplication, leakage-resistant splits,
-manifests, hard-negative mining, and reproducible SFT/preference exports.
+Status: **in progress**. Phase 8A adds the versioned canonical trajectory
+Schema, recursive privacy redaction, exact deduplication, family-level
+leakage-resistant splitting and Manifest-addressed JSONL export. The first 36
+real Harness trajectories split 24/6/6 with zero family or content overlap.
+Hard-negative mining, near-duplicate/privacy audits, and SFT/preference exports
+remain Phase 8B gates.
+
+Progress: `experiments/reports/phase8_progress.md`.
+Decision: `docs/adr/0009-phase8-trajectory-data-boundary.md`.
 
 ## Phase 9 — SFT and GRPO
 
