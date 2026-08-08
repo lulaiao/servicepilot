@@ -1,0 +1,19 @@
+{
+  "experiment": "phase4b_harness_ablations",
+  "code_revision": "569e655",
+  "scenario_count": 36,
+  "scenario_sha256": "ea33cccc96eec2a877f204c00441ad73a6b8545784f39e98cdd55a8081e2cead",
+  "judge": "DeterministicJudge",
+  "report": {
+    "path": "artifacts/reports/phase4b_harness_ablations.json",
+    "sha256": "db5fa8a5ba1642b8649d1159cd3b5ccab034e779b8dcd9cf085235b3cb12f81d"
+  },
+  "ablations": [
+    "tool_budget_12_vs_1",
+    "input_guardrail_enabled_vs_disabled",
+    "observation_rerouting_enabled_vs_disabled",
+    "authoritative_external_verifier_vs_agent_claim_only"
+  ],
+  "gpu_required": false,
+  "reason_gpu_not_used": "All variants use the selected deterministic MVP policy; GPU inference would change the controlled variable."
+}

@@ -1,7 +1,7 @@
 # Phase 4B Harness Formalization progress
 
 Date: 2026-08-08  
-Status: milestone 1 complete; Phase 4B acceptance not yet passed
+Status: milestone 2 complete; Phase 4B acceptance not yet passed
 
 ## Delivered
 
@@ -12,9 +12,11 @@ Status: milestone 1 complete; Phase 4B acceptance not yet passed
 - Isolated repository and Gateway assembly for every evaluation trial.
 - Compatibility wrappers that keep the Phase 3 evaluation entry points stable.
 - Verify-only deterministic replay that has no business-write dependency.
-- Completed-session idempotent resume and explicit rejection of unsupported
-  running-checkpoint resume.
+- Completed-session idempotent resume plus safe interrupted-session resume from
+  persisted tool steps.
 - Ordered input guardrails and append-only, fingerprinted Harness events.
+- Transparent tool interception with started/committed step checkpoints and
+  cached-result replay keyed by tool, argument fingerprint and call ordinal.
 
 ## Identical-budget comparison
 
@@ -42,6 +44,46 @@ The final formal run produced 36 completed sessions, 72 runtime events and 36
 verify-only replay sessions. Unit tests additionally assert that replay does
 not change the repository audit-event count.
 
+## Lost-response recovery evidence
+
+The high-risk recovery test injects `LOST_RESPONSE` for
+`create_refund_request`. The domain write commits on the first Gateway attempt;
+the same idempotency key makes the Gateway retry return the original result on
+attempt two. The Dispatcher then persists that result and a simulated process
+interruption occurs before the Agent receives it.
+
+On resume, the Agent control flow restarts but the Dispatcher returns the
+persisted tool result instead of calling the Gateway again. Assertions prove
+there is still exactly one refund, the Repository audit-event sequence is
+unchanged after resume, and the session reaches `COMPLETED`. This evidence is
+implemented by
+`test_resume_after_checkpointed_high_risk_write_does_not_repeat_refund`.
+
+## Four Harness ablations
+
+All ablations use the same 36 scenarios and deterministic Judge.
+
+| Ablation | Result | Interpretation |
+| --- | --- | --- |
+| Tool budget 12 → 1 | success 1.0000 → 0.3611 | One call cannot complete preview/confirm/write workflows. |
+| Input guardrail off | enabled blocks 1/1 injection before tools; disabled policy remains safe | The policy is a redundant second boundary. |
+| Observation rerouting off | 56 → 0 reroute events; success unchanged at 1.0000 | Current fixed catalog shows observability but no quality gain. |
+| External Verifier off | claim-only disagrees on 4/36 and falsely rejects four valid outcomes | Agent prose is not an authoritative success signal. |
+
+Reproduction:
+
+```text
+PYTHONPATH=src .venv/bin/python scripts/run_phase4b_harness_ablations.py \
+  --code-revision 569e655 \
+  --output artifacts/reports/phase4b_harness_ablations.json
+```
+
+- Ablation report SHA-256:
+  `db5fa8a5ba1642b8649d1159cd3b5ccab034e779b8dcd9cf085235b3cb12f81d`
+- Tracked manifest: `experiments/manifests/phase4b_harness_ablations.json`
+- GPU required: no. These controlled deterministic-policy ablations are CPU
+  experiments; adding the 7B model would change the tested variable.
+
 ## Reproduction and provenance
 
 ```text
@@ -63,16 +105,13 @@ PYTHONPATH=src .venv/bin/python scripts/run_phase4b_harness_eval.py \
 
 ## Open acceptance work
 
-- Add tool-intercepting dispatch so tool guardrails and per-step checkpoints
-  surround every material tool call.
-- Resume an interrupted running session without repeating a committed
-  high-risk write; completed-session resume alone is insufficient.
 - Wire and test explicit termination/recovery for turn, tool, retry, time and
   token budgets, missing confirmation and version conflict.
-- Run the required tool-budget, input-guardrail, observation-rerouting and
-  external-Verifier ablations.
+- Apply TOOL-stage guardrail decisions to intercepted calls; the interception
+  and checkpoints exist, but only INPUT and OUTPUT decisions are enforced.
 - Add failure isolation and resumable experiment manifests; bounded
   concurrency remains deferred until it has a measured need.
 
-ADR 0005 therefore remains **Proposed**, and the project must not claim full
-Phase 4B acceptance or durable tool-level recovery yet.
+ADR 0005 therefore remains **Proposed** until the remaining budget/termination
+and TOOL-guardrail paths pass. The narrow lost-response recovery claim above is
+now supported; a general durable-runtime claim is not.

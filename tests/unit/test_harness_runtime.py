@@ -25,6 +25,7 @@ from servicepilot.harness.runtime import (
     AgentRuntimeHarness,
     UnsupportedResumeError,
 )
+from servicepilot.mcp_gateway.faults import FaultKind
 
 
 class BlockingGuardrail:
@@ -134,6 +135,12 @@ async def test_resume_after_checkpointed_high_risk_write_does_not_repeat_refund(
         item
         for item in build_phase3_scenarios()
         if item.intent is Intent.PARTIAL_REFUND and not item.faults
+    ).model_copy(
+        update={
+            "faults": {
+                "create_refund_request": (FaultKind.LOST_RESPONSE,)
+            }
+        }
     )
     config = config_for(scenario.scenario_id)
     store = InMemoryCheckpointStore()
@@ -160,6 +167,8 @@ async def test_resume_after_checkpointed_high_risk_write_does_not_repeat_refund(
         and step.status.value == "committed"
     ]
     assert len(committed_writes) == 1
+    assert committed_writes[0].result is not None
+    assert committed_writes[0].result["attempts"] == 2
 
     resumed = await runtime.run(
         scenario=scenario,

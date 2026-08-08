@@ -95,12 +95,15 @@ exist:
 
 ## Implementation status
 
-Milestone 1 implements both typed boundaries, isolated evaluation trials,
+Milestones 1–2 implement both typed boundaries, isolated evaluation trials,
 fingerprinted events, verify-only zero-write replay and completed-session
 resume. The direct-loop comparison retains identical Judge outcomes with
 0.2736 ms mean measured overhead per scenario across ten paired repetitions.
 
-This is not durable tool-level resume: an in-progress checkpoint is rejected
-until tool interception, per-step persistence and committed-write recovery are
-implemented and tested. ADR 0005 remains Proposed. Current evidence is in
+Tool calls are now intercepted and checkpointed before and after dispatch. A
+lost-response refund test proves that a persisted committed result is replayed
+after interruption without another write. The four required ablations are also
+recorded. This is a narrow tested recovery boundary, not a general durable
+runtime claim; full budget termination and TOOL guardrail enforcement remain
+open. ADR 0005 remains Proposed. Current evidence is in
 `experiments/reports/phase4b_harness_progress.md`.
