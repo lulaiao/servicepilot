@@ -14,6 +14,7 @@ from servicepilot.retrieval import (
     rank_by_cross_encoder,
     reciprocal_rank_fusion,
 )
+from servicepilot.retrieval.lexical import is_applicable
 from servicepilot.retrieval.models import SearchHit
 
 ROOT = Path(__file__).parents[2]
@@ -22,6 +23,7 @@ QUERY_PATH = ROOT / "data/eval/phase6_retrieval_queries.jsonl"
 HARD_CORPUS_PATH = ROOT / "data/policies/phase6_hard_negatives.jsonl"
 HARD_QUERY_PATH = ROOT / "data/eval/phase6_retrieval_queries_hard.jsonl"
 DIAGNOSTIC_QUERY_PATH = ROOT / "data/eval/phase6_reranker_diagnostic_queries.jsonl"
+SEALED_QUERY_PATH = ROOT / "data/eval/phase6_retrieval_sealed.jsonl"
 NOW = datetime(2026, 8, 8, tzinfo=UTC)
 
 
@@ -116,6 +118,21 @@ def test_diagnostic_dataset_has_reviewable_disjoint_evidence_labels() -> None:
         )
         for item in queries
     )
+
+
+def test_sealed_retrieval_set_is_unique_and_required_evidence_is_applicable() -> None:
+    corpus = load_policy_corpus(CORPUS_PATH) + load_policy_corpus(HARD_CORPUS_PATH)
+    documents = {item.evidence_id: item for item in corpus}
+    queries = load_retrieval_queries(SEALED_QUERY_PATH)
+
+    assert len(queries) == 36
+    assert len({item.text for item in queries}) == 36
+    for query in queries:
+        assert query.required_evidence_ids == query.gold_evidence_ids
+        assert all(
+            is_applicable(documents[evidence_id], query, NOW)
+            for evidence_id in query.required_evidence_ids
+        )
 
 
 def test_query_rewrite_expands_colloquial_terms_deterministically() -> None:
