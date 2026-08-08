@@ -158,11 +158,15 @@ Decision: `docs/adr/0006-layered-memory-boundary.md`.
 
 ## Phase 6 — hybrid retrieval and evidence verification
 
-Status: pending. Build gold-evidence datasets before BM25+dense retrieval,
-metadata filters, query expansion, reranking, context completion, and evidence
-sufficiency checks.
+Status: **in progress**. Phase 6A froze an initial gold-evidence corpus/query
+set, added BM25, metadata filters, ranking metrics and deterministic evidence
+sufficiency checks. Dense and reranker models remain `TBD`; the initial set is
+too small/easy to justify them.
 Freeze the corpus and compare lexical-only, dense-only, hybrid, and reranked
 variants under the same latency and retrieval budget before accepting components.
+
+Progress: `experiments/reports/phase6_progress.md`.
+Proposed decision: `docs/adr/0007-phase6-retrieval-components.md`.
 
 ## Phase 7 — monitors, recovery, and full evaluation
 

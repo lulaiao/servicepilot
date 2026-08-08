@@ -1,0 +1,16 @@
+{
+  "experiment": "phase6_lexical_and_metadata_baseline",
+  "code_revision": "11c9587",
+  "corpus_count": 10,
+  "query_count": 12,
+  "top_k": 3,
+  "corpus_sha256": "d7fc54d070a6fc0b2bcf142513a473e2f33044d2d2cad3e7ee47e02960160128",
+  "query_sha256": "d95e05513bdad1c90b5d4c2f0ea0eaaf5c584e8e66a422a49681c29f4965066e",
+  "report": {
+    "path": "artifacts/reports/phase6_lexical_eval.json",
+    "sha256": "58b92c8d8f5b2b9e804321472c485f83bd301e70659298c093b1974c7ef0680c"
+  },
+  "dense_model": "TBD",
+  "reranker_model": "TBD",
+  "sealed_test_used": false
+}
