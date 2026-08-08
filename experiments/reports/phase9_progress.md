@@ -1,7 +1,7 @@
 # Phase 9 progress: training readiness audit
 
 Date: 2026-08-08  
-Status: Phase 9A complete; training not started
+Status: Phase 9B protocol and 7B dry-run complete; formal SFT not started
 
 ## Outcome
 
@@ -97,3 +97,23 @@ units rather than individually hashed across train/dev.
 The readiness re-audit now allows LoRA SFT. Outcome and process GRPO remain
 blocked solely by missing reward unit, distribution, and reward-hacking audits.
 No formal 7B training has started.
+
+## Phase 9B frozen protocol and 7B feasibility
+
+The formal experiment inputs are now frozen in
+`experiments/configs/phase9_qwen25_7b_lora_sft_v1.json`: exact model revision,
+SFT data hash, four seeds, BF16 LoRA configuration, training limits, checkpoint
+rules, dev selection order, termination conditions, and a sealed-test-once
+policy. Protocol validation rejects fewer than four unique seeds, selection on
+sealed data, inconsistent split counts, and unsafe checkpoint ordering.
+
+An offline Qwen2.5-7B-Instruct dry-run on GPU 4 completed one optimizer step
+over 734 input tokens, including 102 assistant-labelled tokens. Loss was finite
+at 3.719796; the step took 1.4888 seconds; peak allocated/reserved VRAM was
+20,892.78/21,594 MiB. Both the adapter and optimizer state reloaded, with
+5,046,272 trainable parameters restored.
+
+This removes the 7B memory and resume uncertainty without making a quality
+claim. Formal SFT has not run, and the sealed split has not been inspected for
+model selection. The next gate is the predeclared four-seed experiment against
+the untrained 7B and rule-Agent baselines under the same executable Judge.

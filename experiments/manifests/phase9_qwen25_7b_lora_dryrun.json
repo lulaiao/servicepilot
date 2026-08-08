@@ -1,0 +1,22 @@
+{
+  "schema_version": "servicepilot-training-run-v1",
+  "experiment": "phase9_qwen25_7b_lora_dryrun",
+  "claim_scope": "pipeline_validation_only_not_model_quality",
+  "code_revision": "8e3536bde44797a17d18906c5842920526fa3a6a",
+  "protocol": "experiments/configs/phase9_qwen25_7b_lora_sft_v1.json",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset": "data/generated/phase9_expanded_sft_v2.jsonl",
+  "dataset_sha256": "57c8c8da02b6b02bbd5126d04bff3b244336330184495dabf801c32c4afe7963",
+  "seed": 20260808,
+  "optimizer_steps": 1,
+  "input_tokens": 734,
+  "labelled_assistant_tokens": 102,
+  "loss": 3.719796,
+  "peak_vram_allocated_mib": 20892.78,
+  "peak_vram_reserved_mib": 21594.0,
+  "optimizer_step_seconds": 1.4888,
+  "checkpoint_reload_succeeded": true,
+  "raw_report": "artifacts/reports/phase9_lora_dryrun_qwen7b.json",
+  "raw_report_sha256": "e2927cce11e73e5655f0742d147c2a7d513a3aeb85c3ea2a06d4badcd47cfcf4",
+  "passed": true
+}

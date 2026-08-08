@@ -194,13 +194,17 @@ Status: **in progress; LoRA SFT allowed, GRPO blocked**. Phase 9A confirms RTX A
 CUDA/BF16 compatibility and sufficient disk. Transformers+PEFT is the
 provisional minimal LoRA path and TRL remains a candidate loop. The expanded
 dataset passes the 696/126/120 SFT and semantic-family gates, so a frozen LoRA
-SFT experiment may proceed. GRPO remains blocked by missing reward unit,
+SFT experiment may proceed. The Phase 9B protocol is frozen and a real 7B BF16
+one-step dry-run passed checkpoint/optimizer resume at 20.89 GiB peak allocated
+VRAM; this is pipeline evidence, not a quality result. GRPO remains blocked by missing reward unit,
 distribution, and hacking audits.
 
 Progress: `experiments/reports/phase9_progress.md`.
 Decision: `docs/adr/0010-phase9-training-stack-and-model-gates.md`.
 Data expansion: `docs/phase9_data_expansion_plan.md`.
 Expansion manifest: `experiments/manifests/phase9_scenario_expansion_v1.json`.
+SFT protocol decision: `docs/adr/0011-phase9-7b-lora-sft-protocol.md`.
+7B dry-run manifest: `experiments/manifests/phase9_qwen25_7b_lora_dryrun.json`.
 
 ## Phase 10 — open-source delivery
 
