@@ -207,3 +207,10 @@ checkpoint, multi-intent success improved from 0/3 to 3/3, overall task success
 from 0.8056 to 0.8889, and False-success from 0.1667 to 0.0833. Four of 36
 classifications were overridden. High-risk error remained 0.0556, so formal
 training and sealed evaluation remain blocked.
+
+An independent Output Completion Verifier now requires successful tool evidence
+for every deterministic required intent before allowing a completion claim. On
+the same checkpoint and scenarios it preserved 0.8889 task success and 3/3
+multi-intent success while reducing False-success from 0.0833 to zero. The four
+real failures remain visible. High-risk error is still 0.0556, so the next gate
+is pre-dispatch intent/action alignment rather than more training.

@@ -220,6 +220,8 @@ SFT v2 screening decision: **stopped before four-seed training**. Evidence:
 SFT v3 completion-guard ablation:
 `experiments/manifests/phase9_sft_v3_completion_guard_ablation.json` and
 `docs/adr/0015-phase9-multi-intent-completion-guard.md`.
+Output completion evidence:
+`experiments/manifests/phase9_sft_v3_output_completion_verifier.json`.
 
 ## Phase 10 — open-source delivery
 

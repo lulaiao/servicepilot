@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from servicepilot.agents.completion import OutputCompletionVerifier
 from servicepilot.agents.rule_baseline import RuleBasedSingleAgent
 from servicepilot.eval.models import Intent, TraceEvent, TraceRole
 from servicepilot.eval.simulator import FSMUserSimulator
@@ -27,10 +28,35 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
         self.state: DialogueState | None = None
         self.observation_rerouting = observation_rerouting
         self.safety_override_count = 0
+        self.completion_verifier = OutputCompletionVerifier()
+        self.completion_required_intents: tuple[Intent, ...] = ()
+
+    async def run(
+        self,
+        scenario: Any,
+        simulator: FSMUserSimulator,
+        gateway: ReliableToolGateway,
+    ) -> Any:
+        trajectory = await super().run(scenario, simulator, gateway)
+        decision = self.completion_verifier.verify(
+            self.completion_required_intents, trajectory.events
+        )
+        if trajectory.claimed_success and not decision.allowed:
+            return trajectory.model_copy(
+                update={
+                    "claimed_success": False,
+                    "final_message": "处理未完成，缺少必要的成功工具证据。",
+                }
+            )
+        return trajectory
 
     def detect_intents(self, text: str) -> tuple[Intent, ...]:
         intent = self.classifier.classify(text)
         safety = self.safety_classifier.classify(text)
+        self.completion_required_intents = (
+            safety.primary_intent,
+            *safety.secondary_intents,
+        )
         # A narrow deterministic guardrail protects conjunctions and prompt
         # injection. It does not replace ordinary learned single-intent routing.
         if safety.injection_detected or safety.secondary_intents:
