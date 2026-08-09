@@ -36,7 +36,8 @@ def test_full_training_requires_resources_data_and_reward_audits() -> None:
         reward_unit_tests_passed=True,
         reward_distribution_audited=True,
         reward_hacking_audited=True,
-        grpo_deployment_contract_validated=True,
+        outcome_grpo_deployment_contract_validated=True,
+        process_grpo_deployment_contract_validated=True,
     )
 
     assert all(item.allowed for item in assess_training_readiness(ready))
@@ -55,6 +56,22 @@ def test_reward_audit_alone_does_not_authorize_objective_mismatch() -> None:
     results = {item.experiment: item for item in assess_training_readiness(audited)}
     assert not results[TrainingExperiment.OUTCOME_GRPO].allowed
     assert (
-        "grpo_deployment_contract_not_validated"
+        "outcome_grpo_deployment_contract_not_validated"
         in results[TrainingExperiment.OUTCOME_GRPO].failed_gates
     )
+
+
+def test_outcome_contract_does_not_unlock_process_grpo() -> None:
+    audited = current_audit(
+        train_sft_records=500,
+        dev_sft_records=100,
+        sealed_sft_records=100,
+        train_preference_records=500,
+        reward_unit_tests_passed=True,
+        reward_distribution_audited=True,
+        reward_hacking_audited=True,
+        outcome_grpo_deployment_contract_validated=True,
+    )
+    results = {item.experiment: item for item in assess_training_readiness(audited)}
+    assert results[TrainingExperiment.OUTCOME_GRPO].allowed
+    assert not results[TrainingExperiment.PROCESS_GRPO].allowed

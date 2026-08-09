@@ -275,3 +275,24 @@ were the other would repeat the v1 objective/deployment mismatch. A new explicit
 readiness gate now requires an on-policy executable reward adapter for the
 deployed classifier before even a smoke run. GPU availability does not override
 this correctness gate.
+
+## Outcome GRPO on-policy smoke stopped on zero variance
+
+The new on-policy adapter preserves the deployed classifier Prompt and Schema,
+then executes sampled predictions through the routed Agent, tools, and
+deterministic Judge. Thirty-two model-owned scenarios passed contract audit;
+four Guardrail-owned multi-intent/injection scenarios were excluded. Across 96
+gold, invalid, and valid-confusable executions, minimum confusable reward margin
+was 2.25 with no zero or reversed groups. Guardrail rescues and classifier
+contract mismatches receive explicit negative credit.
+
+The frozen one-step 7B smoke completed without OOM and loaded zero sealed
+records. It performed four executable reward evaluations in 5.3032 seconds with
+34,624.78 MiB peak allocated VRAM. However, the two samples within each prompt
+were byte-identical, all rewards were 1.75, reward standard deviation was zero,
+and loss was effectively zero. The smoke therefore failed its predeclared
+variance gate and is not evidence of RL improvement.
+
+The next action is an inference-only generation diversity diagnostic on frozen
+hard dev prompts. Training retries remain prohibited until useful reward
+variance is demonstrated without depending on malformed JSON.

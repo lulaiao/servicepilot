@@ -23,6 +23,13 @@ from servicepilot.training.expansion import (
     build_phase9_train_dev_families_v2,
     expand_family_variants,
 )
+from servicepilot.training.on_policy import (
+    ExecutableClassifierReward,
+    OnPolicyRewardEvidence,
+    classifier_grpo_examples,
+    gold_completion,
+    model_owned_scenarios,
+)
 from servicepilot.training.protocol import (
     LoraProtocol,
     SFTBudget,
@@ -104,6 +111,11 @@ __all__ = [
     "LoraProtocol",
     "SFTBudget",
     "SFTExperimentProtocol",
+    "ExecutableClassifierReward",
+    "OnPolicyRewardEvidence",
+    "classifier_grpo_examples",
+    "gold_completion",
+    "model_owned_scenarios",
     "ExpandedScenarioFamily",
     "ExpandedScenarioVariant",
     "build_phase9_sealed_families",

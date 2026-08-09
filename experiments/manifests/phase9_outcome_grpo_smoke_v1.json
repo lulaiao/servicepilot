@@ -1,0 +1,39 @@
+{
+  "protocol": "experiments/configs/phase9_qwen25_7b_outcome_grpo_smoke_v1.json",
+  "protocol_version": "phase9-qwen25-7b-outcome-grpo-smoke-v1",
+  "claim_scope": "pipeline_validation_only",
+  "on_policy_contract": {
+    "scenario_count": 32,
+    "guardrail_owned_excluded_count": 4,
+    "execution_count": 96,
+    "gold_task_success_count": 32,
+    "confusable_margin_min": 2.25,
+    "zero_margin_count": 0,
+    "contract_validated": true,
+    "raw_report": "artifacts/reports/phase9_on_policy_contract_audit_v1.json",
+    "raw_report_sha256": "1f05f1ba8379350fc01030122ff0c9f4eb08ab593358d24333530fdc34f92e1d"
+  },
+  "smoke": {
+    "base_model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "sft_adapter": "artifacts/checkpoints/phase9_classifier_sft_v3_seed20260808/checkpoint-100",
+    "steps": 1,
+    "num_generations": 2,
+    "executable_reward_evaluations": 4,
+    "training_loss": 4.368630257545192e-08,
+    "reward_mean": 1.75,
+    "reward_std": 0.0,
+    "peak_vram_allocated_mib": 34624.78,
+    "wall_time_seconds": 5.3032,
+    "sealed_records_loaded": 0,
+    "raw_report": "artifacts/reports/phase9_outcome_grpo_smoke_v1.json",
+    "raw_report_sha256": "62d93b41f234bdccb0231f459962ef8deb62fa928e588d6abbda2ed7dceb8db6"
+  },
+  "gates": {
+    "finite_training_loss": true,
+    "four_executable_reward_evaluations": true,
+    "nonzero_group_reward_std": false,
+    "no_cuda_oom": true
+  },
+  "smoke_passed": false,
+  "next_gate": "frozen inference-only generation diversity diagnostic before any retry"
+}

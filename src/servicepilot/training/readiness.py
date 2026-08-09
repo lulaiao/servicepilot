@@ -25,7 +25,8 @@ class TrainingReadinessInput(BaseModel):
     reward_unit_tests_passed: bool = False
     reward_distribution_audited: bool = False
     reward_hacking_audited: bool = False
-    grpo_deployment_contract_validated: bool = False
+    outcome_grpo_deployment_contract_validated: bool = False
+    process_grpo_deployment_contract_validated: bool = False
 
 
 class ExperimentReadiness(BaseModel):
@@ -66,8 +67,12 @@ def assess_training_readiness(
         grpo_failures.append("reward_distribution_audit_missing")
     if not current.reward_hacking_audited:
         grpo_failures.append("reward_hacking_audit_missing")
-    if not current.grpo_deployment_contract_validated:
-        grpo_failures.append("grpo_deployment_contract_not_validated")
+    outcome_grpo_failures = list(grpo_failures)
+    if not current.outcome_grpo_deployment_contract_validated:
+        outcome_grpo_failures.append("outcome_grpo_deployment_contract_not_validated")
+    process_grpo_failures = list(grpo_failures)
+    if not current.process_grpo_deployment_contract_validated:
+        process_grpo_failures.append("process_grpo_deployment_contract_not_validated")
 
     return (
         ExperimentReadiness(
@@ -82,12 +87,12 @@ def assess_training_readiness(
         ),
         ExperimentReadiness(
             experiment=TrainingExperiment.OUTCOME_GRPO,
-            allowed=not grpo_failures,
-            failed_gates=tuple(grpo_failures),
+            allowed=not outcome_grpo_failures,
+            failed_gates=tuple(outcome_grpo_failures),
         ),
         ExperimentReadiness(
             experiment=TrainingExperiment.PROCESS_GRPO,
-            allowed=not grpo_failures,
-            failed_gates=tuple(grpo_failures),
+            allowed=not process_grpo_failures,
+            failed_gates=tuple(process_grpo_failures),
         ),
     )
