@@ -320,3 +320,22 @@ All v3 smoke gates passed with zero sealed records loaded.
 This validates only the one-step GRPO pipeline. A quality claim still requires
 a predeclared multi-step protocol, repeated seeds, pre/post executable dev
 comparison, safety termination gates, and later one-time sealed evaluation.
+
+## Bounded outcome GRPO screen frozen
+
+A single-seed 10-step screening protocol is frozen before execution. It uses six
+hard dev prompts, temperature 0.9, two generations, constant `5e-7` learning
+rate, and zero sealed records. Unsafe/False-success reward gates or batch Schema
+validity below 0.75 terminate before an optimizer update; KL above 0.05 stops
+subsequent steps.
+
+Completion additionally requires all 10 steps, overall Schema validity at least
+0.95, at least three non-zero-reward-variance steps, runtime-error rate no more
+than 0.25, KL within limit, and a measurable LoRA parameter update. A passing
+adapter must still match or beat the selected SFT baseline on the unchanged
+36-scenario executable dev Harness before repeated seeds are authorized.
+
+Execution is currently pending: GPU 2 acquired an unrelated active workload
+after the protocol was frozen, and the remaining cards were also active. The
+runner, JSON protocol, Ruff, mypy, and full CPU regression are ready; no
+parameter will be changed when a GPU becomes available.

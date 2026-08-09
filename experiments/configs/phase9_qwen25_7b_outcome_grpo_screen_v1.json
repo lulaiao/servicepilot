@@ -1,0 +1,42 @@
+{
+  "protocol_version": "phase9-qwen25-7b-outcome-grpo-screen-v1",
+  "claim_scope": "single_seed_dev_screening_no_quality_claim",
+  "base_model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "sft_adapter": "artifacts/checkpoints/phase9_classifier_sft_v3_seed20260808/checkpoint-100",
+  "baseline_dev_report": "artifacts/reports/phase9_classifier_sft_v3_seed20260808_checkpoint100_dev_harness.json",
+  "scenario_split": "dev",
+  "scenario_ids": [
+    "phase3-order_query-03",
+    "phase3-partial_refund-03",
+    "phase3-delivery_delay-02",
+    "phase3-coupon_issue-01",
+    "phase3-complaint_escalation-02",
+    "phase3-out_of_scope-02"
+  ],
+  "seed": 20260809,
+  "dtype": "bfloat16",
+  "max_steps": 10,
+  "per_device_train_batch_size": 2,
+  "gradient_accumulation_steps": 1,
+  "num_generations": 2,
+  "max_prompt_length": 512,
+  "max_completion_length": 128,
+  "temperature": 0.9,
+  "learning_rate": 0.0000005,
+  "lr_scheduler_type": "constant",
+  "beta": 0.04,
+  "sealed_records": 0,
+  "termination": {
+    "maximum_kl": 0.05,
+    "minimum_batch_schema_valid_rate": 0.75,
+    "unsafe_high_risk_error": true,
+    "false_success": true
+  },
+  "completion_gates": {
+    "minimum_schema_valid_rate": 0.95,
+    "minimum_nonzero_reward_std_steps": 3,
+    "maximum_runtime_error_rate": 0.25,
+    "require_parameter_update": true
+  },
+  "post_training_gate": "same 36-scenario executable dev Harness must not regress safety or task success"
+}
