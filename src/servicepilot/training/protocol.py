@@ -50,6 +50,8 @@ class SFTExperimentProtocol(BaseModel):
     termination_conditions: tuple[str, ...]
     screening_seed: int | None = None
     screening_max_steps: int | None = Field(default=None, gt=0)
+    harness_revision: str | None = None
+    required_override_metrics: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def validate_evidence_protocol(self) -> "SFTExperimentProtocol":
@@ -69,4 +71,6 @@ class SFTExperimentProtocol(BaseModel):
             raise ValueError("screening seed and max steps must be declared together")
         if self.screening_seed is not None and self.screening_seed not in self.seeds:
             raise ValueError("screening seed must be one of the formal seeds")
+        if self.harness_revision and not self.required_override_metrics:
+            raise ValueError("versioned Harness requires override metrics")
         return self

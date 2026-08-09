@@ -31,3 +31,11 @@ def test_protocol_screening_must_use_a_formal_seed() -> None:
 
     with pytest.raises(ValueError, match="screening seed"):
         SFTExperimentProtocol.model_validate(raw)
+
+
+def test_versioned_harness_requires_override_metrics() -> None:
+    raw = json.loads(PROTOCOL.read_text())
+    raw["harness_revision"] = "abc123"
+
+    with pytest.raises(ValueError, match="override metrics"):
+        SFTExperimentProtocol.model_validate(raw)
