@@ -1,0 +1,40 @@
+{
+  "protocol_version": "phase9-qwen25-7b-outcome-grpo-smoke-v3",
+  "claim_scope": "pipeline_validation_only",
+  "base_model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "sft_adapter": "artifacts/checkpoints/phase9_classifier_sft_v3_seed20260808/checkpoint-100",
+  "sft_seed": 20260808,
+  "sft_checkpoint_step": 100,
+  "scenario_source": "servicepilot.eval.catalog.build_phase3_scenarios",
+  "scenario_split": "dev",
+  "scenario_ids": [
+    "phase3-partial_refund-03",
+    "phase3-delivery_delay-02"
+  ],
+  "selection_evidence": "phase9-grpo-diversity-diagnostic-v1 temperature 0.9",
+  "guardrail_owned_scenarios_excluded": true,
+  "reward": "ExecutableClassifierReward",
+  "reward_contract": "deployed classifier JSON -> RoutedRuleAgent -> tools -> DeterministicJudge",
+  "seed": 20260809,
+  "dtype": "bfloat16",
+  "max_steps": 1,
+  "per_device_train_batch_size": 2,
+  "gradient_accumulation_steps": 1,
+  "num_generations": 2,
+  "max_prompt_length": 512,
+  "max_completion_length": 128,
+  "temperature": 0.9,
+  "learning_rate": 0.000001,
+  "lr_scheduler_type": "constant",
+  "beta": 0.04,
+  "sealed_records": 0,
+  "success_gates": [
+    "finite_training_loss",
+    "four_executable_reward_evaluations",
+    "nonzero_group_reward_std",
+    "nonzero_learning_rate",
+    "nonzero_gradient_norm",
+    "nonzero_parameter_delta",
+    "no_cuda_oom"
+  ]
+}

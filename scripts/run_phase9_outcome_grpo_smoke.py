@@ -46,7 +46,12 @@ def main() -> None:
     torch.cuda.reset_peak_memory_stats()
 
     scenarios = model_owned_scenarios(build_phase3_scenarios())
-    selected_scenarios = (scenarios[0], scenarios[len(scenarios) // 2])
+    by_id = {item.scenario_id: item for item in scenarios}
+    selected_scenarios = (
+        tuple(by_id[item] for item in protocol["scenario_ids"])
+        if protocol.get("scenario_ids")
+        else (scenarios[0], scenarios[len(scenarios) // 2])
+    )
     examples = classifier_grpo_examples(selected_scenarios)
     dataset = Dataset.from_list(list(examples))
     reward_adapter = ExecutableClassifierReward(selected_scenarios)
@@ -77,6 +82,11 @@ def main() -> None:
         protocol["sft_adapter"],
         is_trainable=True,
     )
+    trainable_before = {
+        name: parameter.detach().float().cpu().clone()
+        for name, parameter in model.named_parameters()
+        if parameter.requires_grad
+    }
     training_args = GRPOConfig(
         output_dir=str(args.output_dir),
         max_steps=protocol["max_steps"],
@@ -87,6 +97,7 @@ def main() -> None:
         max_completion_length=protocol["max_completion_length"],
         temperature=protocol["temperature"],
         learning_rate=protocol["learning_rate"],
+        lr_scheduler_type=protocol.get("lr_scheduler_type", "linear"),
         beta=protocol["beta"],
         bf16=True,
         logging_steps=1,
@@ -114,10 +125,29 @@ def main() -> None:
         if row.get("reward_std") is not None
     ]
     train_loss = float(result.training_loss)
+    learning_rates = [
+        float(row["learning_rate"])
+        for row in log_history
+        if row.get("learning_rate") is not None
+    ]
+    gradient_norms = [
+        float(row["grad_norm"])
+        for row in log_history
+        if row.get("grad_norm") is not None
+    ]
+    parameter_delta_squared = 0.0
+    for name, parameter in model.named_parameters():
+        if name in trainable_before:
+            difference = parameter.detach().float().cpu() - trainable_before[name]
+            parameter_delta_squared += float((difference * difference).sum())
+    parameter_delta_l2 = math.sqrt(parameter_delta_squared)
     gates = {
         "finite_training_loss": math.isfinite(train_loss),
         "four_executable_reward_evaluations": len(reward_adapter.evidence) == 4,
         "nonzero_group_reward_std": bool(reward_stds) and max(reward_stds) > 0,
+        "nonzero_learning_rate": bool(learning_rates) and max(learning_rates) > 0,
+        "nonzero_gradient_norm": bool(gradient_norms) and max(gradient_norms) > 0,
+        "nonzero_parameter_delta": parameter_delta_l2 > 0,
         "no_cuda_oom": True,
     }
     payload = {
@@ -129,6 +159,7 @@ def main() -> None:
         "sealed_records_loaded": 0,
         "train_scenario_ids": [item.scenario_id for item in selected_scenarios],
         "training_loss": train_loss,
+        "parameter_delta_l2": parameter_delta_l2,
         "log_history": log_history,
         "reward_evidence": [item.model_dump(mode="json") for item in reward_adapter.evidence],
         "resources": {

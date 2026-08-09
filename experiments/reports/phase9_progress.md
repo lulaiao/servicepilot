@@ -296,3 +296,27 @@ variance gate and is not evidence of RL improvement.
 The next action is an inference-only generation diversity diagnostic on frozen
 hard dev prompts. Training retries remain prohibited until useful reward
 variance is demonstrated without depending on malformed JSON.
+
+## Diversity diagnostic and GRPO optimizer smoke pass
+
+The frozen inference-only diagnostic evaluated temperatures 0.9, 1.1, and 1.3
+over six hard dev prompts and 72 total completions. Temperature 0.9 was the
+smallest setting to pass: Schema validity 1.0, two valid non-zero-reward groups,
+and zero unsafe hard-gate rate. Temperature 1.3 increased unique completions but
+reduced Schema validity to 0.9583, so it was not preferred.
+
+Smoke v2 then produced reward standard deviation 1.9445 and a non-zero gradient,
+but forensic inspection found learning rate zero from the one-step linear
+scheduler. It validated reward and backward mechanics but not an optimizer
+update and was rejected despite its original gates.
+
+Smoke v3 used the same frozen prompts and temperature with a constant `1e-6`
+learning rate plus explicit optimizer gates. It recorded gradient norm 0.5830,
+LoRA parameter delta L2 0.002235, KL 0.00007585, and 34,798.67 MiB peak allocated
+VRAM. All four completions were Schema-valid; rewards included successful
+execution, Guardrail rescue, and a safely captured runtime-error trajectory.
+All v3 smoke gates passed with zero sealed records loaded.
+
+This validates only the one-step GRPO pipeline. A quality claim still requires
+a predeclared multi-step protocol, repeated seeds, pre/post executable dev
+comparison, safety termination gates, and later one-time sealed evaluation.

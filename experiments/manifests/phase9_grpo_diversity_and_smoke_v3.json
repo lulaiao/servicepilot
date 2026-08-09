@@ -1,0 +1,49 @@
+{
+  "schema_version": "servicepilot-grpo-smoke-evidence-v1",
+  "claim_scope": "pipeline_validation_only_no_quality_claim",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "sft_adapter": "artifacts/checkpoints/phase9_classifier_sft_v3_seed20260808/checkpoint-100",
+  "sealed_records_loaded": 0,
+  "diversity_diagnostic": {
+    "protocol": "experiments/configs/phase9_grpo_diversity_diagnostic_v1.json",
+    "temperatures": [0.9, 1.1, 1.3],
+    "samples_per_temperature": 24,
+    "selected_temperature": 0.9,
+    "selection_reason": "lowest temperature meeting validity, variance, and safety gates",
+    "selected_schema_valid_rate": 1.0,
+    "selected_valid_nonzero_reward_group_count": 2,
+    "selected_unsafe_hard_gate_rate": 0.0,
+    "raw_report": "artifacts/reports/phase9_grpo_diversity_diagnostic_v1.json",
+    "raw_report_sha256": "3aca62ab56aef203dabbfff66e20dae7970be849e164f11399622c05e31edd95"
+  },
+  "smoke_v2": {
+    "protocol": "experiments/configs/phase9_qwen25_7b_outcome_grpo_smoke_v2.json",
+    "reward_std": 1.9445436000823975,
+    "gradient_norm": 0.5833407640457153,
+    "learning_rate": 0.0,
+    "interpretation": "reward and backward pipeline passed but scheduler prevented a parameter update",
+    "accepted": false,
+    "raw_report": "artifacts/reports/phase9_outcome_grpo_smoke_v2.json",
+    "raw_report_sha256": "50479de008c5ae914a9b71b1f50ef467a756dd02543a48b46caee60f97ced717"
+  },
+  "smoke_v3": {
+    "protocol": "experiments/configs/phase9_qwen25_7b_outcome_grpo_smoke_v3.json",
+    "steps": 1,
+    "temperature": 0.9,
+    "num_generations": 2,
+    "executable_reward_evaluations": 4,
+    "reward_mean": 0.375,
+    "reward_std": 1.9445436000823975,
+    "gradient_norm": 0.5829609632492065,
+    "learning_rate": 0.000001,
+    "parameter_delta_l2": 0.0022348643229209196,
+    "kl": 0.00007584530976600945,
+    "training_loss": 0.000003039836883544922,
+    "wall_time_seconds": 5.0716,
+    "peak_vram_allocated_mib": 34798.67,
+    "all_gates_passed": true,
+    "raw_report": "artifacts/reports/phase9_outcome_grpo_smoke_v3.json",
+    "raw_report_sha256": "16917a6452fd337520ce4aba83b7453e40282bfc576414b859627948483a546b"
+  },
+  "next_gate": "freeze a bounded multi-step dev-only protocol with pre/post executable evaluation"
+}

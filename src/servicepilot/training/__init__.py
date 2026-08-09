@@ -15,6 +15,11 @@ from servicepilot.training.data_models import (
     TrajectoryDatasetManifest,
     TrajectoryTrainingRecord,
 )
+from servicepilot.training.diversity import (
+    DiversitySample,
+    DiversitySummary,
+    summarize_diversity,
+)
 from servicepilot.training.expansion import (
     ExpandedScenarioFamily,
     ExpandedScenarioVariant,
@@ -122,4 +127,7 @@ __all__ = [
     "build_phase9_train_dev_families",
     "build_phase9_train_dev_families_v2",
     "expand_family_variants",
+    "DiversitySample",
+    "DiversitySummary",
+    "summarize_diversity",
 ]
