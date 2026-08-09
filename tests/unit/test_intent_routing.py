@@ -1,3 +1,4 @@
+from servicepilot.agents.routed_baseline import RoutedRuleAgent
 from servicepilot.eval.models import Intent
 from servicepilot.eval.routing_dataset import DatasetSplit, build_routing_dataset
 from servicepilot.eval.routing_metrics import evaluate_extractor
@@ -6,6 +7,8 @@ from servicepilot.routing.intent_rules import RuleIntentClassifier
 from servicepilot.routing.models import (
     AgentRole,
     DialogueState,
+    IntentResult,
+    RiskLevel,
     ToolObservation,
 )
 from servicepilot.routing.router import StatefulRouter
@@ -13,6 +16,17 @@ from servicepilot.routing.structured_output import (
     build_intent_prompt,
     parse_intent_output,
 )
+
+
+class SingleIntentOnlyClassifier:
+    def classify(self, text: str) -> IntentResult:
+        return IntentResult(
+            primary_intent=Intent.DELIVERY_DELAY,
+            slots={},
+            risk_level=RiskLevel.MEDIUM,
+            confidence=0.9,
+            needs_clarification=True,
+        )
 
 
 def test_frozen_routing_dataset_has_disjoint_family_splits() -> None:
@@ -56,6 +70,15 @@ def test_classifier_preserves_multi_intent_and_blocks_injection() -> None:
     assert injection.primary_intent is Intent.OUT_OF_SCOPE
     assert injection.injection_detected is True
     assert injection.risk_level.value == "high"
+
+
+def test_routed_agent_guardrail_restores_multi_intent_completion_contract() -> None:
+    agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
+
+    intents = agent.detect_intents("配送超时，还要投诉转人工")
+
+    assert intents == (Intent.DELIVERY_DELAY, Intent.COMPLAINT_ESCALATION)
+    assert agent.safety_override_count == 1
 
 
 def test_rule_component_metrics_are_computable_on_every_split() -> None:

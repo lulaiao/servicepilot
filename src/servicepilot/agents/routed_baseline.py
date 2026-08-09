@@ -22,12 +22,20 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
         observation_rerouting: bool = True,
     ) -> None:
         self.classifier = classifier or RuleIntentClassifier()
+        self.safety_classifier = RuleIntentClassifier()
         self.router = StatefulRouter()
         self.state: DialogueState | None = None
         self.observation_rerouting = observation_rerouting
+        self.safety_override_count = 0
 
     def detect_intents(self, text: str) -> tuple[Intent, ...]:
         intent = self.classifier.classify(text)
+        safety = self.safety_classifier.classify(text)
+        # A narrow deterministic guardrail protects conjunctions and prompt
+        # injection. It does not replace ordinary learned single-intent routing.
+        if safety.injection_detected or safety.secondary_intents:
+            intent = safety
+            self.safety_override_count += 1
         self.state = DialogueState(intent=intent)
         return (intent.primary_intent, *intent.secondary_intents)
 

@@ -211,6 +211,7 @@ async def main_async() -> None:
     model_trajectories: list[Trajectory] = []
     model_results: list[JudgeResult] = []
     scenario_latencies: list[float] = []
+    safety_override_count = 0
     for index, scenario in enumerate(scenarios, start=1):
         print(
             f"scenario {index}/{len(scenarios)}: {scenario.scenario_id}",
@@ -219,9 +220,10 @@ async def main_async() -> None:
         )
         torch.cuda.synchronize()
         started = time.perf_counter()
+        agent = RoutedRuleAgent(classifier=classifier)
         try:
             trajectory, result, _ = await run_scenario(
-                scenario, agent=RoutedRuleAgent(classifier=classifier)
+                scenario, agent=agent
             )
         except Exception as exc:
             # A learned policy can select an action whose required scenario slot
@@ -246,6 +248,7 @@ async def main_async() -> None:
                 turns=0,
                 tool_calls=0,
             )
+        safety_override_count += agent.safety_override_count
         torch.cuda.synchronize()
         scenario_latencies.append(time.perf_counter() - started)
         model_trajectories.append(trajectory)
@@ -332,6 +335,7 @@ async def main_async() -> None:
                 "AGENT_RUNTIME_ERROR" in item.failure_reasons
                 for item in model_results
             ),
+            "deterministic_safety_override_count": safety_override_count,
         },
     }
     learned = payload["learned_extractor_agent"]

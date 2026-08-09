@@ -198,3 +198,12 @@ below the untrained 7B baseline of 0.8889, while False-success rose to 0.1667.
 All three multi-intent scenarios failed. Four-seed v2 training and sealed
 evaluation are therefore not authorized. The next remediation must target
 multi-intent execution and honest non-completion before another GPU run.
+
+## SFT v3 completion-guard ablation
+
+A narrow deterministic guard now overrides the learned classifier only for
+explicit multi-intent conjunctions and Prompt Injection. With the same v2
+checkpoint, multi-intent success improved from 0/3 to 3/3, overall task success
+from 0.8056 to 0.8889, and False-success from 0.1667 to 0.0833. Four of 36
+classifications were overridden. High-risk error remained 0.0556, so formal
+training and sealed evaluation remain blocked.

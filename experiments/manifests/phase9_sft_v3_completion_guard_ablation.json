@@ -1,0 +1,12 @@
+{
+  "schema_version": "servicepilot-harness-ablation-v1",
+  "experiment": "sft_v3_multi_intent_completion_guard",
+  "base_checkpoint": "phase9_classifier_sft_v2_screening_seed20260808/checkpoint-25",
+  "scenario_count": 36,
+  "before": {"task_success_rate": 0.8056, "false_success_rate": 0.1667, "high_risk_error_rate": 0.0556, "multi_intent_success_rate": 0.0},
+  "after": {"task_success_rate": 0.8889, "false_success_rate": 0.0833, "high_risk_error_rate": 0.0556, "multi_intent_success_rate": 1.0, "deterministic_safety_override_count": 4},
+  "raw_report_sha256": "ce4447f6b14ab69b3830fcfd47a45a82ab2a4201e60b711ec6ed8a8a609a3329",
+  "formal_training_allowed": false,
+  "reason": "zero_high_risk_error_gate_not_met",
+  "passed": true
+}
