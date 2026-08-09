@@ -29,6 +29,17 @@ class SingleIntentOnlyClassifier:
         )
 
 
+class WrongLowRiskClassifier:
+    def classify(self, text: str) -> IntentResult:
+        return IntentResult(
+            primary_intent=Intent.DELIVERY_DELAY,
+            slots={},
+            risk_level=RiskLevel.MEDIUM,
+            confidence=0.9,
+            needs_clarification=True,
+        )
+
+
 def test_frozen_routing_dataset_has_disjoint_family_splits() -> None:
     examples = build_routing_dataset()
 
@@ -79,6 +90,15 @@ def test_routed_agent_guardrail_restores_multi_intent_completion_contract() -> N
 
     assert intents == (Intent.DELIVERY_DELAY, Intent.COMPLAINT_ESCALATION)
     assert agent.safety_override_count == 1
+
+
+def test_tool_alignment_guard_prevents_high_risk_intent_downgrade() -> None:
+    agent = RoutedRuleAgent(classifier=WrongLowRiskClassifier())
+
+    intents = agent.detect_intents("少了一件商品，按缺失商品处理")
+
+    assert intents == (Intent.MISSING_OR_WRONG_ITEM,)
+    assert agent.tool_alignment_override_count == 1
 
 
 def test_rule_component_metrics_are_computable_on_every_split() -> None:

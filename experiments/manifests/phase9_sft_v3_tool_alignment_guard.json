@@ -1,0 +1,15 @@
+{
+  "schema_version": "servicepilot-harness-ablation-v1",
+  "experiment": "high_risk_intent_action_alignment_guard",
+  "scenario_count": 36,
+  "before": {"task_success_rate": 0.8889, "false_success_rate": 0.0, "high_risk_error_rate": 0.0556},
+  "after": {"task_success_rate": 0.9167, "false_success_rate": 0.0, "policy_violation_rate": 0.0278, "high_risk_error_rate": 0.0, "schema_valid_rate": 1.0},
+  "deterministic_multi_intent_or_injection_overrides": 4,
+  "high_risk_alignment_overrides": 2,
+  "remaining_failure_scenarios": ["phase3-order_query-03", "phase3-coupon_issue-01", "phase3-complaint_escalation-02"],
+  "raw_report_sha256": "c551df92101802aed077ee9e6e429e5d4ba48793b848ad8aa77df3c1bcb35bab",
+  "zero_false_success_gate_passed": true,
+  "zero_high_risk_gate_passed": true,
+  "task_success_above_untrained_7b": true,
+  "formal_v3_experiment_allowed": true
+}

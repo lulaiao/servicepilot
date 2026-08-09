@@ -214,3 +214,10 @@ the same checkpoint and scenarios it preserved 0.8889 task success and 3/3
 multi-intent success while reducing False-success from 0.0833 to zero. The four
 real failures remain visible. High-risk error is still 0.0556, so the next gate
 is pre-dispatch intent/action alignment rather than more training.
+
+The high-risk intent/action alignment guard now fail-safe reroutes only when
+deterministic high-risk evidence disagrees with the learned model. Two such
+overrides reduced unsafe high-risk error from 0.0556 to zero, raised task success
+from 0.8889 to 0.9167, and preserved zero False-success. The combined v3 Harness
+therefore passes the dev safety/utility gate; a new repeated protocol may be
+frozen, but the screening checkpoint is still not eligible for sealed testing.

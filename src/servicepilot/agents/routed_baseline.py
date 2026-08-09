@@ -9,7 +9,7 @@ from servicepilot.eval.simulator import FSMUserSimulator
 from servicepilot.mcp_gateway.gateway import ReliableToolGateway, ToolResult
 from servicepilot.routing.classifiers import IntentClassifier
 from servicepilot.routing.intent_rules import RuleIntentClassifier
-from servicepilot.routing.models import DialogueState, ToolObservation
+from servicepilot.routing.models import DialogueState, RiskLevel, ToolObservation
 from servicepilot.routing.router import ROLE_INSTRUCTIONS, StatefulRouter
 
 
@@ -28,6 +28,7 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
         self.state: DialogueState | None = None
         self.observation_rerouting = observation_rerouting
         self.safety_override_count = 0
+        self.tool_alignment_override_count = 0
         self.completion_verifier = OutputCompletionVerifier()
         self.completion_required_intents: tuple[Intent, ...] = ()
 
@@ -62,6 +63,14 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
         if safety.injection_detected or safety.secondary_intents:
             intent = safety
             self.safety_override_count += 1
+        elif (
+            safety.risk_level is RiskLevel.HIGH
+            and intent.primary_intent is not safety.primary_intent
+        ):
+            # Fail-safe reroute before any tool call: a learned low/medium-risk
+            # classification cannot downgrade deterministic high-risk evidence.
+            intent = safety
+            self.tool_alignment_override_count += 1
         self.state = DialogueState(intent=intent)
         return (intent.primary_intent, *intent.secondary_intents)
 

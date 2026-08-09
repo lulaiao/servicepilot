@@ -222,6 +222,9 @@ SFT v3 completion-guard ablation:
 `docs/adr/0015-phase9-multi-intent-completion-guard.md`.
 Output completion evidence:
 `experiments/manifests/phase9_sft_v3_output_completion_verifier.json`.
+High-risk alignment evidence:
+`experiments/manifests/phase9_sft_v3_tool_alignment_guard.json` and
+`docs/adr/0016-phase9-high-risk-tool-alignment.md`.
 
 ## Phase 10 — open-source delivery
 

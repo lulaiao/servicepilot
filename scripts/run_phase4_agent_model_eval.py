@@ -212,6 +212,7 @@ async def main_async() -> None:
     model_results: list[JudgeResult] = []
     scenario_latencies: list[float] = []
     safety_override_count = 0
+    tool_alignment_override_count = 0
     for index, scenario in enumerate(scenarios, start=1):
         print(
             f"scenario {index}/{len(scenarios)}: {scenario.scenario_id}",
@@ -249,6 +250,7 @@ async def main_async() -> None:
                 tool_calls=0,
             )
         safety_override_count += agent.safety_override_count
+        tool_alignment_override_count += agent.tool_alignment_override_count
         torch.cuda.synchronize()
         scenario_latencies.append(time.perf_counter() - started)
         model_trajectories.append(trajectory)
@@ -336,6 +338,7 @@ async def main_async() -> None:
                 for item in model_results
             ),
             "deterministic_safety_override_count": safety_override_count,
+            "tool_alignment_override_count": tool_alignment_override_count,
         },
     }
     learned = payload["learned_extractor_agent"]
