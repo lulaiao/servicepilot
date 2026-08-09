@@ -4,6 +4,7 @@
 import argparse
 import asyncio
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -15,16 +16,30 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gpus", nargs="+", required=True)
     parser.add_argument("--seeds", nargs="+", type=int, required=True)
     parser.add_argument("--steps", nargs="+", type=int, required=True)
-    return parser.parse_args()
+    parser.add_argument(
+        "--artifact-prefix",
+        default="phase9_sft",
+        help="Artifact stem before '_seed' (for example phase9_classifier_sft_v3).",
+    )
+    args = parser.parse_args()
+    if re.fullmatch(r"[A-Za-z0-9_-]+", args.artifact_prefix) is None:
+        parser.error("--artifact-prefix may contain only letters, digits, '_' and '-'")
+    return args
 
 
 async def run_job(
-    gpu: str, model_path: Path, revision: str, seed: int, step: int
+    gpu: str,
+    model_path: Path,
+    revision: str,
+    artifact_prefix: str,
+    seed: int,
+    step: int,
 ) -> None:
-    checkpoint = Path(f"artifacts/checkpoints/phase9_sft_seed{seed}/checkpoint-{step}")
-    report = Path(f"artifacts/reports/phase9_sft_seed{seed}_checkpoint{step}_dev_harness.json")
-    trace = Path(f"artifacts/traces/phase9_sft_seed{seed}_checkpoint{step}_dev_harness.json")
-    log = Path(f"artifacts/logs/phase9_sft_seed{seed}_checkpoint{step}_dev_harness.log")
+    run_stem = f"{artifact_prefix}_seed{seed}"
+    checkpoint = Path(f"artifacts/checkpoints/{run_stem}/checkpoint-{step}")
+    report = Path(f"artifacts/reports/{run_stem}_checkpoint{step}_dev_harness.json")
+    trace = Path(f"artifacts/traces/{run_stem}_checkpoint{step}_dev_harness.json")
+    log = Path(f"artifacts/logs/{run_stem}_checkpoint{step}_dev_harness.log")
     if report.exists():
         print(f"skip existing seed={seed} step={step}", flush=True)
         return
@@ -78,6 +93,7 @@ async def worker(
     queue: asyncio.Queue[tuple[int, int]],
     model_path: Path,
     revision: str,
+    artifact_prefix: str,
     failures: list[str],
 ) -> None:
     while not queue.empty():
@@ -86,7 +102,7 @@ async def worker(
         except asyncio.QueueEmpty:
             return
         try:
-            await run_job(gpu, model_path, revision, seed, step)
+            await run_job(gpu, model_path, revision, artifact_prefix, seed, step)
         except RuntimeError as exc:
             failures.append(str(exc))
             print(f"failed {exc}", flush=True)
@@ -102,7 +118,17 @@ async def main_async() -> None:
             queue.put_nowait((seed, step))
     failures: list[str] = []
     await asyncio.gather(
-        *(worker(gpu, queue, args.model_path, args.revision, failures) for gpu in args.gpus)
+        *(
+            worker(
+                gpu,
+                queue,
+                args.model_path,
+                args.revision,
+                args.artifact_prefix,
+                failures,
+            )
+            for gpu in args.gpus
+        )
     )
     if failures:
         raise RuntimeError("; ".join(failures))

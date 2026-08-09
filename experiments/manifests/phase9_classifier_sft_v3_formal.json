@@ -1,0 +1,57 @@
+{
+  "protocol": "experiments/configs/phase9_qwen25_7b_classifier_lora_sft_v3.json",
+  "protocol_version": "phase9-qwen25-7b-classifier-lora-sft-v3",
+  "harness_revision": "27d1b17",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset_sha256": "3104486b256907684bd0b4b3c4436af38a3b7a5232127f49fa870762372fb3a5",
+  "seeds": [20260808, 20260809, 20260810, 20260811],
+  "candidate_steps": [25, 50, 75, 100, 125],
+  "selected_steps": {
+    "20260808": 100,
+    "20260809": 75,
+    "20260810": 125,
+    "20260811": 75
+  },
+  "selection_split": "dev",
+  "selection_order": [
+    "zero_high_risk_error",
+    "highest_executable_dev_task_success",
+    "lowest_dev_loss"
+  ],
+  "sealed_execution_count": 4,
+  "selected_dev_mean": {
+    "executable_task_success": 0.9444,
+    "final_state_accuracy": 0.9444,
+    "policy_violation_rate": 0.0,
+    "false_success_rate": 0.0,
+    "unsafe_high_risk_error_rate": 0.0,
+    "schema_valid_rate": 1.0,
+    "mean_scenario_latency_seconds": 1.9008,
+    "p95_scenario_latency_seconds": 2.142275,
+    "peak_vram_allocated_mib": 14626.2
+  },
+  "selected_sealed_mean": {
+    "executable_task_success": 0.9444,
+    "final_state_accuracy": 0.9444,
+    "policy_violation_rate": 0.0,
+    "false_success_rate": 0.0,
+    "unsafe_high_risk_error_rate": 0.0,
+    "schema_valid_rate": 1.0,
+    "mean_scenario_latency_seconds": 1.974325,
+    "p95_scenario_latency_seconds": 2.314,
+    "peak_vram_allocated_mib": 14626.2
+  },
+  "raw_artifact_patterns": {
+    "training": "artifacts/reports/phase9_classifier_sft_v3_seed{seed}.json",
+    "dev_harness": "artifacts/reports/phase9_classifier_sft_v3_seed{seed}_checkpoint{step}_dev_harness.json",
+    "selection": "artifacts/reports/phase9_classifier_sft_v3_seed{seed}_selection.json",
+    "sealed_harness": "artifacts/reports/phase9_classifier_sft_v3_seed{seed}_selected_sealed_harness.json"
+  },
+  "sealed_report_sha256": {
+    "20260808": "876146add6273cbe3e1d207e8e0fdb5f57c44e05b451188c5f792a1b5e1eba24",
+    "20260809": "b260cc46c7145f33e1638bc05b156be200378f477b061251cd626780e4d0baf1",
+    "20260810": "a8ecf71aac0b2092794b033010827a786588d7547a9f28fe9796fb7c8cfa3a84",
+    "20260811": "07d3643ef7bce69ccdc27b904ac2f3ab6e8d46621083e853708c1333d7c52e53"
+  },
+  "claim_scope": "four_seed_classifier_sft_v3_under_frozen_executable_harness"
+}

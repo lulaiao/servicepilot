@@ -221,3 +221,35 @@ overrides reduced unsafe high-risk error from 0.0556 to zero, raised task succes
 from 0.8889 to 0.9167, and preserved zero False-success. The combined v3 Harness
 therefore passes the dev safety/utility gate; a new repeated protocol may be
 frozen, but the screening checkpoint is still not eligible for sealed testing.
+
+## Formal classifier SFT v3 complete
+
+Four frozen seeds each completed 141 optimizer steps over the same 756-record
+training split and produced checkpoints at steps 25, 50, 75, 100, and 125. The
+trainer loaded zero sealed records. Mean training runtime was 452.71 seconds and
+peak allocated training VRAM was approximately 16,428 MiB.
+
+All 20 checkpoints then ran the same 36-scenario executable dev Harness. The
+safety-first selector chose steps 100, 75, 125, and 75 for seeds 20260808 through
+20260811. This variation is direct evidence that minimum dev loss is not a
+sufficient Agent checkpoint criterion. One non-selected checkpoint had a 0.0556
+high-risk error rate and was excluded by the safety gate.
+
+Across the four selected checkpoints, executable dev task success and final-state
+accuracy were both 0.9444 with zero cross-seed standard deviation. Policy
+violation, False-success, and unsafe high-risk error were all zero; Schema
+validity was 1.0. Mean scenario latency was 1.9008 seconds, mean P95 was 2.1423
+seconds, and peak inference VRAM was 14,626.2 MiB.
+
+After selection and without further tuning, each selected checkpoint was run
+exactly once on `sealed_test`. Sealed task success and final-state accuracy were
+again 0.9444 for all four seeds, with zero policy violation, False-success, and
+unsafe high-risk error. Mean scenario latency was 1.9743 seconds and mean P95 was
+2.3140 seconds. Raw artifact locations, report hashes, revisions, and aggregate
+metrics are recorded in
+`experiments/manifests/phase9_classifier_sft_v3_formal.json`.
+
+This completes the formal SFT v3 evidence gate. The result supports a bounded
+claim about the frozen 36-scenario Harness; it is not evidence of production
+generalization. The next Phase 9 gate is reward audit and a small GRPO smoke
+experiment, not immediate large-scale RL training.
