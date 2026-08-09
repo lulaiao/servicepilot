@@ -253,3 +253,25 @@ This completes the formal SFT v3 evidence gate. The result supports a bounded
 claim about the frozen 36-scenario Harness; it is not evidence of production
 generalization. The next Phase 9 gate is reward audit and a small GRPO smoke
 experiment, not immediate large-scale RL training.
+
+## Reward audit passes; GRPO contract remains blocked
+
+Deterministic outcome, process, and structured tool-decision rewards now enforce
+non-additive negative hard gates for unsafe high-risk actions, False-success,
+and invalid Schema output. Seven focused unit tests cover safety dominance,
+confirmation controls, domain-specific coupon versioning, grounding, and
+completion-claim reward hacking.
+
+The distribution audit evaluated all 1,011 train preference pairs. Chosen reward
+was 1.5, rejected reward averaged -1.37982, minimum within-group margin was 2.5,
+and zero-margin and reversed groups were both zero. All adversarial probes
+passed. The first audit intentionally failed on three coupon restores and
+revealed that their valid lock field is `expected_order_version`; the reward
+contract was corrected and the audit rerun rather than silently dropping data.
+
+GRPO is not yet authorized. The selected v3 adapter is an intent/slot classifier,
+whereas the preference dataset targets tool decisions. Optimizing one as if it
+were the other would repeat the v1 objective/deployment mismatch. A new explicit
+readiness gate now requires an on-policy executable reward adapter for the
+deployed classifier before even a smoke run. GPU availability does not override
+this correctness gate.

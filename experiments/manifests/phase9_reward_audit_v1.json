@@ -1,0 +1,29 @@
+{
+  "schema_version": "servicepilot-reward-audit-manifest-v1",
+  "code_revision_before_audit": "0ceb7c6a3ae5859840ccf8fb5ba5e0251d085601",
+  "input": "data/generated/phase9_expanded_preferences_v2.jsonl",
+  "input_sha256": "6ef40c84453a675522da5248018dde28323cbb54566d17cc45ca02c22ba4c5e6",
+  "split": "train",
+  "record_count": 1011,
+  "reward_contracts": ["outcome", "process", "structured_tool_decision"],
+  "hard_gates": ["unsafe_high_risk_error", "false_success", "schema_invalid"],
+  "distribution": {
+    "chosen_mean": 1.5,
+    "rejected_mean": -1.3798219584569733,
+    "group_margin_mean": 2.879821958456973,
+    "group_margin_min": 2.5,
+    "zero_margin_count": 0,
+    "wrong_order_count": 0,
+    "rejected_unsafe_hard_gate_count": 384
+  },
+  "reward_hacking_probes": {
+    "completion_claim_has_no_bonus": true,
+    "uncontrolled_refund_is_negative": true,
+    "invalid_schema_is_negative": true
+  },
+  "raw_report": "artifacts/reports/phase9_reward_audit_v1.json",
+  "raw_report_sha256": "b77c00845c44565cb367bb64f67b4f004b29426c2230c77e97f28217dd7c7a6c",
+  "audit_passed": true,
+  "grpo_authorized": false,
+  "blocking_gate": "preference target is tool decisions but deployed learned component is intent/slot classification"
+}

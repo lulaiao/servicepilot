@@ -36,6 +36,25 @@ def test_full_training_requires_resources_data_and_reward_audits() -> None:
         reward_unit_tests_passed=True,
         reward_distribution_audited=True,
         reward_hacking_audited=True,
+        grpo_deployment_contract_validated=True,
     )
 
     assert all(item.allowed for item in assess_training_readiness(ready))
+
+
+def test_reward_audit_alone_does_not_authorize_objective_mismatch() -> None:
+    audited = current_audit(
+        train_sft_records=500,
+        dev_sft_records=100,
+        sealed_sft_records=100,
+        train_preference_records=500,
+        reward_unit_tests_passed=True,
+        reward_distribution_audited=True,
+        reward_hacking_audited=True,
+    )
+    results = {item.experiment: item for item in assess_training_readiness(audited)}
+    assert not results[TrainingExperiment.OUTCOME_GRPO].allowed
+    assert (
+        "grpo_deployment_contract_not_validated"
+        in results[TrainingExperiment.OUTCOME_GRPO].failed_gates
+    )

@@ -25,6 +25,7 @@ class TrainingReadinessInput(BaseModel):
     reward_unit_tests_passed: bool = False
     reward_distribution_audited: bool = False
     reward_hacking_audited: bool = False
+    grpo_deployment_contract_validated: bool = False
 
 
 class ExperimentReadiness(BaseModel):
@@ -65,6 +66,8 @@ def assess_training_readiness(
         grpo_failures.append("reward_distribution_audit_missing")
     if not current.reward_hacking_audited:
         grpo_failures.append("reward_hacking_audit_missing")
+    if not current.grpo_deployment_contract_validated:
+        grpo_failures.append("grpo_deployment_contract_not_validated")
 
     return (
         ExperimentReadiness(

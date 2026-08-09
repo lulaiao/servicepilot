@@ -34,6 +34,14 @@ from servicepilot.training.readiness import (
     TrainingReadinessInput,
     assess_training_readiness,
 )
+from servicepilot.training.reward import (
+    OutcomeRewardSignals,
+    ProcessRewardSignals,
+    RewardResult,
+    decision_reward,
+    outcome_reward,
+    process_reward,
+)
 from servicepilot.training.sft_run import (
     CheckpointEvidence,
     SeedRunState,
@@ -82,6 +90,12 @@ __all__ = [
     "TrainingExperiment",
     "TrainingReadinessInput",
     "assess_training_readiness",
+    "OutcomeRewardSignals",
+    "ProcessRewardSignals",
+    "RewardResult",
+    "decision_reward",
+    "outcome_reward",
+    "process_reward",
     "assistant_only_labels",
     "CheckpointEvidence",
     "SeedRunState",
