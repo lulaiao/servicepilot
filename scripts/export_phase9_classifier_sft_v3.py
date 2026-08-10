@@ -54,6 +54,21 @@ def main() -> None:
     expected = {"train": 804, "dev": 150, "sealed_test": 120}
     if split_counts != expected:
         raise RuntimeError(f"unexpected split counts: {split_counts}")
+    content_by_split = {
+        split: {
+            hashlib.sha256(item.messages[0]["content"].encode()).hexdigest()
+            for item in records
+            if item.split is split
+        }
+        for split in DataSplit
+    }
+    cross_split_content_overlap = sum(
+        len(content_by_split[left] & content_by_split[right])
+        for index, left in enumerate(DataSplit)
+        for right in tuple(DataSplit)[index + 1 :]
+    )
+    if cross_split_content_overlap:
+        raise RuntimeError("classifier SFT v3 contains cross-split content leakage")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
         "".join(item.model_dump_json() + "\n" for item in records), encoding="utf-8"
@@ -74,6 +89,7 @@ def main() -> None:
         "sealed_hard_negative_count": sum(
             item.split is DataSplit.SEALED_TEST for item in contract_remediation
         ),
+        "cross_split_content_overlap_count": cross_split_content_overlap,
         "hard_eval_v2_accessed": False,
         "passed": True,
     }
