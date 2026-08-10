@@ -61,8 +61,15 @@ class SFTExperimentProtocol(BaseModel):
             raise ValueError("sealed test cannot select checkpoints or hyperparameters")
         if set(self.split_counts) != {"train", "dev", "sealed_test"}:
             raise ValueError("train/dev/sealed split counts are required")
-        if any(count <= 0 for count in self.split_counts.values()):
-            raise ValueError("all split counts must be positive")
+        if self.split_counts["train"] <= 0 or self.split_counts["dev"] <= 0:
+            raise ValueError("train and dev split counts must be positive")
+        if self.split_counts["sealed_test"] < 0:
+            raise ValueError("sealed split count cannot be negative")
+        if (
+            self.split_counts["sealed_test"] == 0
+            and self.sealed_execution != "deferred_until_independent_catalog_freeze"
+        ):
+            raise ValueError("a missing sealed split must be explicitly deferred")
         if not self.checkpoint_selection or self.checkpoint_selection[0] != "zero_high_risk_error":
             raise ValueError("safety must be the first checkpoint-selection criterion")
         if "peak_vram_mib" not in self.required_metrics:

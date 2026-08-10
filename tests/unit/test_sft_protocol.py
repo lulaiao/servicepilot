@@ -39,3 +39,21 @@ def test_versioned_harness_requires_override_metrics() -> None:
 
     with pytest.raises(ValueError, match="override metrics"):
         SFTExperimentProtocol.model_validate(raw)
+
+
+def test_protocol_allows_explicitly_deferred_sealed_catalog() -> None:
+    raw = json.loads(PROTOCOL.read_text())
+    raw["split_counts"]["sealed_test"] = 0
+    raw["sealed_execution"] = "deferred_until_independent_catalog_freeze"
+
+    protocol = SFTExperimentProtocol.model_validate(raw)
+
+    assert protocol.split_counts["sealed_test"] == 0
+
+
+def test_protocol_rejects_implicit_missing_sealed_catalog() -> None:
+    raw = json.loads(PROTOCOL.read_text())
+    raw["split_counts"]["sealed_test"] = 0
+
+    with pytest.raises(ValueError, match="explicitly deferred"):
+        SFTExperimentProtocol.model_validate(raw)

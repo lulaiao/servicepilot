@@ -1,0 +1,51 @@
+{
+  "schema_version": "servicepilot-classifier-sft-v4-independent",
+  "code_revision": "13a05f69fbdb8391059eb678b89f0bd66eefbe11",
+  "output": "data/generated/phase9_classifier_sft_v4.jsonl",
+  "output_sha256": "dd62388bb099feff065e1b078bd146f0f24473623b43ac2b3691c1bcda88e090",
+  "record_count": 108,
+  "split_counts": {
+    "dev": 36,
+    "train": 72
+  },
+  "intent_split_counts": {
+    "dev:cancel_order": 3,
+    "dev:complaint_escalation": 3,
+    "dev:coupon_issue": 3,
+    "dev:delivery_delay": 3,
+    "dev:duplicate_charge": 3,
+    "dev:full_refund": 3,
+    "dev:missing_or_wrong_item": 3,
+    "dev:multi_intent": 3,
+    "dev:order_query": 3,
+    "dev:out_of_scope": 3,
+    "dev:partial_refund": 3,
+    "dev:reschedule": 3,
+    "train:cancel_order": 6,
+    "train:complaint_escalation": 6,
+    "train:coupon_issue": 6,
+    "train:delivery_delay": 6,
+    "train:duplicate_charge": 6,
+    "train:full_refund": 6,
+    "train:missing_or_wrong_item": 6,
+    "train:multi_intent": 6,
+    "train:order_query": 6,
+    "train:out_of_scope": 6,
+    "train:partial_refund": 6,
+    "train:reschedule": 6
+  },
+  "visible_slot_counts": {
+    "dev:order_id": 11,
+    "dev:requested_amount": 2,
+    "train:order_id": 33,
+    "train:requested_amount": 10
+  },
+  "exact_cross_split_overlap_count": 0,
+  "near_duplicate_threshold": 0.8,
+  "near_duplicate_count": 0,
+  "near_duplicates": [],
+  "sealed_record_count": 0,
+  "legacy_variant_source_used": false,
+  "hard_eval_v2_accessed": false,
+  "passed": true
+}
