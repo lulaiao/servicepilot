@@ -1,0 +1,19 @@
+{
+  "schema_version": "servicepilot-factored-classifier-v1",
+  "code_revision": "334134334b94f9b719f4983e613eaec25db60e85",
+  "output": "data/generated/phase9_factored_classifier_v1.jsonl",
+  "output_sha256": "7cfc757c100115871136e28ee2103750ba4732a0654fe4aab6501b30744c2b67",
+  "record_count": 84,
+  "split_counts": {
+    "dev": 28,
+    "train": 56
+  },
+  "family_count": 14,
+  "exact_cross_split_overlap_count": 0,
+  "near_duplicate_threshold": 0.8,
+  "near_duplicate_count": 0,
+  "legacy_v4_dev_reused": false,
+  "sealed_record_count": 0,
+  "hard_eval_v2_accessed": false,
+  "passed": true
+}
