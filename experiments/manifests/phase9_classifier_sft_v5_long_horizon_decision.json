@@ -1,0 +1,57 @@
+{
+  "schema_version": "servicepilot-phase9-raw-checkpoint-selection-v1",
+  "stage": "classifier_v5_long_horizon_diagnostic",
+  "training_report": "artifacts/reports/phase9_classifier_sft_v5_long_horizon_seed20260816.json",
+  "training_report_sha256": "a4b2fcb13ec31b7de4490c46582ce06f36c5261bf2db184aa57680928b84890c",
+  "evaluation_split": "dev",
+  "sealed_evaluation_accessed": false,
+  "reference": {
+    "name": "v5_checkpoint10_short_horizon",
+    "schema_valid_rate": 1.0,
+    "primary_accuracy": 0.9167,
+    "primary_macro_f1": 0.8339,
+    "executable_intent_tuple_accuracy": 0.9167,
+    "mean_latency_seconds": 2.4471,
+    "remaining_tuple_error_count": 3
+  },
+  "candidates": [
+    {
+      "name": "v5_long_horizon_checkpoint15",
+      "report": "artifacts/reports/phase9_classifier_sft_v5_long_horizon_checkpoint15_dev.json",
+      "report_sha256": "b14a5af2bd33b222d2ef0ded80175828cd1f386b2f010430479e2bb05f28b45b",
+      "dev_loss": 0.19597770273685455,
+      "schema_valid_rate": 0.9722,
+      "primary_accuracy": 0.9167,
+      "primary_macro_f1": 0.8429,
+      "executable_intent_tuple_accuracy": 0.9167,
+      "mean_latency_seconds": 3.9584,
+      "remaining_tuple_error_count": 3,
+      "new_schema_failure": "slots.requested_amount emitted as integer instead of string",
+      "decision": "reject_before_agent_harness"
+    },
+    {
+      "name": "v5_long_horizon_checkpoint20",
+      "report": "artifacts/reports/phase9_classifier_sft_v5_long_horizon_checkpoint20_dev.json",
+      "report_sha256": "f0d786b3d243169d8f189d0314a47d18e9a54ab570c4354cc432a4622342bded",
+      "dev_loss": 0.15382595360279083,
+      "schema_valid_rate": 1.0,
+      "primary_accuracy": 0.9167,
+      "primary_macro_f1": 0.8339,
+      "executable_intent_tuple_accuracy": 0.9167,
+      "mean_latency_seconds": 3.8684,
+      "remaining_tuple_error_count": 3,
+      "same_error_set_as_short_horizon_checkpoint10": true,
+      "decision": "reject_before_agent_harness"
+    }
+  ],
+  "diagnosis": {
+    "insufficient_optimization_hypothesis_supported": false,
+    "lower_dev_loss_implied_better_business_semantics": false,
+    "target_cancel_vs_reschedule_error_fixed": false,
+    "agent_harness_evaluation_required": false
+  },
+  "decision": "stop_extending_v5_training_horizon",
+  "reason": "Lower token-level dev loss did not change the semantic error set, while checkpoint 15 introduced a schema regression and both checkpoints increased latency.",
+  "next_action": "Create a v6 train-only label-boundary redesign covering cancellation without refund, domain-primary versus remediation-action hierarchy, and typed slot serialization; preserve the immutable v4 dev catalog and defer sealed evaluation.",
+  "hard_eval_v2_reused": false
+}
