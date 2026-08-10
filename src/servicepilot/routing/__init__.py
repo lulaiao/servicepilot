@@ -16,6 +16,10 @@ from servicepilot.routing.models import (
     RouteDecision,
 )
 from servicepilot.routing.router import StatefulRouter
+from servicepilot.routing.structured_output import (
+    build_factored_intent_prompt,
+    parse_factored_intent_output,
+)
 
 __all__ = [
     "AgentRole",
@@ -30,4 +34,6 @@ __all__ = [
     "RouteDecision",
     "RuleIntentClassifier",
     "StatefulRouter",
+    "build_factored_intent_prompt",
+    "parse_factored_intent_output",
 ]

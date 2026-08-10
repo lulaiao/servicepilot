@@ -4,6 +4,7 @@ import json
 from typing import Any
 
 from servicepilot.routing.models import IntentResult
+from servicepilot.routing.factored_intent import FactoredIntentResult
 
 
 def build_intent_prompt(text: str) -> str:
@@ -48,3 +49,35 @@ def parse_intent_output(text: str) -> IntentResult:
     if not isinstance(value, dict):
         raise ValueError("output is not an object")
     return IntentResult.model_validate(value)
+
+
+def build_factored_intent_prompt(text: str) -> str:
+    """Build the v3 issue/action contract without legacy primary-intent ambiguity."""
+
+    return (
+        "你是订单售后分类器。只输出一个JSON对象，不要解释，不要使用Markdown代码块。"
+        "issue_type表示用户遇到的业务问题，只能取none,delivery_delay,"
+        "missing_or_wrong_item,duplicate_charge,coupon_issue,out_of_scope。"
+        "requested_actions表示用户明确请求的操作，是数组，元素只能取order_query,"
+        "cancel_order,full_refund,partial_refund,reschedule,complaint_escalation。"
+        "问题与动作必须分别判断：错漏商品后要求退款时，issue_type仍是"
+        "missing_or_wrong_item，同时把退款放入requested_actions；重复扣款同理。"
+        "终止订单但不退款时issue_type为none，requested_actions包含cancel_order。"
+        "配送延迟并要求人工投诉时，issue_type为delivery_delay，requested_actions包含"
+        "complaint_escalation。不得补充用户未明确请求的操作。slots必须包含order_id、"
+        "reason、requested_amount；requested_amount已知时必须是JSON字符串，未知用null，"
+        "绝不能输出JSON数字。risk_level取low/medium/high；confidence为0到1；"
+        "needs_clarification和injection_detected为布尔值。"
+        f"\n用户输入：{text}"
+    )
+
+
+def parse_factored_intent_output(text: str) -> FactoredIntentResult:
+    start = text.find("{")
+    end = text.rfind("}")
+    if start < 0 or end <= start:
+        raise ValueError("no JSON object found")
+    value: Any = json.loads(text[start : end + 1])
+    if not isinstance(value, dict):
+        raise ValueError("output is not an object")
+    return FactoredIntentResult.model_validate(value)
