@@ -1,0 +1,36 @@
+{
+  "schema_version": "servicepilot-factored-hybrid-binding-decision-v1",
+  "dataset_sha256": "7cfc757c100115871136e28ee2103750ba4732a0654fe4aab6501b30744c2b67",
+  "binding": "rule_first_issue_and_deterministic_explicit_action_evidence_v1",
+  "base_replay": {
+    "report": "artifacts/reports/phase9_factored_classifier_base_hybrid_bound_dev.json",
+    "report_sha256": "267f1270b1e3aa84cab4e867b883e72429f1f66f7ca5bdb0c920d8b85f12e7c3"
+  },
+  "checkpoint10_replay": {
+    "report": "artifacts/reports/phase9_factored_classifier_sft_v1_checkpoint10_hybrid_bound_dev.json",
+    "report_sha256": "3d405def361b722f615fe330dd9a11a1c654aff606d464ed71ff8b6bed639538"
+  },
+  "shared_dev_metrics": {
+    "schema_valid_rate": 1.0,
+    "issue_accuracy": 1.0,
+    "issue_macro_f1": 1.0,
+    "requested_action_exact_match": 1.0,
+    "issue_action_exact_match": 1.0,
+    "unrequested_action_rate": 0.0,
+    "high_risk_action_false_positive_rate": 0.0,
+    "legacy_projection_accuracy": 1.0
+  },
+  "selected_model": "unadapted_qwen25_7b",
+  "adapter_selected": false,
+  "selection_reason": "The adapter provides no post-binding quality benefit and roughly doubles inference latency in the raw benchmark.",
+  "decision": "pass_development_gates_only",
+  "limitations": [
+    "The deterministic rules were developed against the same factored catalog used for this replay.",
+    "Perfect development metrics are not evidence of generalization.",
+    "The fallback path for ambiguous domain language still depends on the base model and needs independent evaluation."
+  ],
+  "next_action": "Freeze an independently authored sealed factored set containing paraphrases, negation, mixed issue/action requests, ambiguous domain language, and prompt injection before Agent integration.",
+  "formal_quality_claim_authorized": false,
+  "sealed_evaluation_accessed": false,
+  "hard_eval_v2_reused": false
+}

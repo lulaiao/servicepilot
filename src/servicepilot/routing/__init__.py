@@ -15,6 +15,11 @@ from servicepilot.routing.factored_intent import (
     project_legacy_intent,
 )
 from servicepilot.routing.intent_rules import RuleIntentClassifier
+from servicepilot.routing.issue_evidence import (
+    IssueEvidence,
+    bind_rule_first_issue,
+    extract_issue_evidence,
+)
 from servicepilot.routing.models import (
     AgentRole,
     DialogueState,
@@ -33,9 +38,12 @@ __all__ = [
     "bind_evidence_backed_actions",
     "DialogueState",
     "IntentResult",
+    "IssueEvidence",
     "IntentClassifier",
     "extract_requested_action_evidence",
     "extract_requested_actions",
+    "bind_rule_first_issue",
+    "extract_issue_evidence",
     "FactoredIntentResult",
     "FactoredSlots",
     "IssueType",

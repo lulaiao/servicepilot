@@ -12,6 +12,7 @@ from servicepilot.routing.action_evidence import (
     extract_requested_action_evidence,
 )
 from servicepilot.routing.factored_intent import FactoredIntentResult
+from servicepilot.routing.issue_evidence import bind_rule_first_issue, extract_issue_evidence
 from servicepilot.training.data_models import SFTTrainingRecord
 
 
@@ -24,6 +25,7 @@ def main() -> None:
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--bind-issues", action="store_true")
     args = parser.parse_args()
 
     source = json.loads(args.report.read_text(encoding="utf-8"))
@@ -51,7 +53,10 @@ def main() -> None:
             else None
         )
         bound = bind_evidence_backed_actions(raw_prediction, text) if raw_prediction else None
+        if bound is not None and args.bind_issues:
+            bound = bind_rule_first_issue(bound, text)
         evidence = extract_requested_action_evidence(text)
+        issue_evidence = extract_issue_evidence(text) if args.bind_issues else None
         targets.append(target)
         predictions.append(bound)
         records.append(
@@ -70,6 +75,17 @@ def main() -> None:
                     }
                     for value in evidence
                 ],
+                "issue_evidence": (
+                    {
+                        "issue_type": issue_evidence.issue_type.value,
+                        "text": issue_evidence.text,
+                        "start": issue_evidence.start,
+                        "end": issue_evidence.end,
+                        "reason": issue_evidence.reason,
+                    }
+                    if issue_evidence
+                    else None
+                ),
                 "raw_actions_changed": (
                     raw_prediction is not None
                     and raw_prediction.requested_actions != bound.requested_actions
@@ -88,7 +104,11 @@ def main() -> None:
         "source_report_sha256": sha256(args.report),
         "dataset": str(args.dataset),
         "dataset_sha256": sha256(args.dataset),
-        "binding": "deterministic_explicit_action_evidence_v1",
+        "binding": (
+            "rule_first_issue_and_deterministic_explicit_action_evidence_v1"
+            if args.bind_issues
+            else "deterministic_explicit_action_evidence_v1"
+        ),
         **metrics,
         "changed_prediction_count": sum(item["raw_actions_changed"] for item in records),
         "records": records,
