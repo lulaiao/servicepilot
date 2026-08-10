@@ -1,0 +1,11 @@
+{
+  "schema_version": "servicepilot-classifier-v4-executable-dev",
+  "code_revision": "de3ec8734287f156edf73bd3285e2821ff22cfe1",
+  "scenario_count": 36,
+  "output": "data/eval/phase9_classifier_v4_exec_dev.jsonl",
+  "output_sha256": "7162448abd6b79b8d6e70aeefc128645c6a55b12df13f7af99ebd08baa0ee655",
+  "train_scenario_count": 0,
+  "sealed_scenario_count": 0,
+  "hard_eval_v2_accessed": false,
+  "passed": true
+}
