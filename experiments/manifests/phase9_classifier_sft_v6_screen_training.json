@@ -1,0 +1,38 @@
+{
+  "protocol_version": "phase9-qwen25-7b-classifier-lora-sft-v6-label-boundary-screen",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset_sha256": "bd8ad6c29b50ef36a9f63b8ae5fa0fdcc8f0122bde12b4778aea19fb9caed671",
+  "seed": 20260820,
+  "completed_optimizer_steps": 15,
+  "completed_epoch": 1.380952380952381,
+  "sealed_records_loaded_into_trainer": 0,
+  "train_loss": 0.6456769665082296,
+  "checkpoints": [
+    {
+      "step": 5,
+      "dev_loss": 0.767310380935669,
+      "adapter_sha256": "ac0e5a0abd69dad1da3905e1b6360183bd00c7f59208297a2249e8758d24e25f",
+      "raw_evaluation_decision": "skip",
+      "reason": "Dev loss remains in the previously observed pre-learning region."
+    },
+    {
+      "step": 10,
+      "dev_loss": 0.4379937946796417,
+      "adapter_sha256": "df5742af6fb7239f5211c4bec6b76be24e77fe5a7ac32223bde3d2357b099032",
+      "raw_evaluation_decision": "evaluate"
+    },
+    {
+      "step": 15,
+      "dev_loss": 0.33481016755104065,
+      "adapter_sha256": "86335f3043ddbb50ff5351d6a8c32d72510bece820ea5400442ad27d02d2648d",
+      "raw_evaluation_decision": "evaluate"
+    }
+  ],
+  "wall_time_seconds": 57.1859,
+  "peak_vram_allocated_mib": 16443.9,
+  "peak_vram_reserved_mib": 17920.0,
+  "raw_report": "artifacts/reports/phase9_classifier_sft_v6_screen_seed20260820.json",
+  "raw_report_sha256": "7fb58f24d74c526584e8a51449851601b29e3a0bdce649563821a12fb78f4e17",
+  "status": "awaiting_checkpoint_10_and_15_raw_dev_evaluation",
+  "claim_scope": "single-seed screening only"
+}
