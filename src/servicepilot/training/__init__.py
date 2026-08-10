@@ -20,6 +20,10 @@ from servicepilot.training.classifier_v4_catalog import (
     build_classifier_v4_sft,
     build_classifier_v4_utterances,
 )
+from servicepilot.training.classifier_v5_data import (
+    build_classifier_v5_hard_negatives,
+    build_classifier_v5_sft,
+)
 from servicepilot.training.data_models import (
     DataSplit,
     PreferenceTrainingRecord,
@@ -105,6 +109,8 @@ __all__ = [
     "build_classifier_v4_sft",
     "build_classifier_v4_dev_scenarios",
     "build_classifier_v4_utterances",
+    "build_classifier_v5_hard_negatives",
+    "build_classifier_v5_sft",
     "PreferenceTrainingRecord",
     "SFTTrainingRecord",
     "TrainingEvent",
