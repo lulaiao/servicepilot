@@ -1,0 +1,59 @@
+{
+  "schema_version": "servicepilot-phase9-raw-checkpoint-selection-v1",
+  "stage": "classifier_v6_label_boundary_screen",
+  "evaluation_split": "dev",
+  "sealed_evaluation_accessed": false,
+  "reference": {
+    "name": "v5_checkpoint10",
+    "schema_valid_rate": 1.0,
+    "primary_accuracy": 0.9167,
+    "primary_macro_f1": 0.8339,
+    "executable_intent_tuple_accuracy": 0.9167,
+    "mean_latency_seconds": 2.4471,
+    "remaining_tuple_error_count": 3
+  },
+  "candidates": [
+    {
+      "name": "v6_checkpoint10",
+      "report": "artifacts/reports/phase9_classifier_sft_v6_checkpoint10_dev.json",
+      "report_sha256": "57e1a71a754460730db3a0326dab7dc63d6c3456165768ce6cd4394289fb7bda",
+      "schema_valid_rate": 1.0,
+      "primary_accuracy": 0.9167,
+      "primary_macro_f1": 0.8339,
+      "executable_intent_tuple_accuracy": 0.9167,
+      "mean_latency_seconds": 6.7892,
+      "same_error_set_as_v5_checkpoint10": true,
+      "decision": "reject_before_agent_harness"
+    },
+    {
+      "name": "v6_checkpoint15",
+      "report": "artifacts/reports/phase9_classifier_sft_v6_checkpoint15_dev.json",
+      "report_sha256": "642369f7cc3b561575e09d6ea7906ba2f9bae549221e0e1a60da07f550eaaf31",
+      "schema_valid_rate": 0.9444,
+      "primary_accuracy": 0.8889,
+      "primary_macro_f1": 0.827,
+      "executable_intent_tuple_accuracy": 0.8889,
+      "mean_latency_seconds": 6.2997,
+      "schema_failure_count": 2,
+      "decision": "reject_before_agent_harness"
+    }
+  ],
+  "targeted_outcomes": {
+    "cancel_without_refund_boundary_fixed": false,
+    "missing_item_primary_hierarchy_fixed": false,
+    "duplicate_charge_primary_hierarchy_fixed": false,
+    "typed_amount_serialization_stable": false
+  },
+  "raw_advancement_gates": {
+    "schema_validity_equals_one": false,
+    "cancel_reschedule_target_fixed": false,
+    "macro_f1_not_below_reference": false,
+    "tuple_accuracy_exceeds_reference": false,
+    "no_new_error_categories": false
+  },
+  "decision": "reject_all_v6_checkpoints",
+  "reason": "Train-only examples did not change the stable semantic error set at checkpoint 10, while checkpoint 15 introduced schema regressions and both checkpoints materially increased latency.",
+  "next_action": "Formalize an explicit versioned label-semantics and output-type prompt contract, then compare it under a frozen prompt-only diagnostic before authorizing more training.",
+  "agent_harness_evaluation_required": false,
+  "hard_eval_v2_reused": false
+}
