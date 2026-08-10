@@ -1,0 +1,25 @@
+{
+  "selection_stage": "raw_classifier_dev_screen",
+  "baseline": {
+    "schema_valid_rate": 0.9722,
+    "primary_macro_f1": 0.819,
+    "executable_intent_tuple_accuracy": 0.8611
+  },
+  "checkpoint_5": {
+    "report_sha256": "1de93dd92f5ec65b713ae7c59bba240d942b57c1c7c48aa8072c1e25bffda340",
+    "schema_valid_rate": 0.9722,
+    "primary_macro_f1": 0.819,
+    "executable_intent_tuple_accuracy": 0.8611,
+    "decision": "reject_no_quality_improvement"
+  },
+  "checkpoint_10": {
+    "report_sha256": "db7e7e135daf6a3365377c6aabcf5968f9c94086021ea4a6348382ad994a2255",
+    "schema_valid_rate": 1.0,
+    "primary_macro_f1": 0.8339,
+    "executable_intent_tuple_accuracy": 0.8889,
+    "decision": "advance_to_executable_agent_dev_only"
+  },
+  "remaining_semantic_error_count": 4,
+  "selected_checkpoint": "artifacts/checkpoints/phase9_classifier_sft_v4_screen_seed20260812/checkpoint-10",
+  "claim_scope": "not_selected_for_formal_training_or_release"
+}
