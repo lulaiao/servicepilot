@@ -1,0 +1,29 @@
+{
+  "schema_version": "servicepilot-factored-classifier-baseline-v1",
+  "stage": "factored_classifier_v1_base_dev",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "adapter": null,
+  "dataset": "data/generated/phase9_factored_classifier_v1.jsonl",
+  "dataset_sha256": "7cfc757c100115871136e28ee2103750ba4732a0654fe4aab6501b30744c2b67",
+  "raw_report": "artifacts/reports/phase9_factored_classifier_base_dev.json",
+  "raw_report_sha256": "3aa3cc52b487cd96a7afc2b9b17ce9d41d090ce6d6e011d77d257af6cabbf208",
+  "metrics": {
+    "example_count": 28,
+    "schema_valid_rate": 1.0,
+    "issue_accuracy": 0.7857,
+    "issue_macro_f1": 0.7175,
+    "requested_action_exact_match": 0.7857,
+    "requested_action_micro_f1": 0.8108,
+    "requested_action_macro_f1": 0.7204,
+    "issue_action_exact_match": 0.5714,
+    "unrequested_action_rate": 0.1429,
+    "high_risk_action_false_positive_rate": 0.1071,
+    "legacy_projection_accuracy": 0.7143,
+    "mean_latency_seconds": 2.3144,
+    "peak_vram_allocated_mib": 14632.6
+  },
+  "decision": "reject_for_agent_use_but_advance_to_bounded_sft_screen",
+  "reason": "The base model proves schema feasibility but invents unrequested actions, including high-risk writes, and does not meet projection quality gates.",
+  "sealed_evaluation_accessed": false,
+  "hard_eval_v2_reused": false
+}

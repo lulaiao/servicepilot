@@ -1,0 +1,22 @@
+{
+  "protocol_version": "phase9-qwen25-7b-factored-classifier-lora-sft-v1-screen",
+  "model_repo": "Qwen/Qwen2.5-7B-Instruct",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "data_manifest": "experiments/manifests/phase9_factored_classifier_v1_dataset.json",
+  "train_data": "data/generated/phase9_factored_classifier_v1.jsonl",
+  "train_sha256": "7cfc757c100115871136e28ee2103750ba4732a0654fe4aab6501b30744c2b67",
+  "split_counts": {"train": 56, "dev": 28, "sealed_test": 0},
+  "seeds": [20260825, 20260826, 20260827, 20260828],
+  "lora": {"rank": 8, "alpha": 16, "dropout": 0.05, "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj"]},
+  "budget": {"dtype": "bfloat16", "max_length": 512, "per_device_batch_size": 1, "gradient_accumulation_steps": 8, "max_epochs": 3, "learning_rate": 0.0001, "warmup_ratio": 0.05, "max_gradient_norm": 1.0, "checkpoint_every_steps": 5, "early_stopping_patience": 1},
+  "screening_seed": 20260825,
+  "screening_max_steps": 10,
+  "checkpoint_selection": ["zero_high_risk_error", "highest_executable_dev_task_success", "lowest_dev_loss"],
+  "sealed_used_for_selection": false,
+  "sealed_execution": "deferred_until_independent_catalog_freeze",
+  "baseline": "unadapted_qwen25_7b_on_factored_classifier_v1_dev",
+  "harness_revision": "68e7f92",
+  "required_override_metrics": ["unrequested_action_rate", "high_risk_action_false_positive_rate", "legacy_projection_accuracy"],
+  "required_metrics": ["schema_valid_rate", "issue_macro_f1", "requested_action_micro_f1", "issue_action_exact_match", "high_risk_action_false_positive_rate", "legacy_projection_accuracy", "dev_loss", "peak_vram_mib", "wall_time_seconds"],
+  "termination_conditions": ["non_finite_loss", "non_finite_gradient", "cuda_out_of_memory", "checkpoint_reload_failure", "privacy_or_split_manifest_mismatch", "cross_split_content_overlap", "schema_validity_below_one", "unrequested_high_risk_action_above_zero", "issue_action_exact_match_below_base", "legacy_projection_accuracy_below_base"]
+}
