@@ -1,0 +1,46 @@
+{
+  "schema_version": "servicepilot-phase9-prompt-diagnostic-decision-v1",
+  "stage": "classifier_prompt_contract_v2_with_v5_checkpoint10",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "adapter": "artifacts/checkpoints/phase9_classifier_sft_v5_screen_seed20260816/checkpoint-10",
+  "prompt_v2_dataset": "data/eval/phase9_classifier_prompt_v2_dev.jsonl",
+  "prompt_v2_dataset_sha256": "7d679bdc048fba86a5be89df73a3ef6513c531c3ada0e78ee35b7290cc944144",
+  "raw_report": "artifacts/reports/phase9_classifier_v5_checkpoint10_prompt_v2_dev.json",
+  "raw_report_sha256": "36a27d2ca471cc15be14883ac76572916092761840e9362e6008200d1c8c0b6f",
+  "controlled_variables": {
+    "model_weights_unchanged": true,
+    "adapter_weights_unchanged": true,
+    "dev_utterances_unchanged": true,
+    "gold_targets_unchanged": true,
+    "decoding_unchanged": true,
+    "only_prompt_contract_changed": true
+  },
+  "prompt_v1_reference": {
+    "schema_valid_rate": 1.0,
+    "primary_accuracy": 0.9167,
+    "primary_macro_f1": 0.8339,
+    "executable_intent_tuple_accuracy": 0.9167,
+    "mean_latency_seconds": 2.4471,
+    "tuple_error_count": 3
+  },
+  "prompt_v2_metrics": {
+    "schema_valid_rate": 1.0,
+    "primary_accuracy": 0.9167,
+    "primary_macro_f1": 0.8339,
+    "executable_intent_tuple_accuracy": 0.9167,
+    "mean_latency_seconds": 5.0202,
+    "tuple_error_count": 3,
+    "same_error_set_as_prompt_v1": true
+  },
+  "targeted_outcomes": {
+    "cancel_without_refund_boundary_fixed": false,
+    "missing_item_primary_hierarchy_fixed": false,
+    "duplicate_charge_primary_hierarchy_fixed": false
+  },
+  "decision": "reject_prompt_v2_with_v5_adapter",
+  "reason": "The explicit contract changed no prediction and doubled mean latency, so it provides no quality benefit with the v5 adapter.",
+  "next_action": "Evaluate the same frozen prompt v2 dataset with the unadapted base model to distinguish adapter-induced instruction rigidity from a flawed single-layer intent schema.",
+  "agent_harness_evaluation_required": false,
+  "sealed_evaluation_accessed": false,
+  "hard_eval_v2_reused": false
+}
