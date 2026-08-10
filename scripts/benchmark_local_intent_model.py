@@ -7,10 +7,13 @@ import os
 import resource
 import sys
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from servicepilot.eval.models import Intent
 from servicepilot.eval.routing_dataset import DatasetSplit, build_routing_dataset
+from servicepilot.routing.models import IntentResult
 from servicepilot.routing.structured_output import (
     build_intent_prompt,
     parse_intent_output,
@@ -20,13 +23,13 @@ from servicepilot.routing.structured_output import (
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model-path", type=Path, required=True)
+    parser.add_argument("--adapter-path", type=Path)
+    parser.add_argument("--dataset", type=Path)
     parser.add_argument("--revision", required=True)
     parser.add_argument("--split", choices=("train", "dev"), default="dev")
     parser.add_argument("--max-examples", type=int)
     parser.add_argument("--max-new-tokens", type=int, default=128)
-    parser.add_argument(
-        "--device", choices=("auto", "cpu", "cuda"), default="auto"
-    )
+    parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     parser.add_argument(
         "--dtype",
         choices=("float32", "float16", "bfloat16"),
@@ -41,6 +44,74 @@ def parse_args() -> argparse.Namespace:
         default=Path("artifacts/reports/local_model_dev.json"),
     )
     return parser.parse_args()
+
+
+@dataclass(frozen=True)
+class BenchmarkExample:
+    example_id: str
+    text: str
+    target: IntentResult
+
+
+def load_examples(path: Path | None, split: DatasetSplit) -> list[BenchmarkExample]:
+    if path is None:
+        return [
+            BenchmarkExample(
+                example_id=item.example_id,
+                text=item.text,
+                target=IntentResult(
+                    primary_intent=item.primary_intent,
+                    secondary_intents=item.secondary_intents,
+                    slots=item.slots,
+                    risk_level="low",
+                    confidence=1.0,
+                    needs_clarification=False,
+                ),
+            )
+            for item in build_routing_dataset()
+            if item.split is split
+        ]
+    from servicepilot.training import DataSplit, SFTTrainingRecord
+
+    records = (
+        SFTTrainingRecord.model_validate_json(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    )
+    selected = []
+    for record in records:
+        if record.split is not DataSplit(split.value):
+            continue
+        prompt = record.messages[0]["content"]
+        selected.append(
+            BenchmarkExample(
+                example_id=record.record_id,
+                text=prompt.rsplit("用户输入：", maxsplit=1)[-1],
+                target=IntentResult.model_validate_json(record.messages[1]["content"]),
+            )
+        )
+    return selected
+
+
+def macro_f1(records: list[dict[str, Any]]) -> float:
+    scores = []
+    for label in Intent:
+        tp = sum(
+            item["gold_primary"] == label.value and item["predicted_primary"] == label.value
+            for item in records
+        )
+        fp = sum(
+            item["gold_primary"] != label.value and item["predicted_primary"] == label.value
+            for item in records
+        )
+        fn = sum(
+            item["gold_primary"] == label.value and item["predicted_primary"] != label.value
+            for item in records
+        )
+        precision = tp / (tp + fp) if tp + fp else 0.0
+        recall = tp / (tp + fn) if tp + fn else 0.0
+        scores.append(2 * precision * recall / (precision + recall) if precision + recall else 0.0)
+    return round(sum(scores) / len(scores), 4)
 
 
 def main() -> None:
@@ -77,21 +148,21 @@ def main() -> None:
         torch.cuda.reset_peak_memory_stats()
 
     split = DatasetSplit(args.split)
-    examples = [
-        item for item in build_routing_dataset() if item.split is split
-    ]
+    examples = load_examples(args.dataset, split)
     if args.max_examples is not None:
         examples = examples[: args.max_examples]
     load_started = time.perf_counter()
     print(f"loading model on {device} with {args.dtype}", file=sys.stderr, flush=True)
-    tokenizer = AutoTokenizer.from_pretrained(
-        args.model_path, local_files_only=True
-    )
+    tokenizer = AutoTokenizer.from_pretrained(args.model_path, local_files_only=True)
     model = AutoModelForCausalLM.from_pretrained(
         args.model_path,
         local_files_only=True,
         torch_dtype=dtype,
     ).to(device)
+    if args.adapter_path:
+        from peft import PeftModel
+
+        model = PeftModel.from_pretrained(model, args.adapter_path, is_trainable=False)
     model.eval()
     if device == "cuda":
         torch.cuda.synchronize()
@@ -168,24 +239,31 @@ def main() -> None:
         records.append(
             {
                 "example_id": example.example_id,
-                "gold_primary": example.primary_intent.value,
-                "prediction": (
-                    prediction.model_dump(mode="json") if prediction else None
-                ),
+                "gold_primary": example.target.primary_intent.value,
+                "gold_secondary": [item.value for item in example.target.secondary_intents],
+                "predicted_primary": prediction.primary_intent.value if prediction else None,
+                "prediction": (prediction.model_dump(mode="json") if prediction else None),
                 "schema_valid": prediction is not None,
                 "primary_correct": (
                     prediction is not None
-                    and prediction.primary_intent is example.primary_intent
+                    and prediction.primary_intent is example.target.primary_intent
+                ),
+                "executable_tuple_correct": (
+                    prediction is not None
+                    and (
+                        prediction.primary_intent,
+                        *prediction.secondary_intents,
+                    )
+                    == (
+                        example.target.primary_intent,
+                        *example.target.secondary_intents,
+                    )
                 ),
                 "latency_seconds": round(latency, 4),
-                "latency_repetitions_seconds": [
-                    round(item, 4) for item in latencies
-                ],
+                "latency_repetitions_seconds": [round(item, 4) for item in latencies],
                 "input_tokens": input_tokens,
                 "generated_tokens": generated_tokens,
-                "generation_tokens_per_second": round(
-                    generated_tokens / latency, 4
-                ),
+                "generation_tokens_per_second": round(generated_tokens / latency, 4),
                 "output_consistent_across_repetitions": all(
                     torch.equal(outputs[0], item) for item in outputs[1:]
                 ),
@@ -198,6 +276,7 @@ def main() -> None:
         "candidate": {
             "path": str(args.model_path.resolve()),
             "revision": args.revision,
+            "adapter_path": str(args.adapter_path.resolve()) if args.adapter_path else None,
             "dtype": args.dtype,
             "device": device,
             "offline": True,
@@ -206,9 +285,7 @@ def main() -> None:
             "torch_version": torch.__version__,
             "cuda_runtime": torch.version.cuda,
             "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
-            "gpu_name": (
-                torch.cuda.get_device_name(0) if device == "cuda" else None
-            ),
+            "gpu_name": (torch.cuda.get_device_name(0) if device == "cuda" else None),
             "seed": args.seed,
             "warmup_runs": args.warmup_runs,
             "repetitions": args.repetitions,
@@ -218,36 +295,26 @@ def main() -> None:
             "model_load_seconds": round(model_load_seconds, 4),
         },
         "split": split.value,
+        "dataset": str(args.dataset) if args.dataset else "routing_dataset",
         "example_count": count,
-        "schema_valid_rate": round(
-            sum(item["schema_valid"] for item in records) / count, 4
+        "schema_valid_rate": round(sum(item["schema_valid"] for item in records) / count, 4),
+        "primary_accuracy": round(sum(item["primary_correct"] for item in records) / count, 4),
+        "primary_macro_f1": macro_f1(records),
+        "executable_intent_tuple_accuracy": round(
+            sum(item["executable_tuple_correct"] for item in records) / count, 4
         ),
-        "primary_accuracy": round(
-            sum(item["primary_correct"] for item in records) / count, 4
-        ),
-        "mean_latency_seconds": round(
-            sum(item["latency_seconds"] for item in records) / count, 4
-        ),
-        "peak_rss_mib": round(
-            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1
-        ),
+        "mean_latency_seconds": round(sum(item["latency_seconds"] for item in records) / count, 4),
+        "peak_rss_mib": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),
         "peak_vram_allocated_mib": (
-            round(torch.cuda.max_memory_allocated() / 1024**2, 1)
-            if device == "cuda"
-            else None
+            round(torch.cuda.max_memory_allocated() / 1024**2, 1) if device == "cuda" else None
         ),
         "peak_vram_reserved_mib": (
-            round(torch.cuda.max_memory_reserved() / 1024**2, 1)
-            if device == "cuda"
-            else None
+            round(torch.cuda.max_memory_reserved() / 1024**2, 1) if device == "cuda" else None
         ),
         "mean_generation_tokens_per_second": round(
             sum(item["generated_tokens"] for item in records)
             * args.repetitions
-            / sum(
-                sum(item["latency_repetitions_seconds"])
-                for item in records
-            ),
+            / sum(sum(item["latency_repetitions_seconds"]) for item in records),
             4,
         ),
         "records": records,
