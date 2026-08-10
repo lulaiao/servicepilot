@@ -9,9 +9,15 @@ from servicepilot.training.classifier_data import (
     build_contract_hard_negative_sft,
     build_failure_remediation_sft,
     classifier_target,
+    classifier_target_for_text,
     risk_for_intent,
     to_classifier_sft,
     visible_slots,
+)
+from servicepilot.training.classifier_v4_catalog import (
+    ClassifierUtterance,
+    build_classifier_v4_sft,
+    build_classifier_v4_utterances,
 )
 from servicepilot.training.data_models import (
     DataSplit,
@@ -88,11 +94,15 @@ __all__ = [
     "assess_grpo_advancement",
     "DataSplit",
     "classifier_target",
+    "classifier_target_for_text",
     "build_contract_hard_negative_sft",
     "build_failure_remediation_sft",
     "risk_for_intent",
     "to_classifier_sft",
     "visible_slots",
+    "ClassifierUtterance",
+    "build_classifier_v4_sft",
+    "build_classifier_v4_utterances",
     "PreferenceTrainingRecord",
     "SFTTrainingRecord",
     "TrainingEvent",

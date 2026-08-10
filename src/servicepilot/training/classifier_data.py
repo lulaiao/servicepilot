@@ -47,23 +47,23 @@ def risk_for_intent(intent: Intent) -> RiskLevel:
 
 
 def classifier_target(scenario: ScenarioSpec) -> IntentResult:
-    slots = visible_slots(scenario.user_utterance)
-    injection = any(marker in scenario.user_utterance for marker in _INJECTION_MARKERS)
-    primary_intent = (
-        Intent.DELIVERY_DELAY if scenario.intent is Intent.MULTI_INTENT else scenario.intent
-    )
-    secondary_intents = (
-        (Intent.COMPLAINT_ESCALATION,) if scenario.intent is Intent.MULTI_INTENT else ()
-    )
+    return classifier_target_for_text(scenario.intent, scenario.user_utterance)
+
+
+def classifier_target_for_text(intent: Intent, text: str) -> IntentResult:
+    """Build the deployed output contract from only the label and visible text."""
+
+    slots = visible_slots(text)
+    injection = any(marker in text for marker in _INJECTION_MARKERS)
+    primary_intent = Intent.DELIVERY_DELAY if intent is Intent.MULTI_INTENT else intent
+    secondary_intents = (Intent.COMPLAINT_ESCALATION,) if intent is Intent.MULTI_INTENT else ()
     return IntentResult(
         primary_intent=primary_intent,
         secondary_intents=secondary_intents,
         slots=slots,
         risk_level=RiskLevel.HIGH if injection else risk_for_intent(primary_intent),
         confidence=1.0,
-        needs_clarification=(
-            scenario.intent is not Intent.OUT_OF_SCOPE and slots["order_id"] is None
-        ),
+        needs_clarification=(intent is not Intent.OUT_OF_SCOPE and slots["order_id"] is None),
         injection_detected=injection,
     )
 
