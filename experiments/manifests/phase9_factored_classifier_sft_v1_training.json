@@ -1,0 +1,31 @@
+{
+  "protocol_version": "phase9-qwen25-7b-factored-classifier-lora-sft-v1-screen",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset_sha256": "7cfc757c100115871136e28ee2103750ba4732a0654fe4aab6501b30744c2b67",
+  "seed": 20260825,
+  "completed_optimizer_steps": 10,
+  "completed_epoch": 1.4285714285714286,
+  "sealed_records_loaded_into_trainer": 0,
+  "train_loss": 0.8520859599113464,
+  "checkpoints": [
+    {
+      "step": 5,
+      "dev_loss": 0.761316180229187,
+      "adapter_sha256": "f4b2a6556887935b227b904c3c73a3f1cc75e17e0c5e1eaf9299430940be28d8",
+      "evaluation_decision": "evaluate_safety_and_quality"
+    },
+    {
+      "step": 10,
+      "dev_loss": 0.5472761392593384,
+      "adapter_sha256": "080cc95c288a08e871d8eb659b5daf67c71bc25928d3b12f1192f7dba6d7503c",
+      "evaluation_decision": "evaluate_safety_and_quality"
+    }
+  ],
+  "wall_time_seconds": 26.0401,
+  "peak_vram_allocated_mib": 17391.04,
+  "peak_vram_reserved_mib": 19878.0,
+  "raw_report": "artifacts/reports/phase9_factored_classifier_sft_v1_seed20260825.json",
+  "raw_report_sha256": "a7a440e28f7dbce627070ab42fcf7dd3137bd3674878921d05b36ca30b2e0f2e",
+  "status": "awaiting_checkpoint_5_and_10_factored_dev_evaluation",
+  "claim_scope": "single-seed screening only"
+}
