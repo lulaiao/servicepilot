@@ -1,0 +1,28 @@
+{
+  "protocol": "phase9-qwen25-7b-classifier-lora-sft-v4-independent-screen",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "adapter": null,
+  "dataset_sha256": "dd62388bb099feff065e1b078bd146f0f24473623b43ac2b3691c1bcda88e090",
+  "raw_report": "artifacts/reports/phase9_classifier_v4_untrained_dev.json",
+  "raw_report_sha256": "50a42ae4908b68b0eda20c543506358ee25c8ddecb54a08271cad4305faf5509",
+  "split": "dev",
+  "example_count": 36,
+  "seed": 20260812,
+  "dtype": "bfloat16",
+  "device": "cuda:physical-2",
+  "schema_valid_rate": 0.9722,
+  "primary_accuracy": 0.8889,
+  "primary_macro_f1": 0.819,
+  "executable_intent_tuple_accuracy": 0.8611,
+  "mean_latency_seconds": 2.2049,
+  "peak_vram_allocated_mib": 14608.6,
+  "error_count": 5,
+  "error_classes": [
+    "cancel_order_to_reschedule",
+    "numeric_slot_schema_invalid",
+    "missing_item_to_partial_refund",
+    "duplicate_charge_to_partial_refund",
+    "multi_intent_secondary_missing"
+  ],
+  "decision": "eligible_for_predeclared_10_step_single_seed_screen"
+}
