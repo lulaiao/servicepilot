@@ -36,7 +36,11 @@ class FSMUserSimulator:
         return f"订单号是 {self.scenario.order_id}"
 
     def answer_confirmation(self, explanation: str) -> str:
-        if self.state not in {UserState.ORDER_REVEALED, UserState.ACTIVE}:
+        if self.state not in {
+            UserState.ORDER_REVEALED,
+            UserState.ACTIVE,
+            UserState.CONFIRMED,
+        }:
             raise RuntimeError("confirmation is invalid in current state")
         if not explanation.strip():
             self.state = UserState.REFUSED
@@ -52,10 +56,16 @@ class FSMUserSimulator:
             raise RuntimeError("scenario has no refund details")
         return self.scenario.reason, self.scenario.requested_amount
 
+    def has_refund_details(self) -> bool:
+        return self.scenario.reason is not None and self.scenario.requested_amount is not None
+
     def reschedule_time(self) -> datetime:
         if self.scenario.new_time is None:
             raise RuntimeError("scenario has no reschedule time")
         return self.scenario.new_time
+
+    def has_reschedule_time(self) -> bool:
+        return self.scenario.new_time is not None
 
     def finish(self) -> None:
         self.state = UserState.DONE

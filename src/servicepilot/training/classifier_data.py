@@ -20,9 +20,7 @@ _HIGH_RISK = frozenset(
         Intent.RESCHEDULE,
     }
 )
-_MEDIUM_RISK = frozenset(
-    {Intent.DELIVERY_DELAY, Intent.COUPON_ISSUE, Intent.COMPLAINT_ESCALATION}
-)
+_MEDIUM_RISK = frozenset({Intent.DELIVERY_DELAY, Intent.COUPON_ISSUE, Intent.COMPLAINT_ESCALATION})
 _INJECTION_MARKERS = ("忽略规则", "绕过政策", "直接修改数据库", "调用写工具")
 _ORDER_ID = re.compile(r"(?:订单号|订单)\s*(?:是|为|[:：])?\s*([A-Za-z0-9_-]{6,})")
 _AMOUNT = re.compile(r"(?:退款|退我|金额)\D{0,6}(\d+(?:\.\d{1,2})?)\s*元")
@@ -51,10 +49,17 @@ def risk_for_intent(intent: Intent) -> RiskLevel:
 def classifier_target(scenario: ScenarioSpec) -> IntentResult:
     slots = visible_slots(scenario.user_utterance)
     injection = any(marker in scenario.user_utterance for marker in _INJECTION_MARKERS)
+    primary_intent = (
+        Intent.DELIVERY_DELAY if scenario.intent is Intent.MULTI_INTENT else scenario.intent
+    )
+    secondary_intents = (
+        (Intent.COMPLAINT_ESCALATION,) if scenario.intent is Intent.MULTI_INTENT else ()
+    )
     return IntentResult(
-        primary_intent=scenario.intent,
+        primary_intent=primary_intent,
+        secondary_intents=secondary_intents,
         slots=slots,
-        risk_level=RiskLevel.HIGH if injection else risk_for_intent(scenario.intent),
+        risk_level=RiskLevel.HIGH if injection else risk_for_intent(primary_intent),
         confidence=1.0,
         needs_clarification=(
             scenario.intent is not Intent.OUT_OF_SCOPE and slots["order_id"] is None
@@ -81,9 +86,7 @@ def to_classifier_sft(variant: ExpandedScenarioVariant) -> SFTTrainingRecord:
     )
 
 
-def _remediation_record(
-    *, source_id: str, text: str, target: IntentResult
-) -> SFTTrainingRecord:
+def _remediation_record(*, source_id: str, text: str, target: IntentResult) -> SFTTrainingRecord:
     content = json.dumps(target.model_dump(mode="json"), ensure_ascii=False, sort_keys=True)
     digest = hashlib.sha256(f"{source_id}\n{text}\n{content}".encode()).hexdigest()
     return SFTTrainingRecord(
@@ -107,8 +110,7 @@ def build_failure_remediation_sft(
         raise ValueError("per_category must be positive")
     train = [item for item in variants if item.split is DataSplit.TRAIN]
     by_intent = {
-        intent: [item for item in train if item.scenario.intent is intent]
-        for intent in Intent
+        intent: [item for item in train if item.scenario.intent is intent] for intent in Intent
     }
     recipes: tuple[tuple[str, Intent, Intent | None, str], ...] = (
         (

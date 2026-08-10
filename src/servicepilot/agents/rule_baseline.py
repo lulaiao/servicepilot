@@ -30,9 +30,7 @@ class RuleBasedSingleAgent:
             message = "这个请求不属于本地生活订单售后范围，我不会执行订单写操作。"
             self._event(events, TraceRole.ASSISTANT, "message", message)
             simulator.finish()
-            return self._trajectory(
-                scenario, trace_id, events, False, message, intents
-            )
+            return self._trajectory(scenario, trace_id, events, False, message, intents)
 
         question = "请提供需要处理的订单号。"
         self._event(events, TraceRole.ASSISTANT, "clarification", question)
@@ -61,9 +59,7 @@ class RuleBasedSingleAgent:
         )
         self._event(events, TraceRole.ASSISTANT, "final", message)
         simulator.finish()
-        return self._trajectory(
-            scenario, trace_id, events, claimed_success, message, intents
-        )
+        return self._trajectory(scenario, trace_id, events, claimed_success, message, intents)
 
     def detect_intents(self, text: str) -> tuple[Intent, ...]:
         if "忽略规则" in text or "直接修改数据库" in text:
@@ -133,6 +129,14 @@ class RuleBasedSingleAgent:
         }:
             question = "请确认退款原因和期望退款金额。"
             self._event(events, TraceRole.ASSISTANT, "clarification", question)
+            if not simulator.has_refund_details():
+                self._event(
+                    events,
+                    TraceRole.USER,
+                    "slot_unavailable",
+                    "当前无法提供退款原因或金额。",
+                )
+                return False
             reason, amount = simulator.refund_details()
             self._event(
                 events,
@@ -170,6 +174,14 @@ class RuleBasedSingleAgent:
         if intent is Intent.RESCHEDULE:
             question = "请确认新的预约或配送时间。"
             self._event(events, TraceRole.ASSISTANT, "clarification", question)
+            if not simulator.has_reschedule_time():
+                self._event(
+                    events,
+                    TraceRole.USER,
+                    "slot_unavailable",
+                    "当前无法提供新的预约或配送时间。",
+                )
+                return False
             new_time = simulator.reschedule_time()
             self._event(
                 events,
@@ -233,15 +245,11 @@ class RuleBasedSingleAgent:
         *,
         version_key: str = "expected_version",
     ) -> bool:
-        preview = await self._call(
-            gateway, trace_id, events, preview_tool, preview_arguments
-        )
+        preview = await self._call(gateway, trace_id, events, preview_tool, preview_arguments)
         if not preview.ok or preview.data is None:
             return False
         explanation = str(preview.data["summary"])
-        self._event(
-            events, TraceRole.ASSISTANT, "confirmation_request", explanation
-        )
+        self._event(events, TraceRole.ASSISTANT, "confirmation_request", explanation)
         confirmation = simulator.answer_confirmation(explanation)
         self._event(events, TraceRole.USER, "confirmation", confirmation)
         if not simulator.scenario.accept_confirmation:
@@ -252,11 +260,7 @@ class RuleBasedSingleAgent:
             "idempotency_key": f"{trace_id}-{execute_tool}",
             version_key: preview.data["expected_version"],
         }
-        return (
-            await self._call(
-                gateway, trace_id, events, execute_tool, arguments
-            )
-        ).ok
+        return (await self._call(gateway, trace_id, events, execute_tool, arguments)).ok
 
     async def _call(
         self,

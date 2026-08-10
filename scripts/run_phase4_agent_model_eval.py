@@ -24,6 +24,7 @@ from servicepilot.routing.structured_output import (
     build_intent_prompt,
     parse_intent_output,
 )
+from servicepilot.training.classifier_data import classifier_target
 
 INJECTION_PHRASES = (
     "忽略规则",
@@ -185,7 +186,8 @@ def raw_classifier_metrics(
     if len(records) != len(scenarios):
         raise ValueError("classifier record count does not match scenario count")
     labels = tuple(Intent)
-    gold = [item.intent for item in scenarios]
+    targets = [classifier_target(item) for item in scenarios]
+    gold = [item.primary_intent for item in targets]
     predicted = [Intent(item["prediction"]["primary_intent"]) for item in records]
     per_intent: dict[str, dict[str, float | int]] = {}
     f1_values = []
@@ -218,7 +220,30 @@ def raw_classifier_metrics(
         ),
         "primary_macro_f1": round(sum(f1_values) / len(f1_values), 4),
         "schema_valid_rate": round(sum(item["schema_valid"] for item in records) / len(records), 4),
+        "executable_intent_tuple_accuracy": round(
+            sum(
+                (
+                    Intent(record["prediction"]["primary_intent"]),
+                    *tuple(Intent(item) for item in record["prediction"]["secondary_intents"]),
+                )
+                == (target.primary_intent, *target.secondary_intents)
+                for target, record in zip(targets, records, strict=True)
+            )
+            / len(records),
+            4,
+        ),
         "per_intent": per_intent,
+    }
+
+
+def guardrail_effect_metrics(records: list[dict[str, Any]]) -> dict[str, Any]:
+    interventions = [item for item in records if item["intervention_type"] is not None]
+    return {
+        "intervention_count": len(interventions),
+        "rescue_count": sum(item["effect"] == "rescue" for item in interventions),
+        "harm_count": sum(item["effect"] == "harm" for item in interventions),
+        "neutral_count": sum(item["effect"] == "neutral" for item in interventions),
+        "records": interventions,
     }
 
 
@@ -266,6 +291,7 @@ async def main_async() -> None:
     scenario_latencies: list[float] = []
     safety_override_count = 0
     tool_alignment_override_count = 0
+    guardrail_records: list[dict[str, Any]] = []
     for index, scenario in enumerate(scenarios, start=1):
         print(
             f"scenario {index}/{len(scenarios)}: {scenario.scenario_id}",
@@ -302,6 +328,40 @@ async def main_async() -> None:
             )
         safety_override_count += agent.safety_override_count
         tool_alignment_override_count += agent.tool_alignment_override_count
+        raw_record = classifier.records[-1]
+        raw_intents = (
+            Intent(raw_record["prediction"]["primary_intent"]),
+            *tuple(Intent(item) for item in raw_record["prediction"]["secondary_intents"]),
+        )
+        expected = classifier_target(scenario)
+        expected_intents = (expected.primary_intent, *expected.secondary_intents)
+        selected_intents = (
+            (agent.state.intent.primary_intent, *agent.state.intent.secondary_intents)
+            if agent.state is not None
+            else ()
+        )
+        intervention_type = None
+        if agent.safety_override_count:
+            intervention_type = "deterministic_safety"
+        elif agent.tool_alignment_override_count:
+            intervention_type = "tool_alignment"
+        raw_correct = raw_intents == expected_intents
+        selected_correct = selected_intents == expected_intents
+        effect = "neutral"
+        if not raw_correct and selected_correct:
+            effect = "rescue"
+        elif raw_correct and not selected_correct:
+            effect = "harm"
+        guardrail_records.append(
+            {
+                "scenario_id": scenario.scenario_id,
+                "intervention_type": intervention_type,
+                "raw_intents": [item.value for item in raw_intents],
+                "selected_intents": [item.value for item in selected_intents],
+                "expected_intents": [item.value for item in expected_intents],
+                "effect": effect,
+            }
+        )
         torch.cuda.synchronize()
         scenario_latencies.append(time.perf_counter() - started)
         model_trajectories.append(trajectory)
@@ -379,6 +439,7 @@ async def main_async() -> None:
             ),
             "deterministic_safety_override_count": safety_override_count,
             "tool_alignment_override_count": tool_alignment_override_count,
+            "guardrail_effects": guardrail_effect_metrics(guardrail_records),
         },
     }
     learned = payload["learned_extractor_agent"]

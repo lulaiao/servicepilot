@@ -1,7 +1,11 @@
+import pytest
+
 from servicepilot.agents.routed_baseline import RoutedRuleAgent
+from servicepilot.eval.catalog import build_phase3_scenarios
 from servicepilot.eval.models import Intent
 from servicepilot.eval.routing_dataset import DatasetSplit, build_routing_dataset
 from servicepilot.eval.routing_metrics import evaluate_extractor
+from servicepilot.eval.runner import run_scenario
 from servicepilot.mcp_gateway.errors import ToolErrorCode
 from servicepilot.routing.intent_rules import RuleIntentClassifier
 from servicepilot.routing.models import (
@@ -40,6 +44,18 @@ class WrongLowRiskClassifier:
         )
 
 
+class WrongRescheduleClassifier:
+    def classify(self, text: str) -> IntentResult:
+        del text
+        return IntentResult(
+            primary_intent=Intent.RESCHEDULE,
+            slots={},
+            risk_level=RiskLevel.HIGH,
+            confidence=0.9,
+            needs_clarification=True,
+        )
+
+
 def test_frozen_routing_dataset_has_disjoint_family_splits() -> None:
     examples = build_routing_dataset()
 
@@ -51,9 +67,7 @@ def test_frozen_routing_dataset_has_disjoint_family_splits() -> None:
         split: {item.family_id for item in examples if item.split is split}
         for split in DatasetSplit
     }
-    assert families_by_split[DatasetSplit.TRAIN].isdisjoint(
-        families_by_split[DatasetSplit.DEV]
-    )
+    assert families_by_split[DatasetSplit.TRAIN].isdisjoint(families_by_split[DatasetSplit.DEV])
     assert families_by_split[DatasetSplit.TRAIN].isdisjoint(
         families_by_split[DatasetSplit.SEALED_TEST]
     )
@@ -101,14 +115,25 @@ def test_tool_alignment_guard_prevents_high_risk_intent_downgrade() -> None:
     assert agent.tool_alignment_override_count == 1
 
 
+@pytest.mark.asyncio
+async def test_incompatible_predicted_action_fails_safely_without_runtime_error() -> None:
+    source = next(item for item in build_phase3_scenarios() if item.intent is Intent.CANCEL_ORDER)
+    scenario = source.model_copy(update={"user_utterance": "请停止这笔订单后续处理"})
+
+    trajectory, judge, _ = await run_scenario(
+        scenario, agent=RoutedRuleAgent(classifier=WrongRescheduleClassifier())
+    )
+
+    assert not trajectory.claimed_success
+    assert any(item.kind == "slot_unavailable" for item in trajectory.events)
+    assert not judge.task_success
+
+
 def test_rule_component_metrics_are_computable_on_every_split() -> None:
     examples = build_routing_dataset()
     classifier = RuleIntentClassifier()
 
-    reports = [
-        evaluate_extractor(examples, classifier.classify, split)
-        for split in DatasetSplit
-    ]
+    reports = [evaluate_extractor(examples, classifier.classify, split) for split in DatasetSplit]
 
     assert [report.example_count for report in reports] == [24, 12, 24]
     assert all(0 <= report.macro_f1 <= 1 for report in reports)
@@ -127,9 +152,7 @@ def test_router_changes_role_from_action_and_observation() -> None:
 
     assert router.route(state).role is AgentRole.POLICY
     assert (
-        router.route(
-            state.model_copy(update={"pending_action": "create_refund_request"})
-        ).role
+        router.route(state.model_copy(update={"pending_action": "create_refund_request"})).role
         is AgentRole.AFTER_SALES
     )
     failed = ToolObservation(
@@ -137,9 +160,7 @@ def test_router_changes_role_from_action_and_observation() -> None:
         ok=False,
         error_code=ToolErrorCode.VERSION_CONFLICT,
     )
-    recovery = state.model_copy(
-        update={"pending_action": None, "failed_tools": (failed,)}
-    )
+    recovery = state.model_copy(update={"pending_action": None, "failed_tools": (failed,)})
     assert router.route(recovery).role is AgentRole.COORDINATOR
     assert router.route(recovery).should_clarify is True
 
