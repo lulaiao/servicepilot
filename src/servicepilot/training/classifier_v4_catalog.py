@@ -5,7 +5,8 @@ import json
 
 from pydantic import BaseModel, ConfigDict
 
-from servicepilot.eval.models import Intent
+from servicepilot.eval.catalog import build_phase3_scenarios
+from servicepilot.eval.models import Intent, ScenarioSpec
 from servicepilot.routing.structured_output import build_intent_prompt
 from servicepilot.training.classifier_data import classifier_target_for_text
 from servicepilot.training.data_models import DataSplit, SFTTrainingRecord
@@ -243,3 +244,27 @@ def build_classifier_v4_sft() -> tuple[SFTTrainingRecord, ...]:
             )
         )
     return tuple(records)
+
+
+def build_classifier_v4_dev_scenarios() -> tuple[ScenarioSpec, ...]:
+    """Attach dev utterances to known-executable workflows for checkpoint selection."""
+
+    bases = {
+        item.intent: item for item in build_phase3_scenarios() if item.scenario_id.endswith("-01")
+    }
+    scenarios = []
+    for item in build_classifier_v4_utterances():
+        if item.split is not DataSplit.DEV:
+            continue
+        scenarios.append(
+            bases[item.intent].model_copy(
+                update={
+                    "scenario_id": f"exec-{item.utterance_id}",
+                    "order_id": f"exec-{item.utterance_id}",
+                    "user_id": f"synthetic-user-{item.utterance_id}",
+                    "user_utterance": item.text,
+                    "faults": {},
+                }
+            )
+        )
+    return tuple(scenarios)

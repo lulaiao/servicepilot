@@ -16,6 +16,7 @@ from servicepilot.training.classifier_data import (
 )
 from servicepilot.training.classifier_v4_catalog import (
     ClassifierUtterance,
+    build_classifier_v4_dev_scenarios,
     build_classifier_v4_sft,
     build_classifier_v4_utterances,
 )
@@ -102,6 +103,7 @@ __all__ = [
     "visible_slots",
     "ClassifierUtterance",
     "build_classifier_v4_sft",
+    "build_classifier_v4_dev_scenarios",
     "build_classifier_v4_utterances",
     "PreferenceTrainingRecord",
     "SFTTrainingRecord",

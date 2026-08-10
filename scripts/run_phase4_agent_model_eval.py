@@ -170,14 +170,18 @@ def percentile(values: list[float], fraction: float) -> float:
 def load_scenarios(path: Path | None) -> tuple[ScenarioSpec, ...]:
     if path is None:
         return build_phase3_scenarios()
-    cases = tuple(
-        HardEvalCase.model_validate_json(line)
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    )
-    if not cases:
+    scenarios = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        value = json.loads(line)
+        if "scenario" in value:
+            scenarios.append(HardEvalCase.model_validate(value).scenario)
+        else:
+            scenarios.append(ScenarioSpec.model_validate(value))
+    if not scenarios:
         raise ValueError("scenario catalog is empty")
-    return tuple(item.scenario for item in cases)
+    return tuple(scenarios)
 
 
 def raw_classifier_metrics(
