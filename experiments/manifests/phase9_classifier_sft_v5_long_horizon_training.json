@@ -1,0 +1,40 @@
+{
+  "protocol_version": "phase9-qwen25-7b-classifier-lora-sft-v5-long-horizon-diagnostic",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset_sha256": "8166711611a83f47039d18293dae55b6276021ccd2a7cdf69c5b73de3f873d6a",
+  "seed": 20260816,
+  "training_mode": "fresh_run_from_base_model",
+  "completed_optimizer_steps": 20,
+  "completed_epoch": 2.533333333333333,
+  "sealed_records_loaded_into_trainer": 0,
+  "train_loss": 0.4698157783597708,
+  "checkpoints": [
+    {
+      "step": 5,
+      "dev_loss": 0.7566437125205994,
+      "adapter_sha256": "4804e6600814a7d4e14a7a2a067b163b7ec2b551198f371d8a9f299a3af5a858"
+    },
+    {
+      "step": 10,
+      "dev_loss": 0.3717745244503021,
+      "adapter_sha256": "48214c4fd4534e146d6c277b026c6b31cb9be80ae7ba791d53317787a0c532fe"
+    },
+    {
+      "step": 15,
+      "dev_loss": 0.19597770273685455,
+      "adapter_sha256": "3bf19f1e45799b0b72b951e6d2931ae615b31594d86be69f2711a0369e2e1a0f"
+    },
+    {
+      "step": 20,
+      "dev_loss": 0.15382595360279083,
+      "adapter_sha256": "3910d318066f0a541fc942f5797940dd8c84e712c3cf521e8b10f8eb71e67fc6"
+    }
+  ],
+  "wall_time_seconds": 51.6702,
+  "peak_vram_allocated_mib": 16441.53,
+  "peak_vram_reserved_mib": 16680.0,
+  "raw_report": "artifacts/reports/phase9_classifier_sft_v5_long_horizon_seed20260816.json",
+  "raw_report_sha256": "a4b2fcb13ec31b7de4490c46582ce06f36c5261bf2db184aa57680928b84890c",
+  "status": "awaiting_checkpoint_15_and_20_dev_evaluation",
+  "claim_scope": "screening_only_not_formal_quality"
+}
