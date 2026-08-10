@@ -1,0 +1,23 @@
+{
+  "protocol_version": "phase9-qwen25-7b-classifier-lora-sft-v5-hard-negative-screen",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset_sha256": "8166711611a83f47039d18293dae55b6276021ccd2a7cdf69c5b73de3f873d6a",
+  "seed": 20260816,
+  "completed_optimizer_steps": 10,
+  "sealed_records_loaded_into_trainer": 0,
+  "train_loss": 0.8112661898136139,
+  "checkpoint_5": {
+    "dev_loss": 0.7926301956176758,
+    "adapter_sha256": "0ba0f70fac90b7987b943777c8e6ece1aad0818945a9239d3cec235be2e92cf8"
+  },
+  "checkpoint_10": {
+    "dev_loss": 0.5865015387535095,
+    "adapter_sha256": "fa3879c540112c89f13601ca43b5a2d1780a75c789ad148047a415a24ed53382"
+  },
+  "wall_time_seconds": 39.3164,
+  "peak_vram_allocated_mib": 16441.53,
+  "raw_report": "artifacts/reports/phase9_classifier_sft_v5_screen_seed20260816.json",
+  "raw_report_sha256": "40db11c6a8d661df3024b0bd7562e79f3891dcae08f9397bb1dcdd01d8f2de93",
+  "status": "awaiting_same_dev_checkpoint_evaluation",
+  "claim_scope": "screening_only_not_formal_quality"
+}
