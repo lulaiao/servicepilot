@@ -1,0 +1,23 @@
+{
+  "protocol_version": "phase9-qwen25-7b-classifier-lora-sft-v4-independent-screen",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset_sha256": "dd62388bb099feff065e1b078bd146f0f24473623b43ac2b3691c1bcda88e090",
+  "seed": 20260812,
+  "completed_optimizer_steps": 10,
+  "sealed_records_loaded_into_trainer": 0,
+  "train_loss": 0.832737272977829,
+  "checkpoint_5": {
+    "dev_loss": 0.8007789254188538,
+    "adapter_sha256": "6010ec1139b00ff917a281b040a33c71616e79719325ac2d1bceacf0c65c80bf"
+  },
+  "checkpoint_10": {
+    "dev_loss": 0.5952779054641724,
+    "adapter_sha256": "9e52047b94ee68a2efc8eddce742ea958a174f6dac0a1bf85ed72b92e3650da1"
+  },
+  "wall_time_seconds": 32.7204,
+  "peak_vram_allocated_mib": 16439.65,
+  "raw_report": "artifacts/reports/phase9_classifier_sft_v4_screen_seed20260812.json",
+  "raw_report_sha256": "f833027f0750321a767dd0ba89371bb8564664edf7bf3b830c0e8db81f70a2a1",
+  "status": "awaiting_same_dev_checkpoint_evaluation",
+  "claim_scope": "screening_only_not_formal_quality"
+}
