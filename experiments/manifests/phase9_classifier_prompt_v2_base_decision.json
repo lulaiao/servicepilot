@@ -1,0 +1,33 @@
+{
+  "schema_version": "servicepilot-phase9-prompt-diagnostic-decision-v1",
+  "stage": "classifier_prompt_contract_v2_with_base_model",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "adapter": null,
+  "prompt_v2_dataset": "data/eval/phase9_classifier_prompt_v2_dev.jsonl",
+  "prompt_v2_dataset_sha256": "7d679bdc048fba86a5be89df73a3ef6513c531c3ada0e78ee35b7290cc944144",
+  "raw_report": "artifacts/reports/phase9_classifier_base_prompt_v2_dev.json",
+  "raw_report_sha256": "10eac4d2e10849aa14e333b4f7eb2fc419c9fa8cf3061e91226dcea1953d5b93",
+  "metrics": {
+    "schema_valid_rate": 0.9722,
+    "primary_accuracy": 0.8889,
+    "primary_macro_f1": 0.819,
+    "executable_intent_tuple_accuracy": 0.8611,
+    "mean_latency_seconds": 3.268,
+    "tuple_error_count": 5
+  },
+  "targeted_outcomes": {
+    "cancel_without_refund_boundary_fixed": false,
+    "missing_item_primary_hierarchy_fixed": false,
+    "duplicate_charge_primary_hierarchy_fixed": false,
+    "delay_and_escalation_secondary_complete": false,
+    "typed_amount_serialization_stable": false
+  },
+  "adapter_instruction_rigidity_hypothesis_supported": false,
+  "single_layer_intent_schema_hypothesis_supported": true,
+  "decision": "stop_single_layer_intent_tuning",
+  "reason": "The unadapted model retained all three stable issue-versus-action errors despite explicit definitions, while also regressing multi-intent completeness and output typing.",
+  "next_action": "Factor classification into independent issue_type and requested_actions fields with deterministic legacy routing projection.",
+  "agent_harness_evaluation_required": false,
+  "sealed_evaluation_accessed": false,
+  "hard_eval_v2_reused": false
+}
