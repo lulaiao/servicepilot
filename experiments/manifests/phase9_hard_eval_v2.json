@@ -1,0 +1,1511 @@
+{
+  "catalog_version": "servicepilot-hard-eval-v2",
+  "provenance": "post_training_independent_compositional_authoring",
+  "code_revision": "fb99398bda0c88211fd58a5e8e1006cc3c1b82cf",
+  "case_count": 240,
+  "intent_counts": {
+    "cancel_order": 20,
+    "complaint_escalation": 20,
+    "coupon_issue": 20,
+    "delivery_delay": 20,
+    "duplicate_charge": 20,
+    "full_refund": 20,
+    "missing_or_wrong_item": 20,
+    "multi_intent": 20,
+    "order_query": 20,
+    "out_of_scope": 20,
+    "partial_refund": 20,
+    "reschedule": 20
+  },
+  "compositional_dimensions": {
+    "issue": 4,
+    "request": 5
+  },
+  "training_data": "data/generated/phase9_classifier_sft_v2.jsonl",
+  "training_data_sha256": "3104486b256907684bd0b4b3c4436af38a3b7a5232127f49fa870762372fb3a5",
+  "exact_training_utterance_overlap_count": 0,
+  "near_duplicate_threshold": 0.9,
+  "near_duplicate_count": 0,
+  "near_duplicates": [],
+  "gold_routed_workflow_success_count": 240,
+  "gold_routed_workflow_failures": [],
+  "rule_baseline": {
+    "scenario_count": 240,
+    "task_success_count": 145,
+    "executable_task_success_rate": 0.6042,
+    "final_state_accuracy": 0.6292,
+    "policy_violation_rate": 0.2667,
+    "false_success_rate": 0.0708,
+    "average_turns": 6.392,
+    "average_tool_calls": 1.038,
+    "by_intent": {
+      "order_query": {
+        "count": 20,
+        "success_count": 14,
+        "success_rate": 0.7
+      },
+      "cancel_order": {
+        "count": 20,
+        "success_count": 16,
+        "success_rate": 0.8
+      },
+      "full_refund": {
+        "count": 20,
+        "success_count": 8,
+        "success_rate": 0.4
+      },
+      "partial_refund": {
+        "count": 20,
+        "success_count": 8,
+        "success_rate": 0.4
+      },
+      "delivery_delay": {
+        "count": 20,
+        "success_count": 8,
+        "success_rate": 0.4
+      },
+      "missing_or_wrong_item": {
+        "count": 20,
+        "success_count": 11,
+        "success_rate": 0.55
+      },
+      "duplicate_charge": {
+        "count": 20,
+        "success_count": 11,
+        "success_rate": 0.55
+      },
+      "coupon_issue": {
+        "count": 20,
+        "success_count": 14,
+        "success_rate": 0.7
+      },
+      "reschedule": {
+        "count": 20,
+        "success_count": 8,
+        "success_rate": 0.4
+      },
+      "complaint_escalation": {
+        "count": 20,
+        "success_count": 17,
+        "success_rate": 0.85
+      },
+      "multi_intent": {
+        "count": 20,
+        "success_count": 14,
+        "success_rate": 0.7
+      },
+      "out_of_scope": {
+        "count": 20,
+        "success_count": 16,
+        "success_rate": 0.8
+      }
+    },
+    "failures": [
+      {
+        "scenario_id": "hard-v2-order_query-01-03",
+        "task_success": false,
+        "final_state_correct": true,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-order_query-01-04",
+        "task_success": false,
+        "final_state_correct": true,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-order_query-01-05",
+        "task_success": false,
+        "final_state_correct": true,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-order_query-04-03",
+        "task_success": false,
+        "final_state_correct": true,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-order_query-04-04",
+        "task_success": false,
+        "final_state_correct": true,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-order_query-04-05",
+        "task_success": false,
+        "final_state_correct": true,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-cancel_order-01-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "ORDER_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-cancel_order-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "ORDER_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-cancel_order-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "ORDER_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-cancel_order-04-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "ORDER_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-01-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-01-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-01-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-02-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-02-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-03-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-03-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-04-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-04-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-full_refund-04-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-01-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-01-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-01-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-02-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-02-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-03-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-03-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-04-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-04-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-partial_refund-04-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-01-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-01-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-01-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-02-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-02-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-03-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-03-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-04-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-04-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-delivery_delay-04-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-02-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-02-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-03-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-03-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-04-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-04-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-missing_or_wrong_item-04-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-01-01",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-01-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-01-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-02-01",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-02-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-03-01",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-03-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-duplicate_charge-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "REFUND_AMOUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-coupon_issue-02-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "COUPON_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-coupon_issue-02-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "COUPON_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-coupon_issue-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "COUPON_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-coupon_issue-03-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "COUPON_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-coupon_issue-03-03",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "COUPON_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-coupon_issue-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "COUPON_STATUS_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-01-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-01-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-01-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 10,
+        "tool_calls": 2
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-02-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-02-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 10,
+        "tool_calls": 2
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-03-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-03-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 10,
+        "tool_calls": 2
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-04-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-04-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-reschedule-04-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": false,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "SCHEDULE_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "GOLD_EVIDENCE_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 10,
+        "tool_calls": 2
+      },
+      {
+        "scenario_id": "hard-v2-complaint_escalation-01-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "HANDOFF_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-complaint_escalation-02-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "HANDOFF_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-complaint_escalation-04-05",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": false,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "HANDOFF_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING"
+        ],
+        "turns": 2,
+        "tool_calls": 0
+      },
+      {
+        "scenario_id": "hard-v2-multi_intent-02-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-multi_intent-02-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-multi_intent-03-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-multi_intent-03-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-multi_intent-04-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-multi_intent-04-04",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": false,
+        "failure_reasons": [
+          "DELIVERY_ISSUE_COUNT_MISMATCH",
+          "REQUIRED_ACTION_MISSING",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-out_of_scope-01-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": true,
+        "failure_reasons": [
+          "HANDOFF_COUNT_MISMATCH",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-out_of_scope-02-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": true,
+        "failure_reasons": [
+          "HANDOFF_COUNT_MISMATCH",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-out_of_scope-03-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": true,
+        "failure_reasons": [
+          "HANDOFF_COUNT_MISMATCH",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      },
+      {
+        "scenario_id": "hard-v2-out_of_scope-04-02",
+        "task_success": false,
+        "final_state_correct": false,
+        "policy_compliant": true,
+        "false_success": true,
+        "tool_sequence_valid": true,
+        "failure_reasons": [
+          "HANDOFF_COUNT_MISMATCH",
+          "FALSE_SUCCESS"
+        ],
+        "turns": 6,
+        "tool_calls": 1
+      }
+    ]
+  },
+  "rule_baseline_failure_count": 95,
+  "catalog": "data/eval/phase9_hard_eval_v2.jsonl",
+  "catalog_sha256": "8c408b74fdcf6c3441507b3e6856c970e39bf152ec0b067f445eaf34d845583a",
+  "freeze_passed": true
+}

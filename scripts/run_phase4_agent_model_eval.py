@@ -3,6 +3,7 @@
 
 import argparse
 import asyncio
+import hashlib
 import json
 import math
 import os
@@ -14,7 +15,8 @@ from typing import Any
 
 from servicepilot.agents.routed_baseline import RoutedRuleAgent
 from servicepilot.eval.catalog import build_phase3_scenarios
-from servicepilot.eval.models import Intent, JudgeResult, Trajectory
+from servicepilot.eval.hard_catalog import HardEvalCase
+from servicepilot.eval.models import Intent, JudgeResult, ScenarioSpec, Trajectory
 from servicepilot.eval.runner import build_report, run_scenario, run_suite
 from servicepilot.routing.intent_rules import RuleIntentClassifier
 from servicepilot.routing.models import IntentResult, RiskLevel
@@ -44,11 +46,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model-path", type=Path, required=True)
     parser.add_argument("--adapter-path", type=Path)
     parser.add_argument("--revision", required=True)
-    parser.add_argument("--evaluation-split", choices=("dev", "sealed_test"))
+    parser.add_argument("--evaluation-split", choices=("dev", "sealed_test", "hard_eval_v2"))
+    parser.add_argument("--scenario-catalog", type=Path)
     parser.add_argument("--device", choices=("cuda",), default="cuda")
-    parser.add_argument(
-        "--dtype", choices=("float16", "bfloat16"), default="float16"
-    )
+    parser.add_argument("--dtype", choices=("float16", "bfloat16"), default="float16")
     parser.add_argument("--max-new-tokens", type=int, default=128)
     parser.add_argument("--seed", type=int, default=20260805)
     parser.add_argument("--output", type=Path, required=True)
@@ -78,9 +79,7 @@ class LocalTransformersIntentClassifier:
         torch.cuda.manual_seed_all(args.seed)
         torch.cuda.reset_peak_memory_stats()
         load_started = time.perf_counter()
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            args.model_path, local_files_only=True
-        )
+        self.tokenizer = AutoTokenizer.from_pretrained(args.model_path, local_files_only=True)
         self.model = AutoModelForCausalLM.from_pretrained(
             args.model_path,
             local_files_only=True,
@@ -109,9 +108,7 @@ class LocalTransformersIntentClassifier:
                 }
             )
             return result
-        messages = [
-            {"role": "user", "content": build_intent_prompt(text)}
-        ]
+        messages = [{"role": "user", "content": build_intent_prompt(text)}]
         rendered = self.tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
@@ -169,6 +166,62 @@ def percentile(values: list[float], fraction: float) -> float:
     return ordered[math.ceil(fraction * len(ordered)) - 1]
 
 
+def load_scenarios(path: Path | None) -> tuple[ScenarioSpec, ...]:
+    if path is None:
+        return build_phase3_scenarios()
+    cases = tuple(
+        HardEvalCase.model_validate_json(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    )
+    if not cases:
+        raise ValueError("scenario catalog is empty")
+    return tuple(item.scenario for item in cases)
+
+
+def raw_classifier_metrics(
+    scenarios: tuple[ScenarioSpec, ...], records: list[dict[str, Any]]
+) -> dict[str, Any]:
+    if len(records) != len(scenarios):
+        raise ValueError("classifier record count does not match scenario count")
+    labels = tuple(Intent)
+    gold = [item.intent for item in scenarios]
+    predicted = [Intent(item["prediction"]["primary_intent"]) for item in records]
+    per_intent: dict[str, dict[str, float | int]] = {}
+    f1_values = []
+    for label in labels:
+        pairs = tuple(zip(gold, predicted, strict=True))
+        true_positive = sum(g is label and p is label for g, p in pairs)
+        false_positive = sum(g is not label and p is label for g, p in pairs)
+        false_negative = sum(g is label and p is not label for g, p in pairs)
+        precision = (
+            true_positive / (true_positive + false_positive)
+            if true_positive + false_positive
+            else 0.0
+        )
+        recall = (
+            true_positive / (true_positive + false_negative)
+            if true_positive + false_negative
+            else 0.0
+        )
+        f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+        f1_values.append(f1)
+        per_intent[label.value] = {
+            "support": sum(item is label for item in gold),
+            "precision": round(precision, 4),
+            "recall": round(recall, 4),
+            "f1": round(f1, 4),
+        }
+    return {
+        "primary_accuracy": round(
+            sum(g is p for g, p in zip(gold, predicted, strict=True)) / len(gold), 4
+        ),
+        "primary_macro_f1": round(sum(f1_values) / len(f1_values), 4),
+        "schema_valid_rate": round(sum(item["schema_valid"] for item in records) / len(records), 4),
+        "per_intent": per_intent,
+    }
+
+
 def risk_metrics(
     scenarios: tuple[Any, ...], results: tuple[JudgeResult, ...]
 ) -> dict[str, float | int]:
@@ -194,7 +247,7 @@ async def main_async() -> None:
     args = parse_args()
     import torch
 
-    scenarios = build_phase3_scenarios()
+    scenarios = load_scenarios(args.scenario_catalog)
     rule_started = time.perf_counter()
     rule_trajectories, rule_results, rule_report = await run_suite(
         scenarios, agent_factory=RoutedRuleAgent
@@ -223,9 +276,7 @@ async def main_async() -> None:
         started = time.perf_counter()
         agent = RoutedRuleAgent(classifier=classifier)
         try:
-            trajectory, result, _ = await run_scenario(
-                scenario, agent=agent
-            )
+            trajectory, result, _ = await run_scenario(scenario, agent=agent)
         except Exception as exc:
             # A learned policy can select an action whose required scenario slot
             # is absent. That is evaluation evidence, not an infrastructure
@@ -266,6 +317,12 @@ async def main_async() -> None:
         "checkpoint": str(args.adapter_path) if args.adapter_path else None,
         "comparison_contract": {
             "scenarios": len(scenarios),
+            "scenario_catalog": str(args.scenario_catalog) if args.scenario_catalog else None,
+            "scenario_catalog_sha256": hashlib.sha256(
+                args.scenario_catalog.read_bytes()
+            ).hexdigest()
+            if args.scenario_catalog
+            else None,
             "tool_budget_per_scenario": 12,
             "gateway_retry_budget": 2,
             "router": "StatefulRouter",
@@ -277,65 +334,48 @@ async def main_async() -> None:
             "report": rule_report.model_dump(mode="json"),
             "risk": risk_metrics(scenarios, rule_results),
             "suite_latency_seconds": round(rule_elapsed, 4),
-            "mean_scenario_latency_seconds": round(
-                rule_elapsed / len(scenarios), 4
-            ),
+            "mean_scenario_latency_seconds": round(rule_elapsed / len(scenarios), 4),
             "peak_vram_allocated_mib": 0.0,
         },
         "learned_extractor_agent": {
             "candidate": {
                 "path": str(args.model_path.resolve()),
                 "revision": args.revision,
-                "adapter_path": str(args.adapter_path.resolve())
-                if args.adapter_path
-                else None,
+                "adapter_path": str(args.adapter_path.resolve()) if args.adapter_path else None,
                 "dtype": args.dtype,
                 "device": args.device,
             },
             "runtime": {
                 "torch_version": torch.__version__,
                 "cuda_runtime": torch.version.cuda,
-                "cuda_visible_devices": os.environ.get(
-                    "CUDA_VISIBLE_DEVICES"
-                ),
+                "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
                 "gpu_name": torch.cuda.get_device_name(0),
-                "model_load_seconds": round(
-                    classifier.model_load_seconds, 4
-                ),
+                "model_load_seconds": round(classifier.model_load_seconds, 4),
                 "peak_rss_mib": round(
                     resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024,
                     1,
                 ),
-                "peak_vram_allocated_mib": round(
-                    torch.cuda.max_memory_allocated() / 1024**2, 1
-                ),
-                "peak_vram_reserved_mib": round(
-                    torch.cuda.max_memory_reserved() / 1024**2, 1
-                ),
+                "peak_vram_allocated_mib": round(torch.cuda.max_memory_allocated() / 1024**2, 1),
+                "peak_vram_reserved_mib": round(torch.cuda.max_memory_reserved() / 1024**2, 1),
             },
             "report": model_report.model_dump(mode="json"),
             "risk": risk_metrics(scenarios, tuple(model_results)),
             "mean_scenario_latency_seconds": round(
                 sum(scenario_latencies) / len(scenario_latencies), 4
             ),
-            "p95_scenario_latency_seconds": round(
-                percentile(scenario_latencies, 0.95), 4
-            ),
+            "p95_scenario_latency_seconds": round(percentile(scenario_latencies, 0.95), 4),
             "mean_inference_latency_seconds": round(
                 sum(inference_latencies) / len(inference_latencies), 4
             ),
-            "p95_inference_latency_seconds": round(
-                percentile(inference_latencies, 0.95), 4
-            ),
+            "p95_inference_latency_seconds": round(percentile(inference_latencies, 0.95), 4),
             "schema_valid_rate": round(
-                sum(item["schema_valid"] for item in classifier.records)
-                / len(classifier.records),
+                sum(item["schema_valid"] for item in classifier.records) / len(classifier.records),
                 4,
             ),
+            "raw_classifier": raw_classifier_metrics(scenarios, classifier.records),
             "classifier_records": classifier.records,
             "runtime_error_count": sum(
-                "AGENT_RUNTIME_ERROR" in item.failure_reasons
-                for item in model_results
+                "AGENT_RUNTIME_ERROR" in item.failure_reasons for item in model_results
             ),
             "deterministic_safety_override_count": safety_override_count,
             "tool_alignment_override_count": tool_alignment_override_count,
