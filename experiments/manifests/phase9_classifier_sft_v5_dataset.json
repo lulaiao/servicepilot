@@ -1,0 +1,25 @@
+{
+  "schema_version": "servicepilot-classifier-sft-v5-hard-negative",
+  "code_revision": "105e0f786a424a898ec2f81eaade33be8a7d40bf",
+  "output": "data/generated/phase9_classifier_sft_v5.jsonl",
+  "output_sha256": "8166711611a83f47039d18293dae55b6276021ccd2a7cdf69c5b73de3f873d6a",
+  "record_count": 156,
+  "split_counts": {
+    "dev": 36,
+    "train": 120
+  },
+  "new_train_record_count": 48,
+  "new_train_category_counts": {
+    "cancel_not_reschedule": 12,
+    "delay_and_escalation": 24,
+    "reschedule_not_cancel": 12
+  },
+  "dev_record_sha256": "a6802664185922061bb9c2fd8474b78f2619fca547e172550236b2b6a9f48b93",
+  "dev_changed_from_v4": false,
+  "exact_cross_split_overlap_count": 0,
+  "near_duplicate_threshold": 0.8,
+  "near_duplicate_count": 0,
+  "sealed_record_count": 0,
+  "hard_eval_v2_accessed": false,
+  "passed": true
+}
