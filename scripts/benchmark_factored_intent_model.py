@@ -22,7 +22,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--adapter-path", type=Path)
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--revision", required=True)
-    parser.add_argument("--split", choices=("train", "dev"), default="dev")
+    parser.add_argument("--split", choices=("train", "dev", "sealed_test"), default="dev")
     parser.add_argument("--max-examples", type=int)
     parser.add_argument("--max-new-tokens", type=int, default=192)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
