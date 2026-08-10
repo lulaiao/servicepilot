@@ -1,0 +1,18 @@
+{
+  "schema_version": "servicepilot-factored-holdout-v1",
+  "code_revision": "282e02f1b22f0de7930a815c23cc4f14e377bd00",
+  "rules_frozen_before_authoring_at_revision": "d9d2fdb243c7885d0874164f6ffcff6ae8bc09b5",
+  "output": "data/eval/phase9_factored_holdout_v1.jsonl",
+  "output_sha256": "d321d2aadd16516183f8ae9e6253546feecbc7e55589257bd1127aa99ea00119",
+  "record_count": 24,
+  "split_counts": {
+    "sealed_test": 24
+  },
+  "exact_development_overlap_count": 0,
+  "near_duplicate_threshold": 0.8,
+  "near_duplicate_count": 0,
+  "one_shot_execution": true,
+  "retuning_or_reexecution_after_observation_allowed": false,
+  "hard_eval_v2_accessed": false,
+  "passed": true
+}
