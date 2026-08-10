@@ -1,0 +1,18 @@
+{
+  "schema_version": "servicepilot-classifier-prompt-contract-v2-dev",
+  "code_revision": "a928111d4b89b26ead3b60a803e7fb36e72dc454",
+  "output": "data/eval/phase9_classifier_prompt_v2_dev.jsonl",
+  "output_sha256": "7d679bdc048fba86a5be89df73a3ef6513c531c3ada0e78ee35b7290cc944144",
+  "record_count": 36,
+  "split_counts": {
+    "dev": 36,
+    "train": 0,
+    "sealed_test": 0
+  },
+  "utterances_unchanged": true,
+  "targets_unchanged": true,
+  "model_weights_changed": false,
+  "sealed_record_count": 0,
+  "hard_eval_v2_accessed": false,
+  "passed": true
+}
