@@ -1,0 +1,47 @@
+{
+  "schema_version": "servicepilot-factored-action-binding-replay-decision-v1",
+  "binding_revision": "13a8708",
+  "dataset_sha256": "7cfc757c100115871136e28ee2103750ba4732a0654fe4aab6501b30744c2b67",
+  "replays": [
+    {
+      "candidate": "base",
+      "report": "artifacts/reports/phase9_factored_classifier_base_action_bound_dev.json",
+      "report_sha256": "bb88cdc12458d5ac21d9826fde089fc541b4c0e7e280238e9c0eb72228fb5083",
+      "changed_prediction_count": 6
+    },
+    {
+      "candidate": "checkpoint_5",
+      "report": "artifacts/reports/phase9_factored_classifier_sft_v1_checkpoint5_action_bound_dev.json",
+      "report_sha256": "3948c45a781783704bf99c887f97f53c29ecdf79d70384f2b134a9d9f16bdc27",
+      "changed_prediction_count": 5
+    },
+    {
+      "candidate": "checkpoint_10",
+      "report": "artifacts/reports/phase9_factored_classifier_sft_v1_checkpoint10_action_bound_dev.json",
+      "report_sha256": "c08975469e8d59c8c978bf382e9ca54a2c5d6ab623cebb87d78668fb39526ff8",
+      "changed_prediction_count": 5
+    }
+  ],
+  "shared_metrics_after_binding": {
+    "schema_valid_rate": 1.0,
+    "issue_accuracy": 0.7857,
+    "issue_macro_f1": 0.7175,
+    "requested_action_exact_match": 1.0,
+    "requested_action_micro_f1": 1.0,
+    "requested_action_macro_f1": 1.0,
+    "issue_action_exact_match": 0.7857,
+    "unrequested_action_rate": 0.0,
+    "high_risk_action_false_positive_rate": 0.0,
+    "legacy_projection_accuracy": 0.8571
+  },
+  "decision": "accept_action_binding_reject_adapters_continue_issue_only_remediation",
+  "reason": "Deterministic evidence binding eliminates all action safety errors, while both adapters provide no issue-quality benefit over the faster base model.",
+  "remaining_gates": {
+    "minimum_issue_action_exact_match_0_85": false,
+    "minimum_legacy_projection_accuracy_0_9": false
+  },
+  "next_action": "Implement a deterministic rule-first issue extractor with explicit abstention and retain the base model only as a fallback for unmatched issue language.",
+  "formal_quality_claim_authorized": false,
+  "sealed_evaluation_accessed": false,
+  "hard_eval_v2_reused": false
+}
