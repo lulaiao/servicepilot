@@ -2,6 +2,7 @@ from servicepilot.eval.catalog import build_phase3_scenarios
 from servicepilot.eval.models import Intent
 from servicepilot.training import (
     DataSplit,
+    build_contract_hard_negative_sft,
     build_failure_remediation_sft,
     classifier_target,
     visible_slots,
@@ -60,3 +61,23 @@ def test_failure_remediation_is_train_only_and_bounded() -> None:
     assert len(records) == 60
     assert {item.split for item in records} == {DataSplit.TRAIN}
     assert len({item.record_id for item in records}) == len(records)
+
+
+def test_contract_hard_negatives_are_split_owned_and_bounded() -> None:
+    families = build_phase9_train_dev_families() + build_phase9_train_dev_families_v2()
+    variants = tuple(variant for family in families for variant in expand_family_variants(family))
+
+    records = build_contract_hard_negative_sft(variants)
+
+    assert len(records) == 72
+    assert sum(item.split is DataSplit.TRAIN for item in records) == 48
+    assert sum(item.split is DataSplit.DEV for item in records) == 24
+    assert len({item.record_id for item in records}) == len(records)
+    assert all(item.split is not DataSplit.SEALED_TEST for item in records)
+    multi_outputs = [
+        item.messages[1]["content"]
+        for item in records
+        if "multi_intent_conjunction" in item.source_record_id
+    ]
+    assert all('"primary_intent": "delivery_delay"' in item for item in multi_outputs)
+    assert all('"complaint_escalation"' in item for item in multi_outputs)

@@ -6,6 +6,7 @@ from servicepilot.training.advancement import (
     assess_grpo_advancement,
 )
 from servicepilot.training.classifier_data import (
+    build_contract_hard_negative_sft,
     build_failure_remediation_sft,
     classifier_target,
     risk_for_intent,
@@ -87,6 +88,7 @@ __all__ = [
     "assess_grpo_advancement",
     "DataSplit",
     "classifier_target",
+    "build_contract_hard_negative_sft",
     "build_failure_remediation_sft",
     "risk_for_intent",
     "to_classifier_sft",

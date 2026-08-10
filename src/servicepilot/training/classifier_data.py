@@ -170,3 +170,90 @@ def build_failure_remediation_sft(
                 )
             )
     return tuple(records)
+
+
+def build_contract_hard_negative_sft(
+    variants: tuple[ExpandedScenarioVariant, ...],
+    *,
+    train_per_category: int = 12,
+    dev_per_category: int = 6,
+) -> tuple[SFTTrainingRecord, ...]:
+    """Build split-owned v3 examples for the executable intent-tuple contract."""
+
+    if train_per_category <= 0 or dev_per_category <= 0:
+        raise ValueError("per-category counts must be positive")
+    by_split_intent = {
+        (split, intent): [
+            item for item in variants if item.split is split and item.scenario.intent is intent
+        ]
+        for split in (DataSplit.TRAIN, DataSplit.DEV)
+        for intent in Intent
+    }
+    recipes: tuple[tuple[str, Intent, tuple[str, ...]], ...] = (
+        (
+            "complaint_vs_out_of_scope",
+            Intent.COMPLAINT_ESCALATION,
+            (
+                "我要投诉这笔订单并转人工，不是在咨询无关问题",
+                "这是订单服务投诉，请建立人工工单而不是拒答",
+                "请把本次订单体验升级给客服处理",
+            ),
+        ),
+        (
+            "full_vs_partial",
+            Intent.FULL_REFUND,
+            (
+                "整单都无法使用，我要全部退款，不是部分退款",
+                "请退回本单全部金额，不要只处理其中一项",
+                "所有商品都有问题，需要走全额退款流程",
+            ),
+        ),
+        (
+            "partial_vs_full",
+            Intent.PARTIAL_REFUND,
+            (
+                "只有部分商品有问题，只退对应金额，不要整单退款",
+                "请保留订单，仅申请一笔部分退款",
+                "不是全部退回，我只处理有问题的那一部分",
+            ),
+        ),
+        (
+            "multi_intent_conjunction",
+            Intent.MULTI_INTENT,
+            (
+                "配送已经超时，而且我要建立人工投诉工单",
+                "请同时登记配送延误并转交人工客服",
+                "先记录送达超时，然后创建投诉工单",
+            ),
+        ),
+    )
+    records: list[SFTTrainingRecord] = []
+    for split, count in (
+        (DataSplit.TRAIN, train_per_category),
+        (DataSplit.DEV, dev_per_category),
+    ):
+        for category, intent, templates in recipes:
+            sources = by_split_intent[(split, intent)]
+            if not sources:
+                raise ValueError(f"no {split.value} sources for {intent.value}")
+            for index in range(count):
+                source = sources[index % len(sources)]
+                template = templates[index % len(templates)]
+                text = f"{template}；补充上下文：{source.scenario.user_utterance}"
+                target = classifier_target(
+                    source.scenario.model_copy(update={"user_utterance": text})
+                )
+                record = _remediation_record(
+                    source_id=(
+                        f"v3-contract:{split.value}:{category}:{source.family_id}:{index + 1:02d}"
+                    ),
+                    text=text,
+                    target=target,
+                ).model_copy(
+                    update={
+                        "schema_version": "servicepilot-classifier-sft-v3-contract",
+                        "split": split,
+                    }
+                )
+                records.append(record)
+    return tuple(records)
