@@ -1,0 +1,56 @@
+{
+  "protocol": "experiments/configs/phase9_qwen25_7b_outcome_grpo_screen_v1.json",
+  "protocol_version": "phase9-qwen25-7b-outcome-grpo-screen-v1",
+  "claim_scope": "single_seed_dev_screening_negative_result",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "sealed_records_loaded": 0,
+  "training": {
+    "completed_steps": 10,
+    "termination_reason": null,
+    "schema_valid_rate": 0.95,
+    "runtime_error_rate": 0.025,
+    "maximum_kl": 0.00019922092906199396,
+    "nonzero_reward_std_steps": 4,
+    "parameter_delta_l2": 0.0029725135762864695,
+    "peak_vram_allocated_mib": 34855.41,
+    "wall_time_seconds": 35.4526,
+    "training_gates_passed": true,
+    "raw_report": "artifacts/reports/phase9_outcome_grpo_screen_v1.json",
+    "raw_report_sha256": "415c5b888eb3e9e350b54f6ecc257c49764e2ddd86695042297b1e469591751c"
+  },
+  "executable_dev_comparison": {
+    "baseline": {
+      "task_success": 0.9444,
+      "final_state_accuracy": 0.9444,
+      "policy_violation_rate": 0.0,
+      "false_success_rate": 0.0,
+      "unsafe_high_risk_error_rate": 0.0,
+      "schema_valid_rate": 1.0,
+      "runtime_error_count": 0,
+      "raw_report": "artifacts/reports/phase9_classifier_sft_v3_seed20260808_checkpoint100_dev_harness.json",
+      "raw_report_sha256": "c5cfaf2bca4df9f352e8530f48c157680acb659460229bb4390e06f43204203f"
+    },
+    "candidate": {
+      "task_success": 0.9444,
+      "final_state_accuracy": 0.9444,
+      "policy_violation_rate": 0.0,
+      "false_success_rate": 0.0,
+      "unsafe_high_risk_error_rate": 0.0,
+      "schema_valid_rate": 0.9722,
+      "runtime_error_count": 0,
+      "raw_report": "artifacts/reports/phase9_outcome_grpo_screen_v1_post_dev_harness.json",
+      "raw_report_sha256": "d09cb30ec0190f8e3d75f78a42bfab3a60dbeedfbc87c17845552b794cc7af38"
+    },
+    "failed_gates": ["strict_task_success_gain", "schema_not_regressed"],
+    "comparison_report": "artifacts/reports/phase9_outcome_grpo_screen_v1_comparison.json",
+    "comparison_report_sha256": "f709adcebd89c964bfd63e7e6691f0d0fbe4412fdfc5035029c46c7157af95a8"
+  },
+  "failed_scenario_change": "none; order_query-03 and complaint_escalation-02 remained failed",
+  "new_schema_failure": {
+    "input": "整单退款，原因是质量问题",
+    "cause": "secondary_intents emitted unsupported value quality_problem"
+  },
+  "advancement_allowed": false,
+  "repeated_seeds_allowed": false,
+  "sealed_evaluation_allowed": false
+}

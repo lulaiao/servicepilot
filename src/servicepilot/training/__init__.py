@@ -1,5 +1,10 @@
 """Privacy-safe trajectory data and deferred post-training experiments."""
 
+from servicepilot.training.advancement import (
+    AdvancementDecision,
+    AgentMetricSnapshot,
+    assess_grpo_advancement,
+)
 from servicepilot.training.classifier_data import (
     build_failure_remediation_sft,
     classifier_target,
@@ -77,6 +82,9 @@ from servicepilot.training.trajectory_data import (
 
 __all__ = [
     "GENERATOR_VERSION",
+    "AdvancementDecision",
+    "AgentMetricSnapshot",
+    "assess_grpo_advancement",
     "DataSplit",
     "classifier_target",
     "build_failure_remediation_sft",

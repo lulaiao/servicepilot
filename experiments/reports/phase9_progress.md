@@ -339,3 +339,23 @@ Execution is currently pending: GPU 2 acquired an unrelated active workload
 after the protocol was frozen, and the remaining cards were also active. The
 runner, JSON protocol, Ruff, mypy, and full CPU regression are ready; no
 parameter will be changed when a GPU becomes available.
+
+## Bounded outcome GRPO screen rejected
+
+The frozen 10-step screen later ran on an idle GPU 0. All training-mechanics
+gates passed: 40 executable rewards, no safety termination, Schema validity
+0.95, runtime-error rate 0.025, maximum KL 0.0001992, four non-zero-variance
+steps, and LoRA parameter delta L2 0.002973. It loaded zero sealed records and
+used 34,855.41 MiB peak allocated VRAM.
+
+The unchanged 36-scenario dev Harness showed no utility gain. Task success and
+final-state accuracy remained 0.9444, with the same order-query and escalation
+failures. Policy violation, False-success, unsafe high-risk error, and runtime
+errors stayed at zero, but Schema validity regressed from 1.0 to 0.9722. The new
+failure emitted unsupported secondary intent `quality_problem` for a full-refund
+request. Mean and P95 latency also increased.
+
+The fail-closed advancement comparison therefore rejected the candidate on
+`strict_task_success_gain` and `schema_not_regressed`. Repeated GRPO seeds and
+sealed evaluation are prohibited. Formal SFT v3 remains the selected learned
+baseline; this GRPO run is retained as a reproducible negative result.
