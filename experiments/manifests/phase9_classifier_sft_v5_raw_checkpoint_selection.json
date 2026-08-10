@@ -1,0 +1,51 @@
+{
+  "schema_version": "servicepilot-phase9-raw-checkpoint-selection-v1",
+  "code_revision": "80b8fc4bcd89995c1e628938e3d29646076030d4",
+  "dataset_manifest": "experiments/manifests/phase9_classifier_sft_v5_dataset.json",
+  "evaluation_split": "dev",
+  "sealed_evaluation_accessed": false,
+  "selection_rule": "Advance a checkpoint only when it improves raw executable intent tuple accuracy without reducing schema validity or primary macro-F1 versus the v4 checkpoint-10 reference. Final acceptance additionally requires the executable Agent harness gates.",
+  "reference": {
+    "name": "v4_checkpoint_10",
+    "report": "artifacts/reports/phase9_classifier_sft_v4_checkpoint10_dev.json",
+    "report_sha256": "db7e7e135daf6a3365377c6aabcf5968f9c94086021ea4a6348382ad994a2255",
+    "schema_valid_rate": 1.0,
+    "primary_accuracy": 0.9167,
+    "primary_macro_f1": 0.8339,
+    "executable_intent_tuple_accuracy": 0.8889
+  },
+  "candidates": [
+    {
+      "name": "v5_checkpoint_5",
+      "report": "artifacts/reports/phase9_classifier_sft_v5_checkpoint5_dev.json",
+      "report_sha256": "c665804cd7f1ed6b115ec4796211a353b1c76b426fa84a6d996ccc8aed431684",
+      "schema_valid_rate": 0.9722,
+      "primary_accuracy": 0.8889,
+      "primary_macro_f1": 0.819,
+      "executable_intent_tuple_accuracy": 0.8611,
+      "decision": "reject",
+      "reason": "No improvement over the untrained baseline and worse than the v4 checkpoint-10 reference."
+    },
+    {
+      "name": "v5_checkpoint_10",
+      "report": "artifacts/reports/phase9_classifier_sft_v5_checkpoint10_dev.json",
+      "report_sha256": "6ddc236e692216f5d7817ecf9e98b884c12a840fcbe4c5e8719cb6399ca2f9e4",
+      "schema_valid_rate": 1.0,
+      "primary_accuracy": 0.9167,
+      "primary_macro_f1": 0.8339,
+      "executable_intent_tuple_accuracy": 0.9167,
+      "mean_latency_seconds": 2.4471,
+      "peak_vram_allocated_mib": 14627.9,
+      "targeted_diagnostics": {
+        "delay_and_escalation_secondary_completeness_fixed": true,
+        "cancel_vs_reschedule_boundary_fixed": false
+      },
+      "remaining_tuple_error_count": 3,
+      "decision": "advance_to_executable_agent_dev",
+      "reason": "Tuple accuracy improved by 0.0278 with unchanged schema validity and macro-F1, but one targeted cancellation boundary error and two refund-family errors remain."
+    }
+  ],
+  "selected_checkpoint": "artifacts/checkpoints/phase9_classifier_sft_v5_screen_seed20260816/checkpoint-10",
+  "final_candidate_accepted": false,
+  "next_gate": "Executable Agent dev evaluation under the frozen scenario catalog, tool budget, deterministic Judge, and guardrail revision 43b6e77."
+}
