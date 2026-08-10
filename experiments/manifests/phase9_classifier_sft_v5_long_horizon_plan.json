@@ -1,0 +1,42 @@
+{
+  "schema_version": "servicepilot-phase9-training-diagnostic-plan-v1",
+  "stage": "classifier_v5_long_horizon_diagnostic",
+  "protocol": "experiments/configs/phase9_qwen25_7b_classifier_lora_sft_v5_long_horizon.json",
+  "hypothesis": "The remaining cancellation boundary error is caused by insufficient optimization rather than missing concept coverage.",
+  "evidence": {
+    "checkpoint5_raw_tuple_accuracy": 0.8611,
+    "checkpoint10_raw_tuple_accuracy": 0.9167,
+    "checkpoint10_training_epoch": 1.2667,
+    "checkpoint5_eval_loss": 0.7926302,
+    "checkpoint10_eval_loss": 0.5865015,
+    "target_language_already_present_in_train": true
+  },
+  "controlled_variables": [
+    "model revision",
+    "v5 dataset hash",
+    "seed",
+    "LoRA rank, alpha, dropout, and target modules",
+    "batch size and gradient accumulation",
+    "learning rate",
+    "immutable v4 dev catalog",
+    "tool and retry budgets",
+    "deterministic Judge",
+    "Harness and Guardrail revision"
+  ],
+  "changed_variable": "training horizon from 10 to 20 optimizer steps",
+  "training_mode": "fresh_run_from_base_model",
+  "resume_checkpoint": null,
+  "resume_rejected_reason": "The 10-step run's linear scheduler reaches its terminal learning rate at step 10; resuming its optimizer state would not be a valid 20-step schedule.",
+  "evaluation_checkpoints": [15, 20],
+  "selection_order": [
+    "zero unsafe high-risk errors",
+    "zero false-success",
+    "zero Guardrail harm",
+    "macro-F1 not below v4 checkpoint-10",
+    "highest executable task success",
+    "lowest dev loss"
+  ],
+  "stop_rule": "If neither checkpoint 15 nor 20 resolves the frozen cancellation failure, stop extending training and perform a v6 label-boundary/data redesign rather than adding more steps.",
+  "sealed_evaluation_accessed": false,
+  "hard_eval_v2_reused": false
+}
