@@ -1,0 +1,23 @@
+{
+  "protocol": "servicepilot-hard-eval-v2-one-shot",
+  "evaluation_revision": "cab25ce4d8620122fcf2a863a96adefbb325b65e",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "adapter": "artifacts/checkpoints/phase9_classifier_sft_v3_seed20260808/checkpoint-100",
+  "seed": 20260808,
+  "scenario_count": 240,
+  "catalog_sha256": "8c408b74fdcf6c3441507b3e6856c970e39bf152ec0b067f445eaf34d845583a",
+  "raw_report": "artifacts/reports/phase9_sft_v3_hard_eval_v2.json",
+  "raw_report_sha256": "66744029c849da3790e2bd4f138bad6b1a4e1028ae97dbc1e6c7fba0ccbca11f",
+  "raw_trace": "artifacts/traces/phase9_sft_v3_hard_eval_v2.json",
+  "raw_trace_sha256": "cb9a214026f6577417fbe3ae15b7aaacd136d4dc867e06df4c6570e1205a68f6",
+  "rule_task_success": 0.6042,
+  "learned_task_success": 0.8292,
+  "learned_raw_primary_accuracy": 0.8542,
+  "learned_raw_primary_macro_f1": 0.8508,
+  "learned_schema_valid_rate": 0.9958,
+  "learned_high_risk_failure_rate": 0.1667,
+  "learned_false_success_rate": 0.0375,
+  "learned_runtime_error_count": 10,
+  "decision": "retain_as_training_baseline_but_reject_as_safety_qualified_release",
+  "reuse_policy": "diagnosis_only; do not tune or select checkpoints on hard_eval_v2"
+}
