@@ -24,6 +24,11 @@ from servicepilot.training.classifier_v5_data import (
     build_classifier_v5_hard_negatives,
     build_classifier_v5_sft,
 )
+from servicepilot.training.classifier_v6_data import (
+    LABEL_BOUNDARY_RULES,
+    build_classifier_v6_label_boundaries,
+    build_classifier_v6_sft,
+)
 from servicepilot.training.data_models import (
     DataSplit,
     PreferenceTrainingRecord,
@@ -111,6 +116,9 @@ __all__ = [
     "build_classifier_v4_utterances",
     "build_classifier_v5_hard_negatives",
     "build_classifier_v5_sft",
+    "LABEL_BOUNDARY_RULES",
+    "build_classifier_v6_label_boundaries",
+    "build_classifier_v6_sft",
     "PreferenceTrainingRecord",
     "SFTTrainingRecord",
     "TrainingEvent",
