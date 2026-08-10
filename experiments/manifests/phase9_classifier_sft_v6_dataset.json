@@ -1,0 +1,26 @@
+{
+  "schema_version": "servicepilot-classifier-sft-v6-label-boundary",
+  "code_revision": "bbe97199de7c002ad1c145b903d8085aab41a424",
+  "output": "data/generated/phase9_classifier_sft_v6.jsonl",
+  "output_sha256": "bd8ad6c29b50ef36a9f63b8ae5fa0fdcc8f0122bde12b4778aea19fb9caed671",
+  "record_count": 204,
+  "split_counts": {
+    "dev": 36,
+    "train": 168
+  },
+  "new_train_record_count": 48,
+  "new_train_category_counts": {
+    "cancel_without_refund": 12,
+    "direct_partial_refund": 12,
+    "duplicate_charge_primary": 12,
+    "missing_item_primary": 12
+  },
+  "dev_record_sha256": "a6802664185922061bb9c2fd8474b78f2619fca547e172550236b2b6a9f48b93",
+  "dev_changed_from_v4": false,
+  "exact_cross_split_overlap_count": 0,
+  "near_duplicate_threshold": 0.8,
+  "near_duplicate_count": 0,
+  "sealed_record_count": 0,
+  "hard_eval_v2_accessed": false,
+  "passed": true
+}
