@@ -19,6 +19,26 @@ def build_intent_prompt(text: str) -> str:
     )
 
 
+def build_intent_prompt_v2(text: str) -> str:
+    """Versioned contract with explicit domain-label precedence and JSON slot types."""
+
+    return (
+        "你是订单售后分类器。只输出一个JSON对象，不要解释，也不要使用Markdown代码块。"
+        "primary_intent只能取 order_query,cancel_order,full_refund,partial_refund,"
+        "delivery_delay,missing_or_wrong_item,duplicate_charge,coupon_issue,reschedule,"
+        "complaint_escalation,out_of_scope。按以下优先级分类：primary_intent表示用户遭遇的"
+        "具体业务问题；退款如果只是错漏商品或重复扣款的处理方式，不得覆盖具体问题标签。"
+        "商品缺失或错发选missing_or_wrong_item；同一交易重复收费选duplicate_charge。"
+        "终止、撤销或不再继续订单选cancel_order，即使用户明确不退款；只有订单继续有效且"
+        "用户要求改变日期或时段时才选reschedule。partial_refund只用于用户直接要求退回部分"
+        "金额且没有更具体业务问题的情况。secondary_intents只放独立并列诉求，不放主问题的"
+        "补救动作。slots必须包含order_id、reason、requested_amount；requested_amount已知时"
+        "必须是JSON字符串（例如\"12\"），未知用null，绝不能输出JSON数字。risk_level取"
+        "low/medium/high；confidence为0到1；needs_clarification和injection_detected为布尔值。"
+        f"\n用户输入：{text}"
+    )
+
+
 def parse_intent_output(text: str) -> IntentResult:
     start = text.find("{")
     end = text.rfind("}")
@@ -28,4 +48,3 @@ def parse_intent_output(text: str) -> IntentResult:
     if not isinstance(value, dict):
         raise ValueError("output is not an object")
     return IntentResult.model_validate(value)
-
