@@ -50,6 +50,11 @@ from servicepilot.training.expansion import (
     build_phase9_train_dev_families_v2,
     expand_family_variants,
 )
+from servicepilot.training.factored_classifier_catalog import (
+    FACTORED_FAMILIES,
+    FactoredFamily,
+    build_factored_classifier_sft,
+)
 from servicepilot.training.on_policy import (
     ExecutableClassifierReward,
     OnPolicyRewardEvidence,
@@ -119,6 +124,9 @@ __all__ = [
     "LABEL_BOUNDARY_RULES",
     "build_classifier_v6_label_boundaries",
     "build_classifier_v6_sft",
+    "FACTORED_FAMILIES",
+    "FactoredFamily",
+    "build_factored_classifier_sft",
     "PreferenceTrainingRecord",
     "SFTTrainingRecord",
     "TrainingEvent",
