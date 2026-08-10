@@ -1,0 +1,39 @@
+{
+  "stage": "classifier_v4_checkpoint10_executable_dev",
+  "raw_report": "artifacts/reports/phase9_classifier_sft_v4_checkpoint10_exec_dev.json",
+  "raw_report_sha256": "4e6f74a1b079316236ba8a1b54e45de6a29f94627f1b43653c95c542e04b5234",
+  "raw_trace": "artifacts/traces/phase9_classifier_sft_v4_checkpoint10_exec_dev.json",
+  "raw_trace_sha256": "3924996c161ce0612105bc5b389f01abdb3c3d22390069aabbde454e917fa148",
+  "checkpoint_metrics": {
+    "task_success": 0.9444,
+    "final_state_accuracy": 0.9444,
+    "policy_violation_rate": 0.0278,
+    "false_success_rate": 0.0,
+    "high_risk_failure_rate": 0.0556,
+    "runtime_error_count": 0,
+    "schema_valid_rate": 1.0,
+    "raw_primary_macro_f1": 0.8339,
+    "raw_executable_intent_tuple_accuracy": 0.8889
+  },
+  "guardrail_before_remediation": {
+    "intervention_count": 3,
+    "rescue_count": 0,
+    "harm_count": 2,
+    "neutral_count": 1
+  },
+  "guardrail_post_remediation_deterministic_replay": {
+    "same_frozen_model_predictions": true,
+    "task_success": 0.9444,
+    "false_success_rate": 0.0,
+    "runtime_error_count": 0,
+    "intervention_count": 0,
+    "remaining_failure_ids": [
+      "exec-v4-dev-cancel_order-03",
+      "exec-v4-dev-multi_intent-01"
+    ]
+  },
+  "decision": "stop_before_formal_multiseed_training",
+  "reason": "zero-high-risk-error gate failed and remaining failures are model semantic errors",
+  "next_action": "author train-only cancellation-vs-reschedule and conjunction-completeness negatives under a new protocol",
+  "hard_eval_v2_reused": false
+}

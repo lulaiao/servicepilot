@@ -56,6 +56,18 @@ class WrongRescheduleClassifier:
         )
 
 
+class CorrectHighRiskClassifier:
+    def classify(self, text: str) -> IntentResult:
+        del text
+        return IntentResult(
+            primary_intent=Intent.PARTIAL_REFUND,
+            slots={},
+            risk_level=RiskLevel.HIGH,
+            confidence=0.9,
+            needs_clarification=True,
+        )
+
+
 def test_frozen_routing_dataset_has_disjoint_family_splits() -> None:
     examples = build_routing_dataset()
 
@@ -113,6 +125,40 @@ def test_tool_alignment_guard_prevents_high_risk_intent_downgrade() -> None:
 
     assert intents == (Intent.MISSING_OR_WRONG_ITEM,)
     assert agent.tool_alignment_override_count == 1
+
+
+def test_guardrail_understands_negated_high_risk_and_reschedule_phrases() -> None:
+    classifier = RuleIntentClassifier()
+
+    partial = classifier.classify("不要整单退款，只返还有问题部分的12元")
+    coupon = classifier.classify("仅处理优惠券返还，不修改配送安排")
+
+    assert partial.primary_intent is Intent.OUT_OF_SCOPE
+    assert coupon.primary_intent is Intent.COUPON_ISSUE
+    assert coupon.secondary_intents == ()
+
+
+def test_tool_alignment_guard_does_not_replace_one_high_risk_action_with_another() -> None:
+    agent = RoutedRuleAgent(classifier=CorrectHighRiskClassifier())
+
+    intents = agent.detect_intents("不要整单退款，只返还有问题部分的12元")
+
+    assert intents == (Intent.PARTIAL_REFUND,)
+    assert agent.tool_alignment_override_count == 0
+    assert agent.completion_required_intents == (Intent.PARTIAL_REFUND,)
+
+
+def test_rule_evidence_can_strengthen_completion_without_changing_selected_action() -> None:
+    agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
+
+    intents = agent.detect_intents("履约超期，还需要人工投诉")
+
+    assert intents == (Intent.DELIVERY_DELAY,)
+    assert agent.safety_override_count == 0
+    assert agent.completion_required_intents == (
+        Intent.DELIVERY_DELAY,
+        Intent.COMPLAINT_ESCALATION,
+    )
 
 
 @pytest.mark.asyncio

@@ -7,6 +7,7 @@ from servicepilot.routing.models import IntentResult, RiskLevel
 
 ORDER_PATTERN = re.compile(r"(phase3-[a-z_]+-\d{2}|ord-\d+)")
 AMOUNT_PATTERN = re.compile(r"(\d+(?:\.\d+)?)\s*(?:元|块)")
+NEGATION_MARKERS = ("不", "无需", "并非", "而非")
 
 
 class RuleIntentClassifier:
@@ -34,35 +35,25 @@ class RuleIntentClassifier:
         intents: list[Intent] = []
         if "优惠券" in normalized or "券还" in normalized:
             intents.append(Intent.COUPON_ISSUE)
-        elif (
-            "取消" in normalized
-            or "不要了" in normalized
-            or "刚下的单退掉" in normalized
-        ):
+        elif "取消" in normalized or "不要了" in normalized or "刚下的单退掉" in normalized:
             intents.append(Intent.CANCEL_ORDER)
         if any(token in normalized for token in ("慢", "延迟", "超时")):
             intents.append(Intent.DELIVERY_DELAY)
         if any(token in normalized for token in ("投诉", "人工", "工单")):
             intents.append(Intent.COMPLAINT_ESCALATION)
-        if any(
-            token in normalized
-            for token in ("重复扣", "扣了两次", "扣了我两次", "重复收费")
-        ):
+        if any(token in normalized for token in ("重复扣", "扣了两次", "扣了我两次", "重复收费")):
             intents.append(Intent.DUPLICATE_CHARGE)
             slots["reason"] = "duplicate_charge"
         elif any(token in normalized for token in ("少了", "漏送", "错件", "不对")):
             intents.append(Intent.MISSING_OR_WRONG_ITEM)
             slots["reason"] = "missing_item"
-        elif any(token in normalized for token in ("全额退款", "全部退", "整单退款")):
+        elif self._contains_positive(normalized, ("全额退款", "全部退", "整单退款")):
             intents.append(Intent.FULL_REFUND)
             slots["reason"] = "quality_issue"
         elif any(token in normalized for token in ("部分退款", "退我", "退12")):
             intents.append(Intent.PARTIAL_REFUND)
             slots["reason"] = "quality_issue"
-        if any(
-            token in normalized
-            for token in ("改期", "修改预约", "改配送", "改到", "改一下")
-        ):
+        if self._contains_positive(normalized, ("改期", "修改预约", "改配送", "改到", "改一下")):
             intents.append(Intent.RESCHEDULE)
         if any(token in normalized for token in ("订单状态", "到哪", "进度", "没消息")):
             intents.append(Intent.ORDER_QUERY)
@@ -120,3 +111,14 @@ class RuleIntentClassifier:
     def _match(pattern: re.Pattern[str], text: str) -> str | None:
         match = pattern.search(text)
         return match.group(1) if match else None
+
+    @staticmethod
+    def _contains_positive(text: str, tokens: tuple[str, ...]) -> bool:
+        for token in tokens:
+            start = 0
+            while (index := text.find(token, start)) >= 0:
+                prefix = text[max(0, index - 4) : index]
+                if not any(marker in prefix for marker in NEGATION_MARKERS):
+                    return True
+                start = index + len(token)
+        return False

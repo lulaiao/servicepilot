@@ -54,10 +54,6 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
     def detect_intents(self, text: str) -> tuple[Intent, ...]:
         intent = self.classifier.classify(text)
         safety = self.safety_classifier.classify(text)
-        self.completion_required_intents = (
-            safety.primary_intent,
-            *safety.secondary_intents,
-        )
         # A narrow deterministic guardrail protects conjunctions and prompt
         # injection. It does not replace ordinary learned single-intent routing.
         if safety.injection_detected or safety.secondary_intents:
@@ -65,12 +61,23 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
             self.safety_override_count += 1
         elif (
             safety.risk_level is RiskLevel.HIGH
+            and intent.risk_level is not RiskLevel.HIGH
             and intent.primary_intent is not safety.primary_intent
         ):
             # Fail-safe reroute before any tool call: a learned low/medium-risk
             # classification cannot downgrade deterministic high-risk evidence.
             intent = safety
             self.tool_alignment_override_count += 1
+        completion_evidence = (
+            intent.primary_intent,
+            *intent.secondary_intents,
+            *(
+                candidate
+                for candidate in (safety.primary_intent, *safety.secondary_intents)
+                if candidate is not Intent.OUT_OF_SCOPE
+            ),
+        )
+        self.completion_required_intents = tuple(dict.fromkeys(completion_evidence))
         self.state = DialogueState(intent=intent)
         return (intent.primary_intent, *intent.secondary_intents)
 
@@ -89,9 +96,7 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
         self.state = state.model_copy(
             update={
                 "confirmed_slots": slots,
-                "intent": state.intent.model_copy(
-                    update={"needs_clarification": False}
-                ),
+                "intent": state.intent.model_copy(update={"needs_clarification": False}),
             }
         )
         return await super()._execute_intent(
@@ -122,9 +127,7 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
             f"{decision.role.value}: {decision.reason}; "
             f"instruction={ROLE_INSTRUCTIONS[decision.role]}",
         )
-        result = await super()._call(
-            gateway, trace_id, events, tool_name, arguments
-        )
+        result = await super()._call(gateway, trace_id, events, tool_name, arguments)
         state = self._require_state()
         if result.ok:
             completed = (*state.completed_tools, tool_name)
