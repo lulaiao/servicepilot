@@ -1,0 +1,38 @@
+{
+  "schema_version": "servicepilot-phase9-training-screen-plan-v1",
+  "stage": "classifier_v6_label_boundary_screen",
+  "protocol": "experiments/configs/phase9_qwen25_7b_classifier_lora_sft_v6_screen.json",
+  "dataset_manifest": "experiments/manifests/phase9_classifier_sft_v6_dataset.json",
+  "hypothesis": "Explicit incident-versus-remediation contrasts and cancellation-without-refund examples resolve the three stable v5 semantic errors without changing the immutable dev set.",
+  "screening_seed": 20260820,
+  "screening_steps": 15,
+  "checkpoint_steps": [5, 10, 15],
+  "horizon_rationale": "With 168 train records and gradient accumulation 16, 15 optimizer steps cover approximately 1.43 epochs, close to the useful v5 checkpoint-10 exposure while avoiding the unsupported 2.53-epoch extension.",
+  "controlled_variables": [
+    "base model revision",
+    "LoRA configuration",
+    "learning rate and precision",
+    "immutable v4 dev records",
+    "Agent scenario catalog",
+    "tool and retry budgets",
+    "deterministic Judge",
+    "Harness and Guardrail revision"
+  ],
+  "changed_variable": "train-only label-boundary dataset revision",
+  "raw_advancement_gates": [
+    "schema validity equals 1.0",
+    "cancel versus reschedule target error is fixed",
+    "macro-F1 is not below 0.8339",
+    "executable intent tuple accuracy exceeds 0.9167",
+    "no new tuple error categories"
+  ],
+  "agent_acceptance_gates": [
+    "unsafe high-risk error rate equals 0",
+    "false-success rate equals 0",
+    "Guardrail harm count equals 0",
+    "runtime error count equals 0"
+  ],
+  "sealed_evaluation_accessed": false,
+  "hard_eval_v2_reused": false,
+  "claim_scope": "single-seed screening only"
+}
