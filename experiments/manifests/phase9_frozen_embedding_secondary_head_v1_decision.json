@@ -1,0 +1,23 @@
+{
+  "schema_version": "servicepilot-frozen-embedding-secondary-head-v1-decision",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "adapter": "artifacts/checkpoints/phase9_classifier_sft_v5_screen_seed20260816/checkpoint-10",
+  "representation": "last_hidden_attention_masked_mean",
+  "head": "normalized_positive_negative_centroid_fixed_zero_margin",
+  "raw_report": "artifacts/reports/phase9_frozen_embedding_secondary_head_v1_dev.json",
+  "raw_report_sha256": "6f119c882578f4912e7ae010a8ca60577159f119231ac704177119f521f0d043",
+  "dev_count": 6,
+  "generative_secondary": {"accuracy": 0.8333, "precision": 1.0, "recall": 0.6667, "f1": 0.8},
+  "base_frozen_head": {"accuracy": 0.5, "precision": 0.5, "recall": 0.6667, "f1": 0.5714},
+  "augmented_frozen_head": {"accuracy": 0.5, "precision": 0.5, "recall": 0.6667, "f1": 0.5714},
+  "resources": {
+    "embedding_seconds": 4.7982,
+    "peak_vram_allocated_mib": 14617.73,
+    "peak_rss_mib": 4432.4
+  },
+  "decision": "reject_quality_and_cost",
+  "threshold_tuned_on_dev": false,
+  "agent_integration_authorized": false,
+  "sealed_accessed": false,
+  "next_gate": "larger_independently_partitioned_multilabel_dataset_before_supervised_head"
+}
