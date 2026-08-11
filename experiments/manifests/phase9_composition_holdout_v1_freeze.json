@@ -1,0 +1,21 @@
+{
+  "schema_version": "servicepilot-composition-holdout-v1-freeze",
+  "provenance": "post_adversarial_independent_authoring",
+  "code_revision_before_freeze": "bada05b",
+  "catalog": "data/eval/phase9_composition_holdout_v1.jsonl",
+  "catalog_sha256": "9452c481e572eec612233ee5e947b15351d706cf61e901f13b31aec78cb55654",
+  "case_count": 60,
+  "category_counts": {
+    "conditional_future": 10,
+    "existing_third_intent": 10,
+    "explicit_pair": 10,
+    "historical_request": 10,
+    "negated_escalation": 10,
+    "unrelated_model_output": 10
+  },
+  "positive_count": 10,
+  "negative_count": 50,
+  "binder_evaluated": false,
+  "selection_or_tuning_allowed": false,
+  "rerun_allowed": false
+}
