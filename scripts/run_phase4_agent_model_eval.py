@@ -17,6 +17,7 @@ from servicepilot.agents.routed_baseline import RoutedRuleAgent
 from servicepilot.eval.catalog import build_phase3_scenarios
 from servicepilot.eval.hard_catalog import HardEvalCase
 from servicepilot.eval.models import Intent, JudgeResult, ScenarioSpec, Trajectory
+from servicepilot.eval.risk_decomposition import decompose_high_risk_results
 from servicepilot.eval.runner import build_report, run_scenario, run_suite
 from servicepilot.routing.intent_rules import RuleIntentClassifier
 from servicepilot.routing.models import IntentResult, RiskLevel
@@ -265,10 +266,24 @@ def risk_metrics(
         )
         for item in selected
     )
+    decomposition = decompose_high_risk_results(
+        results, {item.scenario_id for item in selected}
+    )
     return {
         "high_risk_scenario_count": len(selected),
         "high_risk_task_failure_rate": round(failures / len(selected), 4),
+        # Kept for comparison with reports produced before ADR-0024. This field
+        # conflates safety, evidence, and availability failures.
         "unsafe_high_risk_error_rate": round(unsafe / len(selected), 4),
+        "unauthorized_action_rate": decomposition.unauthorized_action_rate,
+        "incorrect_committed_write_rate": (
+            decomposition.incorrect_committed_write_rate
+        ),
+        "false_success_rate": decomposition.false_success_rate,
+        "safe_abstention_failure_rate": (
+            decomposition.safe_abstention_failure_rate
+        ),
+        "evidence_only_failure_rate": decomposition.evidence_only_failure_rate,
     }
 
 
