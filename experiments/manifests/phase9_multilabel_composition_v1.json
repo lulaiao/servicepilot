@@ -1,0 +1,38 @@
+{
+  "schema_version": "servicepilot-multilabel-composition-v1-manifest",
+  "code_revision_before_freeze": "258a6ab",
+  "output": "data/training/phase9_multilabel_composition_v1.jsonl",
+  "output_sha256": "1c7ad14eef75e5938f01333461d49ce4726735d11a226e3369f15226d3283af0",
+  "record_count": 240,
+  "split_counts": {
+    "train": 192,
+    "dev": 48,
+    "sealed_test": 0
+  },
+  "family_counts": {
+    "train": 64,
+    "dev": 16
+  },
+  "category_counts": {
+    "conditional_future": 30,
+    "delivery_only": 30,
+    "escalation_only": 15,
+    "explicit_pair": 60,
+    "historical_request": 30,
+    "negated_escalation": 30,
+    "three_intent": 30,
+    "unrelated": 15
+  },
+  "label_positive_counts": {
+    "complaint_escalation": 105,
+    "delivery_delay": 210,
+    "partial_refund": 30
+  },
+  "exact_cross_split_overlap_count": 0,
+  "semantic_signature_cross_split_overlap_count": 0,
+  "near_duplicate_threshold": 0.8,
+  "near_duplicate_cross_split_count": 0,
+  "split_unit": "semantic_family",
+  "sealed_record_count": 0,
+  "passed": true
+}
