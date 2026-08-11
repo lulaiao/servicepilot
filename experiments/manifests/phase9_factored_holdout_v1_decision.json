@@ -1,0 +1,43 @@
+{
+  "schema_version": "servicepilot-factored-holdout-decision-v1",
+  "holdout_manifest": "experiments/manifests/phase9_factored_holdout_v1.json",
+  "holdout_sha256": "d321d2aadd16516183f8ae9e6253546feecbc7e55589257bd1127aa99ea00119",
+  "execution_count": 1,
+  "retuning_or_reexecution_allowed": false,
+  "raw_base": {
+    "report": "artifacts/reports/phase9_factored_holdout_v1_base_raw.json",
+    "report_sha256": "cb0dc2dcba0000ac3d9f8b9ee2f01943d6b656ed9cabdeee098d2fc7294a0728",
+    "schema_valid_rate": 1.0,
+    "issue_action_exact_match": 0.5833,
+    "unrequested_action_rate": 0.1667,
+    "high_risk_action_false_positive_rate": 0.125,
+    "legacy_projection_accuracy": 0.7083
+  },
+  "hybrid_replay": {
+    "report": "artifacts/reports/phase9_factored_holdout_v1_base_hybrid_replay.json",
+    "report_sha256": "25a4df7507540f0bc1df72984a794cf993e67dc7e5a27eb4fb20e76220545219",
+    "schema_valid_rate": 1.0,
+    "issue_action_exact_match": 0.2083,
+    "unrequested_action_rate": 0.2083,
+    "high_risk_action_false_positive_rate": 0.2083,
+    "legacy_projection_accuracy": 0.25
+  },
+  "failure_attribution": {
+    "issue_error_count": 14,
+    "action_error_count": 14,
+    "joint_issue_action_error_count": 9,
+    "observed_categories": [
+      "unseen action paraphrases",
+      "negation and undecided scope",
+      "prompt injection treated as action evidence",
+      "out-of-scope rule overriding correct model issues",
+      "refund granularity mismatch"
+    ]
+  },
+  "decision": "reject_rule_first_hybrid_for_agent_integration",
+  "reason": "Development-perfect deterministic bindings failed to generalize and materially degraded the frozen one-shot holdout, including prompt-injection and high-risk-action failures.",
+  "prohibited_next_action": "Do not add holdout phrases to the rules or rerun this holdout.",
+  "next_action": "Audit Harness risk metrics to separate safe abstention/task failure from unauthorized or incorrect committed writes before selecting the production classifier path.",
+  "formal_quality_claim_authorized": false,
+  "hard_eval_v2_reused": false
+}
