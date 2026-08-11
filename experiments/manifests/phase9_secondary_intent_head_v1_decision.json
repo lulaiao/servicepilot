@@ -1,0 +1,17 @@
+{
+  "schema_version": "servicepilot-secondary-intent-head-v1-decision",
+  "representation": "character_2_to_4_gram_centroid",
+  "decision_rule": "fixed_zero_cosine_margin",
+  "base_report": "artifacts/reports/phase9_secondary_intent_head_v1_dev.json",
+  "base_report_sha256": "7549e10fc9c072e448276cb1d0389a238f421842636b5bc36b014177698937d6",
+  "augmented_report": "artifacts/reports/phase9_secondary_intent_head_v1_augmented_dev.json",
+  "augmented_report_sha256": "231e2b795ca84fe65a41716a8e7bfe4ef91568ddf9437ac15e70c3aeee467e1e",
+  "generative_secondary": {"accuracy": 0.8333, "precision": 1.0, "recall": 0.6667, "f1": 0.8},
+  "base_lexical_head": {"accuracy": 0.8333, "precision": 0.75, "recall": 1.0, "f1": 0.8571},
+  "adversarial_augmented_head": {"accuracy": 0.6667, "precision": 0.6, "recall": 1.0, "f1": 0.75},
+  "decision": "reject_false_positive_safety_gate",
+  "threshold_tuned_on_dev": false,
+  "agent_integration_authorized": false,
+  "sealed_accessed": false,
+  "next_candidate": "shared_qwen_frozen_embedding_fixed_centroid_head"
+}
