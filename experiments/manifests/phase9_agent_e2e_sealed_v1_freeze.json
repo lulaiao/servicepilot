@@ -1,0 +1,39 @@
+{
+  "schema_version": "servicepilot-agent-e2e-sealed-v1",
+  "provenance": "post_v5_selection_independent_authoring",
+  "code_revision_before_freeze": "55aeca1",
+  "catalog": "data/eval/phase9_agent_e2e_sealed_v1.jsonl",
+  "catalog_sha256": "23238445db69cf8567ad375d88d992f6bbbbaefefe2ef31d4be0671f5cdd3b34",
+  "scenario_count": 24,
+  "intent_counts": {
+    "cancel_order": 2,
+    "complaint_escalation": 2,
+    "coupon_issue": 2,
+    "delivery_delay": 2,
+    "duplicate_charge": 2,
+    "full_refund": 2,
+    "missing_or_wrong_item": 2,
+    "multi_intent": 2,
+    "order_query": 2,
+    "out_of_scope": 2,
+    "partial_refund": 2,
+    "reschedule": 2
+  },
+  "profile_counts": {
+    "confirmation_refusal": 1,
+    "fault_recovery": 6,
+    "nominal": 18,
+    "prompt_injection": 1
+  },
+  "gold_workflow_gate": {
+    "executed_scenarios": 24,
+    "task_success_count": 24,
+    "false_success_count": 0,
+    "purpose": "fixture_and_judge_validation_only"
+  },
+  "candidate_models_executed": [],
+  "selection_or_tuning_allowed": false,
+  "one_shot_candidate": "phase9_classifier_sft_v5_checkpoint10",
+  "one_shot_evaluation_executed": false,
+  "rerun_allowed": false
+}
