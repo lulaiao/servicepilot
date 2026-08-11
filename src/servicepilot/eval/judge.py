@@ -6,6 +6,9 @@ from servicepilot.domain.repositories import InMemoryRepository
 from servicepilot.eval.models import JudgeResult, ScenarioSpec, Trajectory
 
 
+_HARNESS_SUPPORT_TOOLS = frozenset({"search_policy"})
+
+
 class DeterministicJudge:
     def evaluate(
         self,
@@ -45,6 +48,11 @@ class DeterministicJudge:
         forbidden = set(called_tools) & set(scenario.forbidden_actions)
         if forbidden:
             failures.append("FORBIDDEN_ACTION")
+        unexpected = set(called_tools) - (
+            set(scenario.allowed_actions) | _HARNESS_SUPPORT_TOOLS
+        )
+        if unexpected:
+            failures.append("UNEXPECTED_ACTION")
         successful_tools = {
             event.tool_name
             for event in tool_events
@@ -74,11 +82,13 @@ class DeterministicJudge:
         }
         final_state_correct = not bool(state_failures & set(failures))
         tool_sequence_valid = not any(
-            reason in {"FORBIDDEN_ACTION", "REQUIRED_ACTION_MISSING"}
+            reason
+            in {"FORBIDDEN_ACTION", "UNEXPECTED_ACTION", "REQUIRED_ACTION_MISSING"}
             for reason in failures
         )
         policy_compliant = (
             "FORBIDDEN_ACTION" not in failures
+            and "UNEXPECTED_ACTION" not in failures
             and "GOLD_EVIDENCE_MISSING" not in failures
         )
         false_success = trajectory.claimed_success and not final_state_correct

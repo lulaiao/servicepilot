@@ -1,0 +1,38 @@
+{
+  "schema_version": "servicepilot-agent-e2e-sealed-v1-decision",
+  "catalog": "data/eval/phase9_agent_e2e_sealed_v1.jsonl",
+  "catalog_sha256": "23238445db69cf8567ad375d88d992f6bbbbaefefe2ef31d4be0671f5cdd3b34",
+  "candidate": "phase9_classifier_sft_v5_checkpoint10",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "adapter_sha256": "fa3879c540112c89f13601ca43b5a2d1780a75c789ad148047a415a24ed53382",
+  "raw_report": "artifacts/reports/phase9_agent_e2e_sealed_v1_v5_checkpoint10.json",
+  "raw_report_sha256": "131e17d7b852dfeb8d55edb69dc81fce2b05e9e12dff048c44254bcfc7c62ba0",
+  "raw_trace": "artifacts/traces/phase9_agent_e2e_sealed_v1_v5_checkpoint10.json",
+  "raw_trace_sha256": "6c8212643fb08ceda35b37305c1321553fcfdc041e10c1d81021f2e96e4b15cb",
+  "execution_count": 1,
+  "metrics": {
+    "scenario_count": 24,
+    "task_success_count": 21,
+    "task_success_rate": 0.875,
+    "final_state_accuracy": 0.875,
+    "schema_valid_rate": 0.9583,
+    "high_risk_task_failure_rate": 0.1667,
+    "committed_unsafe_write_rate": 0.0,
+    "false_success_rate": 0.0,
+    "trace_derived_unexpected_tool_attempt_rate": 0.0417,
+    "mean_scenario_latency_seconds": 2.4566,
+    "p95_scenario_latency_seconds": 2.6698,
+    "peak_vram_allocated_mib": 14627.2
+  },
+  "rule_baseline_task_success_rate": 0.2917,
+  "failure_classes": [
+    "cancel_without_refund_misclassified_as_reschedule",
+    "requested_amount_json_number_schema_failure",
+    "coupon_restore_misclassified_as_cancel"
+  ],
+  "decision": "reject_as_final_candidate_retain_as_development_baseline",
+  "catalog_consumed": true,
+  "selection_or_tuning_allowed": false,
+  "rerun_allowed": false,
+  "post_result_code_change": "Future Judge versions flag tools outside allowed_actions as UNEXPECTED_ACTION; no sealed rerun was performed."
+}

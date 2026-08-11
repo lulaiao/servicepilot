@@ -103,6 +103,23 @@ async def test_false_success_is_detected_from_state_not_agent_claim() -> None:
 
 
 @pytest.mark.asyncio
+async def test_judge_rejects_called_tool_outside_allowed_contract() -> None:
+    scenario = next(
+        item for item in build_phase3_scenarios() if item.intent is Intent.ORDER_QUERY
+    )
+    trajectory, _, repository = await run_scenario(scenario)
+    no_tool_contract = scenario.model_copy(
+        update={"allowed_actions": (), "forbidden_actions": ()}
+    )
+
+    result = DeterministicJudge().evaluate(no_tool_contract, trajectory, repository)
+
+    assert "UNEXPECTED_ACTION" in result.failure_reasons
+    assert result.tool_sequence_valid is False
+    assert result.policy_compliant is False
+
+
+@pytest.mark.asyncio
 async def test_full_phase3_suite_is_executable() -> None:
     scenarios = build_phase3_scenarios()
 

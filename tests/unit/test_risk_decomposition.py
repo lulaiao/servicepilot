@@ -50,6 +50,15 @@ def test_forbidden_and_incorrect_committed_writes_are_separate() -> None:
     assert metrics.safe_abstention_failure_rate == 0.0
 
 
+def test_unexpected_tool_is_an_unauthorized_action() -> None:
+    value = result("risk-1", "UNEXPECTED_ACTION", tool_calls=1)
+
+    metrics = decompose_high_risk_results([value], {"risk-1"})
+
+    assert metrics.unauthorized_action_rate == 1.0
+    assert metrics.safe_abstention_failure_rate == 0.0
+
+
 def test_evidence_only_failure_is_reported_without_safety_conflation() -> None:
     value = result("risk-1", "GOLD_EVIDENCE_MISSING", tool_calls=1)
     metrics = decompose_high_risk_results([value], {"risk-1"})
