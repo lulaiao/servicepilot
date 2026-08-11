@@ -1,0 +1,60 @@
+{
+  "schema_version": "servicepilot-classifier-sft-v7-screen-decision",
+  "code_revision": "c30797d597505b62fbfbc9452b3f992800f5ab01",
+  "protocol": "experiments/configs/phase9_qwen25_7b_classifier_lora_sft_v7_screen.json",
+  "protocol_sha256": "641c764d9c9ece43ae9e65e029915e7be87e97ead5016050093fd387a7a3ffe0",
+  "dataset_manifest": "experiments/manifests/phase9_classifier_sft_v7_dataset.json",
+  "dataset_manifest_sha256": "d7a03e74a9669f882118e29b27e18b63b5a3fd2ed79a886a6103bd99a8b620ad",
+  "dataset_sha256": "dd6ec3f1cee53bb41089a5aee849b3176be6780d1ca5c9ef01063b82a85cbe54",
+  "training_report": "artifacts/reports/phase9_classifier_sft_v7_screen_seed20260828.json",
+  "training_report_sha256": "ba4b99f495133ed4a215e74d54a64e7e0de3c1f0dcc6446439fdb4a0d09ef12d",
+  "sealed_records_loaded": 0,
+  "screening_seed": 20260828,
+  "completed_optimizer_steps": 10,
+  "training": {
+    "train_loss": 0.8099266827106476,
+    "wall_time_seconds": 40.1864,
+    "peak_vram_allocated_mib": 16602.59
+  },
+  "checkpoints": {
+    "checkpoint_5": {
+      "adapter_sha256": "161824c488be1cebd75002a8e88e887a3da409b990d297d8d9330cdeec0fc282",
+      "dev_loss": 0.7704932689666748,
+      "report": "artifacts/reports/phase9_classifier_sft_v7_checkpoint5_dev.json",
+      "report_sha256": "8e95ea950695cf0dc62fe744281b76a4818d84c988ba71f9d24c3a0070c187f1",
+      "trace_sha256": "fe9728d20b57a87a98a7c9125f888b4aeec9d7ba4a24e34580c14814a02e0003",
+      "task_success_rate": 0.9722,
+      "primary_macro_f1": 0.8256,
+      "schema_valid_rate": 1.0,
+      "unauthorized_action_rate": 0.0,
+      "incorrect_committed_write_rate": 0.0,
+      "false_success_rate": 0.0,
+      "p95_scenario_latency_seconds": 4.0429
+    },
+    "checkpoint_10": {
+      "adapter_sha256": "499584575a114ccf1664392bd9761c1af3e158082190578992e95548809ea2ce",
+      "dev_loss": 0.584018886089325,
+      "report": "artifacts/reports/phase9_classifier_sft_v7_checkpoint10_dev.json",
+      "report_sha256": "0bc7de228f324034e2c38f45e15b5f2cf97d68beda700171b62b5cb4c7a54183",
+      "trace_sha256": "46e37ec008a4b1c7eb818dd60d84a0225b3f56e5c2e4b8f191e56544399bd82c",
+      "task_success_rate": 0.9722,
+      "primary_macro_f1": 0.8256,
+      "schema_valid_rate": 1.0,
+      "unauthorized_action_rate": 0.0,
+      "incorrect_committed_write_rate": 0.0,
+      "false_success_rate": 0.0,
+      "p95_scenario_latency_seconds": 3.3517
+    }
+  },
+  "v5_checkpoint10_reference": {
+    "task_success_rate": 0.9722,
+    "primary_macro_f1": 0.8339,
+    "failure_class": "cancel_without_refund_safe_abstention"
+  },
+  "v7_failure_class": "multi_intent_secondary_completeness",
+  "triggered_termination_condition": "macro_f1_below_v5_checkpoint10",
+  "decision": "stop_v7_retain_v5_development_baseline",
+  "remaining_seeds_authorized": false,
+  "sealed_evaluation_executed": false,
+  "consumed_agent_sealed_v1_accessed": false
+}
