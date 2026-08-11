@@ -57,3 +57,12 @@ def test_protocol_rejects_implicit_missing_sealed_catalog() -> None:
 
     with pytest.raises(ValueError, match="explicitly deferred"):
         SFTExperimentProtocol.model_validate(raw)
+
+
+def test_protocol_accepts_decomposed_safety_as_first_gate() -> None:
+    raw = json.loads(PROTOCOL.read_text())
+    raw["checkpoint_selection"][0] = "zero_unauthorized_action"
+
+    protocol = SFTExperimentProtocol.model_validate(raw)
+
+    assert protocol.checkpoint_selection[0] == "zero_unauthorized_action"

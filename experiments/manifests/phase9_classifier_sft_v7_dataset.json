@@ -1,0 +1,25 @@
+{
+  "schema_version": "servicepilot-classifier-sft-v7-remediation",
+  "code_revision_before_freeze": "8662be7",
+  "output": "data/training/phase9_classifier_sft_v7.jsonl",
+  "output_sha256": "dd6ec3f1cee53bb41089a5aee849b3176be6780d1ca5c9ef01063b82a85cbe54",
+  "record_count": 180,
+  "split_counts": {
+    "train": 144,
+    "dev": 36,
+    "sealed_test": 0
+  },
+  "new_train_record_count": 24,
+  "new_train_category_counts": {
+    "amount_string_contract": 8,
+    "discount_entitlement_restore": 8,
+    "lifecycle_stop": 8
+  },
+  "dev_sha256": "e6d00a4235309009de8e407c05a91604f85f674418036d0f2d819c0c171f7ebf",
+  "dev_changed_from_v4": false,
+  "exact_train_dev_overlap_count": 0,
+  "inherits_v6": false,
+  "consumed_agent_sealed_v1_loaded": false,
+  "sealed_record_count": 0,
+  "passed": true
+}

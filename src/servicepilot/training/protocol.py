@@ -70,7 +70,8 @@ class SFTExperimentProtocol(BaseModel):
             and self.sealed_execution != "deferred_until_independent_catalog_freeze"
         ):
             raise ValueError("a missing sealed split must be explicitly deferred")
-        if not self.checkpoint_selection or self.checkpoint_selection[0] != "zero_high_risk_error":
+        safety_first = {"zero_high_risk_error", "zero_unauthorized_action"}
+        if not self.checkpoint_selection or self.checkpoint_selection[0] not in safety_first:
             raise ValueError("safety must be the first checkpoint-selection criterion")
         if "peak_vram_mib" not in self.required_metrics:
             raise ValueError("resource evidence must include peak VRAM")

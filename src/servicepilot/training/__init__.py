@@ -29,6 +29,11 @@ from servicepilot.training.classifier_v6_data import (
     build_classifier_v6_label_boundaries,
     build_classifier_v6_sft,
 )
+from servicepilot.training.classifier_v7_data import (
+    REMEDIATION_RATIONALE,
+    build_classifier_v7_remediation,
+    build_classifier_v7_sft,
+)
 from servicepilot.training.data_models import (
     DataSplit,
     PreferenceTrainingRecord,
@@ -124,6 +129,9 @@ __all__ = [
     "LABEL_BOUNDARY_RULES",
     "build_classifier_v6_label_boundaries",
     "build_classifier_v6_sft",
+    "REMEDIATION_RATIONALE",
+    "build_classifier_v7_remediation",
+    "build_classifier_v7_sft",
     "FACTORED_FAMILIES",
     "FactoredFamily",
     "build_factored_classifier_sft",

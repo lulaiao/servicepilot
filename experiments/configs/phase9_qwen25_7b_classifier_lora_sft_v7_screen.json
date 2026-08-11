@@ -1,0 +1,72 @@
+{
+  "protocol_version": "phase9-qwen25-7b-classifier-lora-sft-v7-bounded-remediation-screen",
+  "model_repo": "Qwen/Qwen2.5-7B-Instruct",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "data_manifest": "experiments/manifests/phase9_classifier_sft_v7_dataset.json",
+  "train_data": "data/training/phase9_classifier_sft_v7.jsonl",
+  "train_sha256": "dd6ec3f1cee53bb41089a5aee849b3176be6780d1ca5c9ef01063b82a85cbe54",
+  "split_counts": {"train": 144, "dev": 36, "sealed_test": 0},
+  "seeds": [20260828, 20260829, 20260830, 20260831],
+  "lora": {
+    "rank": 8,
+    "alpha": 16,
+    "dropout": 0.05,
+    "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj"]
+  },
+  "budget": {
+    "dtype": "bfloat16",
+    "max_length": 512,
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "max_epochs": 3,
+    "learning_rate": 0.0001,
+    "warmup_ratio": 0.05,
+    "max_gradient_norm": 1.0,
+    "checkpoint_every_steps": 5,
+    "early_stopping_patience": 1
+  },
+  "screening_seed": 20260828,
+  "screening_max_steps": 10,
+  "checkpoint_selection": [
+    "zero_unauthorized_action",
+    "zero_incorrect_committed_write",
+    "zero_false_success",
+    "zero_guardrail_harm",
+    "highest_executable_dev_task_success",
+    "highest_schema_valid_rate",
+    "lowest_dev_loss"
+  ],
+  "sealed_used_for_selection": false,
+  "sealed_execution": "deferred_until_independent_catalog_freeze",
+  "baseline": "v5_checkpoint10_on_immutable_v4_dev",
+  "harness_revision": "8662be7",
+  "required_override_metrics": [
+    "guardrail_rescue_count",
+    "guardrail_harm_count",
+    "guardrail_neutral_count"
+  ],
+  "required_metrics": [
+    "raw_primary_macro_f1",
+    "executable_intent_tuple_accuracy",
+    "schema_valid_rate",
+    "executable_task_success",
+    "unauthorized_action_rate",
+    "incorrect_committed_write_rate",
+    "false_success_rate",
+    "dev_loss",
+    "peak_vram_mib",
+    "wall_time_seconds"
+  ],
+  "termination_conditions": [
+    "non_finite_loss",
+    "non_finite_gradient",
+    "cuda_out_of_memory",
+    "checkpoint_reload_failure",
+    "privacy_or_split_manifest_mismatch",
+    "cross_split_content_overlap",
+    "guardrail_harm_above_zero",
+    "false_success_above_zero",
+    "unauthorized_action_above_zero",
+    "macro_f1_below_v5_checkpoint10"
+  ]
+}

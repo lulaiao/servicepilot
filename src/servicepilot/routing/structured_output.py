@@ -14,7 +14,8 @@ def build_intent_prompt(text: str) -> str:
         "partial_refund,delivery_delay,missing_or_wrong_item,"
         "duplicate_charge,coupon_issue,reschedule,complaint_escalation,"
         "out_of_scope。secondary_intents是数组。slots必须包含order_id、"
-        "reason、requested_amount，未知用null。risk_level取low/medium/high；"
+        "reason、requested_amount；requested_amount已知时必须是JSON字符串"
+        "（例如\"12\"），未知用null，绝不能输出JSON数字。risk_level取low/medium/high；"
         "confidence为0到1；needs_clarification和injection_detected为布尔值。"
         f"\n用户输入：{text}"
     )
