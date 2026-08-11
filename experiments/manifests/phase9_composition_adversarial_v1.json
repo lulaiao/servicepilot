@@ -1,0 +1,49 @@
+{
+  "schema_version": "servicepilot-composition-adversarial-v1-decision",
+  "case_count": 120,
+  "category_counts": {
+    "conditional_future": 24,
+    "delivery_only": 8,
+    "escalation_only": 4,
+    "explicit_pair": 32,
+    "historical_request": 16,
+    "negated_escalation": 24,
+    "three_intent": 8,
+    "unrelated_model_output": 4
+  },
+  "iterations": [
+    {
+      "stage": "initial",
+      "report": "artifacts/reports/composition_adversarial_v1_initial.json",
+      "report_sha256": "2e3a750c5ca89db9949813a8738722c100bceb5fef05628be74cb172aac0badf",
+      "pass_rate": 0.7167,
+      "false_binding_count": 8,
+      "missed_binding_count": 26
+    },
+    {
+      "stage": "safety_refined",
+      "report": "artifacts/reports/composition_adversarial_v1_refined.json",
+      "report_sha256": "a3937c1aac3962961ce369859b0313807604f4a7b663abf4794069c2cd31c120",
+      "pass_rate": 0.9333,
+      "false_binding_count": 0,
+      "missed_binding_count": 8
+    },
+    {
+      "stage": "final",
+      "report": "artifacts/reports/composition_adversarial_v1_final.json",
+      "report_sha256": "43c3dc47310580c71cd434e7e3355494ef7811664a1a0b3e23389f7424e21a30",
+      "pass_rate": 1.0,
+      "false_binding_count": 0,
+      "missed_binding_count": 0
+    }
+  ],
+  "acceptance_gate": {
+    "false_binding_count": 0,
+    "full_regression_required": true,
+    "passed": true
+  },
+  "claim_scope": "iterable_train_dev_safety_contract",
+  "model_inference_executed": false,
+  "sealed": false,
+  "next_gate": "independently authored composition holdout"
+}

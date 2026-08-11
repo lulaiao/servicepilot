@@ -50,3 +50,17 @@ def test_does_not_bind_from_single_domain_or_unrelated_model_output() -> None:
     assert bind_composition_evidence(
         value, "配送已经超时，还需要人工投诉处理"
     ) == value
+
+
+def test_does_not_bind_conditional_historical_or_three_intent_requests() -> None:
+    base = result(Intent.DELIVERY_DELAY)
+    assert bind_composition_evidence(
+        base, "配送已经超时，如果明天还没解决再转人工处理"
+    ) == base
+    assert bind_composition_evidence(
+        base, "配送已经超时，上次也要求过人工投诉，现在只查状态"
+    ) == base
+    with_third = result(Intent.DELIVERY_DELAY, (Intent.PARTIAL_REFUND,))
+    assert bind_composition_evidence(
+        with_third, "配送已经超时，请转人工处理，另外申请部分退款12元"
+    ) == with_third
