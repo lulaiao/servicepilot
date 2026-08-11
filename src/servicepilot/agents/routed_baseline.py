@@ -22,12 +22,14 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
         classifier: IntentClassifier | None = None,
         *,
         observation_rerouting: bool = True,
+        composition_binding: bool = False,
     ) -> None:
         self.classifier = classifier or RuleIntentClassifier()
         self.safety_classifier = RuleIntentClassifier()
         self.router = StatefulRouter()
         self.state: DialogueState | None = None
         self.observation_rerouting = observation_rerouting
+        self.composition_binding = composition_binding
         self.safety_override_count = 0
         self.tool_alignment_override_count = 0
         self.composition_binding_count = 0
@@ -55,10 +57,11 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
 
     def detect_intents(self, text: str) -> tuple[Intent, ...]:
         intent = self.classifier.classify(text)
-        bound_intent = bind_composition_evidence(intent, text)
-        if bound_intent != intent:
-            intent = bound_intent
-            self.composition_binding_count += 1
+        if self.composition_binding:
+            bound_intent = bind_composition_evidence(intent, text)
+            if bound_intent != intent:
+                intent = bound_intent
+                self.composition_binding_count += 1
         safety = self.safety_classifier.classify(text)
         # A narrow deterministic guardrail protects conjunctions and prompt
         # injection. It does not replace ordinary learned single-intent routing.

@@ -46,7 +46,9 @@ async def main() -> None:
     results = []
     composition_binding_count = 0
     for scenario in scenarios:
-        agent = RoutedRuleAgent(classifier=RecordedClassifier(predictions))
+        agent = RoutedRuleAgent(
+            classifier=RecordedClassifier(predictions), composition_binding=True
+        )
         _, result, _ = await run_scenario(scenario, agent=agent)
         results.append(result)
         composition_binding_count += agent.composition_binding_count

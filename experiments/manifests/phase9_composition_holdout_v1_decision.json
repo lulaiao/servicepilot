@@ -1,0 +1,32 @@
+{
+  "schema_version": "servicepilot-composition-holdout-v1-decision",
+  "freeze_revision": "dd11c7ff3b5d5c60f09aaf9c63433b3ea89c7fd2",
+  "catalog": "data/eval/phase9_composition_holdout_v1.jsonl",
+  "catalog_sha256": "9452c481e572eec612233ee5e947b15351d706cf61e901f13b31aec78cb55654",
+  "raw_report": "artifacts/reports/phase9_composition_holdout_v1_result.json",
+  "raw_report_sha256": "42a3d3abf2e0f78bd6384e6e146bf829698d27665f66107503d630ac4d32f189",
+  "case_count": 60,
+  "baseline": {
+    "task_success_rate": 0.8333,
+    "false_binding_rate": 0.0,
+    "missed_binding_rate": 0.1667,
+    "legitimate_secondary_action_count": 0,
+    "unexpected_secondary_action_count": 0,
+    "false_success_rate": "TBD_not_executable_agent_scenarios"
+  },
+  "composition_binder": {
+    "task_success_rate": 0.8333,
+    "false_binding_rate": 0.0,
+    "missed_binding_rate": 0.1667,
+    "legitimate_secondary_action_count": 0,
+    "unexpected_secondary_action_count": 0,
+    "false_success_rate": "TBD_not_executable_agent_scenarios"
+  },
+  "changed_count": 0,
+  "decision": "reject_as_default_keep_experimental_opt_in",
+  "default_enabled": false,
+  "model_inference_executed": false,
+  "catalog_consumed": true,
+  "selection_or_tuning_allowed": false,
+  "rerun_allowed": false
+}

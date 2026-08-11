@@ -53,6 +53,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--device", choices=("cuda",), default="cuda")
     parser.add_argument("--dtype", choices=("float16", "bfloat16"), default="float16")
     parser.add_argument("--max-new-tokens", type=int, default=128)
+    parser.add_argument("--enable-composition-binding", action="store_true")
     parser.add_argument("--seed", type=int, default=20260805)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--trace-output", type=Path, required=True)
@@ -320,7 +321,10 @@ async def main_async() -> None:
         )
         torch.cuda.synchronize()
         started = time.perf_counter()
-        agent = RoutedRuleAgent(classifier=classifier)
+        agent = RoutedRuleAgent(
+            classifier=classifier,
+            composition_binding=args.enable_composition_binding,
+        )
         try:
             trajectory, result, _ = await run_scenario(scenario, agent=agent)
         except Exception as exc:

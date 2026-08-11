@@ -149,7 +149,9 @@ def test_tool_alignment_guard_does_not_replace_one_high_risk_action_with_another
 
 
 def test_composition_evidence_strengthens_execution_and_completion_contract() -> None:
-    agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
+    agent = RoutedRuleAgent(
+        classifier=SingleIntentOnlyClassifier(), composition_binding=True
+    )
 
     intents = agent.detect_intents("履约超期，还需要人工投诉")
 
@@ -163,7 +165,9 @@ def test_composition_evidence_strengthens_execution_and_completion_contract() ->
 
 
 def test_composition_binding_adds_executable_secondary_with_explicit_evidence() -> None:
-    agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
+    agent = RoutedRuleAgent(
+        classifier=SingleIntentOnlyClassifier(), composition_binding=True
+    )
 
     intents = agent.detect_intents("履约已经逾期，还需要人工投诉处理")
 
@@ -172,9 +176,20 @@ def test_composition_binding_adds_executable_secondary_with_explicit_evidence() 
 
 
 def test_composition_binding_does_not_execute_negated_secondary() -> None:
-    agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
+    agent = RoutedRuleAgent(
+        classifier=SingleIntentOnlyClassifier(), composition_binding=True
+    )
 
     intents = agent.detect_intents("只登记运输延误，不创建人工工单")
+
+    assert intents == (Intent.DELIVERY_DELAY,)
+    assert agent.composition_binding_count == 0
+
+
+def test_composition_binding_is_disabled_by_default() -> None:
+    agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
+
+    intents = agent.detect_intents("履约已经逾期，还需要人工投诉处理")
 
     assert intents == (Intent.DELIVERY_DELAY,)
     assert agent.composition_binding_count == 0
