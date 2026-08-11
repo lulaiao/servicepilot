@@ -27,6 +27,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--head-output", type=Path, required=True)
     parser.add_argument("--batch-size", type=int, default=4)
+    parser.add_argument("--seed", type=int)
     args = parser.parse_args()
     protocol = json.loads(args.protocol.read_text(encoding="utf-8"))
     data_path = Path(protocol["dataset"])
@@ -41,7 +42,9 @@ def main() -> None:
 
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is required for frozen representation extraction")
-    seed = int(protocol["screening_seed"])
+    seed = int(args.seed if args.seed is not None else protocol["screening_seed"])
+    if seed not in protocol["formal_seeds"]:
+        raise RuntimeError("seed is not declared in the frozen protocol")
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     records = tuple(
