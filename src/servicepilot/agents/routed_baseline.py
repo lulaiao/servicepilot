@@ -8,6 +8,7 @@ from servicepilot.eval.models import Intent, TraceEvent, TraceRole
 from servicepilot.eval.simulator import FSMUserSimulator
 from servicepilot.mcp_gateway.gateway import ReliableToolGateway, ToolResult
 from servicepilot.routing.classifiers import IntentClassifier
+from servicepilot.routing.composition_evidence import bind_composition_evidence
 from servicepilot.routing.intent_rules import RuleIntentClassifier
 from servicepilot.routing.models import DialogueState, RiskLevel, ToolObservation
 from servicepilot.routing.router import ROLE_INSTRUCTIONS, StatefulRouter
@@ -29,6 +30,7 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
         self.observation_rerouting = observation_rerouting
         self.safety_override_count = 0
         self.tool_alignment_override_count = 0
+        self.composition_binding_count = 0
         self.completion_verifier = OutputCompletionVerifier()
         self.completion_required_intents: tuple[Intent, ...] = ()
 
@@ -53,6 +55,10 @@ class RoutedRuleAgent(RuleBasedSingleAgent):
 
     def detect_intents(self, text: str) -> tuple[Intent, ...]:
         intent = self.classifier.classify(text)
+        bound_intent = bind_composition_evidence(intent, text)
+        if bound_intent != intent:
+            intent = bound_intent
+            self.composition_binding_count += 1
         safety = self.safety_classifier.classify(text)
         # A narrow deterministic guardrail protects conjunctions and prompt
         # injection. It does not replace ordinary learned single-intent routing.

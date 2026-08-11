@@ -1,0 +1,36 @@
+{
+  "schema_version": "servicepilot-composition-binding-dev-diagnostic-v1",
+  "source_catalog": "data/eval/phase9_classifier_v4_exec_dev.jsonl",
+  "source_catalog_sha256": "7162448abd6b79b8d6e70aeefc128645c6a55b12df13f7af99ebd08baa0ee655",
+  "v7_source_report": "artifacts/reports/phase9_classifier_sft_v7_checkpoint10_dev.json",
+  "v7_source_report_sha256": "0bc7de228f324034e2c38f45e15b5f2cf97d68beda700171b62b5cb4c7a54183",
+  "classifier_replay": {
+    "report": "artifacts/reports/phase9_classifier_sft_v7_checkpoint10_composition_replay.json",
+    "report_sha256": "543c5fdd63564e9e08ef2b6cace01cfe6435f1b5a6779a4ad3b032d81690c944",
+    "before_exact_rate": 0.8889,
+    "after_exact_rate": 0.9167,
+    "changed_count": 1,
+    "rescue_count": 1,
+    "harm_count": 0
+  },
+  "agent_replay": {
+    "report": "artifacts/reports/phase9_classifier_sft_v7_checkpoint10_composition_agent_replay.json",
+    "report_sha256": "9a5aee18cabbcb9f2057b4d0752dd143f28cc553f7bf80a53c83e1fe9c7d8484",
+    "before_task_success_rate": 0.9722,
+    "after_task_success_rate": 1.0,
+    "composition_binding_count": 1,
+    "policy_violation_rate": 0.0,
+    "false_success_rate": 0.0,
+    "model_inference_executed": false
+  },
+  "v5_compatibility_replay": {
+    "report": "artifacts/reports/phase9_classifier_sft_v5_checkpoint10_composition_replay.json",
+    "report_sha256": "e793d3815ba5d18405fa2e4b1c112a140c3bd7a715e1d6b2e63e1f70f7b522c4",
+    "changed_count": 0,
+    "harm_count": 0
+  },
+  "claim_scope": "reused_dev_cpu_diagnostic_only",
+  "v7_model_selection_changed": false,
+  "sealed_accessed": false,
+  "next_gate": "broader train-dev adversarial composition tests before a new independent holdout"
+}

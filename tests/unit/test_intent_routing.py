@@ -148,17 +148,36 @@ def test_tool_alignment_guard_does_not_replace_one_high_risk_action_with_another
     assert agent.completion_required_intents == (Intent.PARTIAL_REFUND,)
 
 
-def test_rule_evidence_can_strengthen_completion_without_changing_selected_action() -> None:
+def test_composition_evidence_strengthens_execution_and_completion_contract() -> None:
     agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
 
     intents = agent.detect_intents("履约超期，还需要人工投诉")
 
-    assert intents == (Intent.DELIVERY_DELAY,)
+    assert intents == (Intent.DELIVERY_DELAY, Intent.COMPLAINT_ESCALATION)
     assert agent.safety_override_count == 0
+    assert agent.composition_binding_count == 1
     assert agent.completion_required_intents == (
         Intent.DELIVERY_DELAY,
         Intent.COMPLAINT_ESCALATION,
     )
+
+
+def test_composition_binding_adds_executable_secondary_with_explicit_evidence() -> None:
+    agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
+
+    intents = agent.detect_intents("履约已经逾期，还需要人工投诉处理")
+
+    assert intents == (Intent.DELIVERY_DELAY, Intent.COMPLAINT_ESCALATION)
+    assert agent.composition_binding_count == 1
+
+
+def test_composition_binding_does_not_execute_negated_secondary() -> None:
+    agent = RoutedRuleAgent(classifier=SingleIntentOnlyClassifier())
+
+    intents = agent.detect_intents("只登记运输延误，不创建人工工单")
+
+    assert intents == (Intent.DELIVERY_DELAY,)
+    assert agent.composition_binding_count == 0
 
 
 @pytest.mark.asyncio

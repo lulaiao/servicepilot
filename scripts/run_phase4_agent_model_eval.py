@@ -310,6 +310,7 @@ async def main_async() -> None:
     scenario_latencies: list[float] = []
     safety_override_count = 0
     tool_alignment_override_count = 0
+    composition_binding_count = 0
     guardrail_records: list[dict[str, Any]] = []
     for index, scenario in enumerate(scenarios, start=1):
         print(
@@ -347,6 +348,7 @@ async def main_async() -> None:
             )
         safety_override_count += agent.safety_override_count
         tool_alignment_override_count += agent.tool_alignment_override_count
+        composition_binding_count += agent.composition_binding_count
         raw_record = classifier.records[-1]
         raw_intents = (
             Intent(raw_record["prediction"]["primary_intent"]),
@@ -360,7 +362,9 @@ async def main_async() -> None:
             else ()
         )
         intervention_type = None
-        if agent.safety_override_count:
+        if agent.composition_binding_count:
+            intervention_type = "composition_binding"
+        elif agent.safety_override_count:
             intervention_type = "deterministic_safety"
         elif agent.tool_alignment_override_count:
             intervention_type = "tool_alignment"
@@ -458,6 +462,7 @@ async def main_async() -> None:
             ),
             "deterministic_safety_override_count": safety_override_count,
             "tool_alignment_override_count": tool_alignment_override_count,
+            "composition_binding_count": composition_binding_count,
             "guardrail_effects": guardrail_effect_metrics(guardrail_records),
         },
     }
