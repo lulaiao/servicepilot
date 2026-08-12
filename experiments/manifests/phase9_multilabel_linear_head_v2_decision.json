@@ -1,0 +1,85 @@
+{
+  "schema_version": "servicepilot-multilabel-linear-head-v2-formal-decision",
+  "result": "artifacts/reports/phase9_multilabel_linear_head_v2_screen.json",
+  "result_sha256": "19992f8611b1fc02f07b192b177937b98d6f514bb4be41d189290ad792186f12",
+  "protocol_sha256": "fed8c92b23845c7b6d0f422d36127235582d9b4516e19f2f5bf3b57ad9daf72b",
+  "dataset_manifest_sha256": "2943934795cedf8adec99c33560ce80fde25aead1481d5853c3fed6f9d8d633a",
+  "eligible_representations": [
+    "instruction_last_token",
+    "raw_attention_masked_mean"
+  ],
+  "selected_representation": "raw_attention_masked_mean",
+  "selected_metric_summary": {
+    "macro_f1": {
+      "mean": 0.9974,
+      "population_std": 0.0,
+      "min": 0.9974,
+      "max": 0.9974
+    },
+    "exact_set_accuracy": {
+      "mean": 0.9922,
+      "population_std": 0.0,
+      "min": 0.9922,
+      "max": 0.9922
+    },
+    "complaint_escalation_false_positive_rate": {
+      "mean": 0.0,
+      "population_std": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    }
+  },
+  "selected_embedding_seconds": 9.5729,
+  "selected_heads": [
+    {
+      "seed": 20261001,
+      "path": "artifacts/checkpoints/phase9_multilabel_linear_head_v2/raw_attention_masked_mean_seed20261001.pt",
+      "sha256": "80d987c6e8fadafa48dfd69f33db1c92f579844d29ce36297f55c1ff633dafdf"
+    },
+    {
+      "seed": 20261002,
+      "path": "artifacts/checkpoints/phase9_multilabel_linear_head_v2/raw_attention_masked_mean_seed20261002.pt",
+      "sha256": "ec1983fe270d1107ed0b8cd29fa5f2f5a620972be785dd16373ac8eba5544946"
+    },
+    {
+      "seed": 20261003,
+      "path": "artifacts/checkpoints/phase9_multilabel_linear_head_v2/raw_attention_masked_mean_seed20261003.pt",
+      "sha256": "b2184dd3fa1bf8465b3e005c5cab7986cf48644da546ffbffb62c486756a36f5"
+    },
+    {
+      "seed": 20261004,
+      "path": "artifacts/checkpoints/phase9_multilabel_linear_head_v2/raw_attention_masked_mean_seed20261004.pt",
+      "sha256": "dd45e88658f22ee2d767a794c11adb9af39ae4562e830b19ee81cc076a63348d"
+    }
+  ],
+  "instruction_last_token_metric_summary": {
+    "macro_f1": {
+      "mean": 0.9437,
+      "population_std": 0.0,
+      "min": 0.9437,
+      "max": 0.9437
+    },
+    "exact_set_accuracy": {
+      "mean": 0.8438,
+      "population_std": 0.0,
+      "min": 0.8438,
+      "max": 0.8438
+    },
+    "complaint_escalation_false_positive_rate": {
+      "mean": 0.0156,
+      "population_std": 0.0,
+      "min": 0.0156,
+      "max": 0.0156
+    }
+  },
+  "instruction_last_token_embedding_seconds": 16.1153,
+  "instruction_latency_increase_fraction": 0.6834,
+  "decision": "accept_raw_mean_as_v2_development_candidate_only",
+  "instruction_last_token_decision": "reject_higher_cost_lower_quality",
+  "agent_integration_allowed": false,
+  "next_gate": "independently_authored_multilabel_holdout_v2",
+  "consumed_holdout_v1_reuse_allowed": false,
+  "threshold_tuning_allowed": false,
+  "sealed_accessed": false,
+  "claim_scope": "balanced_synthetic_dev_representation_selection"
+}
