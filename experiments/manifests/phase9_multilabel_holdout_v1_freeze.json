@@ -1,0 +1,42 @@
+{
+  "schema_version": "servicepilot-multilabel-holdout-v1-freeze",
+  "provenance": "post_selection_independent_manual_authoring",
+  "code_revision_before_freeze": "57695ce",
+  "catalog": "data/eval/phase9_multilabel_holdout_v1.jsonl",
+  "catalog_sha256": "dd563295a1a347aac33735c1333c201db91cf4351e479d2855d5ac35c19ecf19",
+  "training_data": "data/training/phase9_multilabel_composition_v1.jsonl",
+  "training_data_sha256": "1c7ad14eef75e5938f01333461d49ce4726735d11a226e3369f15226d3283af0",
+  "protocol": "experiments/configs/phase9_multilabel_holdout_v1.json",
+  "protocol_sha256": "58fe351422d1b33f84986c40f1eaed6a461abecbf6472d6847980a44fa4a5242",
+  "case_count": 80,
+  "category_counts": {
+    "complaint_only": 10,
+    "conditional_or_historical": 10,
+    "delivery_only": 10,
+    "delivery_refund": 10,
+    "explicit_pair": 10,
+    "negated_escalation": 10,
+    "refund_only": 10,
+    "three_intent": 10
+  },
+  "label_positive_counts": {
+    "complaint_escalation": 30,
+    "delivery_delay": 60,
+    "partial_refund": 30
+  },
+  "normalized_exact_overlap_count": 0,
+  "max_cross_dataset_character_5gram_similarity": 0.1034,
+  "near_duplicate_threshold": 0.8,
+  "model_inference_executed": false,
+  "head_weights_accessed": false,
+  "selection_or_tuning_allowed": false,
+  "threshold": 0.5,
+  "acceptance_gates": {
+    "required_seed_pass_count": 4,
+    "macro_f1_min": 0.85,
+    "exact_set_accuracy_min": 0.8,
+    "complaint_escalation_recall_min": 0.8,
+    "complaint_escalation_false_positive_rate_max": 0.05
+  },
+  "rerun_allowed": false
+}

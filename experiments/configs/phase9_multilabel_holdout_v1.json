@@ -1,0 +1,18 @@
+{
+  "protocol_version": "servicepilot-multilabel-holdout-v1",
+  "candidate_protocol": "experiments/configs/phase9_multilabel_linear_head_v1.json",
+  "candidate_protocol_sha256": "551610432e695d1f507bdc0b8efcd9f6b6a60dcae93984cc52df8d3dcace8908",
+  "labels": ["delivery_delay", "complaint_escalation", "partial_refund"],
+  "head_seeds": [20260901, 20260902, 20260903, 20260904],
+  "threshold": 0.5,
+  "threshold_tuning_allowed": false,
+  "required_seed_pass_count": 4,
+  "acceptance_gates": {
+    "macro_f1_min": 0.85,
+    "exact_set_accuracy_min": 0.8,
+    "complaint_escalation_recall_min": 0.8,
+    "complaint_escalation_false_positive_rate_max": 0.05
+  },
+  "selection_or_tuning_allowed": false,
+  "rerun_allowed": false
+}
