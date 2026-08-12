@@ -1,0 +1,48 @@
+{
+  "schema_version": "servicepilot-multilabel-holdout-v2-freeze",
+  "provenance": "post_v2_selection_independent_manual_authoring",
+  "code_revision_before_freeze": "3d9221d",
+  "catalog": "data/eval/phase9_multilabel_holdout_v2.jsonl",
+  "catalog_sha256": "049ab78c210a7985b6571e78f06cde1784552b8220a889218c7353451c68fe98",
+  "protocol": "experiments/configs/phase9_multilabel_holdout_v2.json",
+  "protocol_sha256": "eda68661d43924e5489633c9f6e06bd64b0bbd453f3e1bac9e88de9074eb85c7",
+  "candidate_decision_sha256": "016e0631ee0b7e1ddd38bc620a5caeec327140de4217f4e9af4a8a380bb47353",
+  "development_data_sha256": "8991dae67ebff149ac62df0fb362b172cb5855e7c05058d3288c5d47c79a43ec",
+  "consumed_holdout_v1_sha256": "dd563295a1a347aac33735c1333c201db91cf4351e479d2855d5ac35c19ecf19",
+  "case_count": 64,
+  "category_counts": {
+    "label_set_000": 8,
+    "label_set_001": 8,
+    "label_set_010": 8,
+    "label_set_011": 8,
+    "label_set_100": 8,
+    "label_set_101": 8,
+    "label_set_110": 8,
+    "label_set_111": 8
+  },
+  "label_positive_counts": {
+    "complaint_escalation": 32,
+    "delivery_delay": 32,
+    "partial_refund": 32
+  },
+  "label_prevalence": {
+    "complaint_escalation": 0.5,
+    "delivery_delay": 0.5,
+    "partial_refund": 0.5
+  },
+  "normalized_exact_overlap_count": 0,
+  "max_prior_corpora_character_5gram_similarity": 0.0968,
+  "near_duplicate_threshold": 0.8,
+  "model_inference_executed": false,
+  "head_weights_accessed": false,
+  "selection_or_tuning_allowed": false,
+  "threshold": 0.5,
+  "acceptance_gates": {
+    "required_seed_pass_count": 4,
+    "macro_f1_min": 0.85,
+    "exact_set_accuracy_min": 0.8,
+    "complaint_escalation_recall_min": 0.8,
+    "complaint_escalation_false_positive_rate_max": 0.05
+  },
+  "rerun_allowed": false
+}
