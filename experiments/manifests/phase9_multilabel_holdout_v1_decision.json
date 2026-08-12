@@ -1,0 +1,144 @@
+{
+  "schema_version": "servicepilot-multilabel-holdout-v1-decision",
+  "result": "artifacts/reports/phase9_multilabel_holdout_v1.json",
+  "result_sha256": "464f9079e63bbd148a8ab0442809a96e5f65ec7de2dea6e9bb4d456920629385",
+  "freeze_manifest_sha256": "631cd99c294a8b011836e9dfcb434795c918f2d19c6a7982cc65bfbe4a1f8ff7",
+  "formal_manifest_sha256": "96f1b263b4442f660e7a1710a3fe54c317b4f1d29e2bb7597a436adb0a2bc81a",
+  "seeds": [
+    20260901,
+    20260902,
+    20260903,
+    20260904
+  ],
+  "passed_seed_count": 0,
+  "required_seed_pass_count": 4,
+  "metrics": {
+    "macro_f1": {
+      "mean": 0.7232,
+      "population_std": 0.0036,
+      "min": 0.7171,
+      "max": 0.7253
+    },
+    "exact_set_accuracy": {
+      "mean": 0.5469,
+      "population_std": 0.0054,
+      "min": 0.5375,
+      "max": 0.55
+    },
+    "complaint_escalation_false_positive_rate": {
+      "mean": 0.06,
+      "population_std": 0.0,
+      "min": 0.06,
+      "max": 0.06
+    }
+  },
+  "per_label": {
+    "delivery_delay": {
+      "precision": {
+        "mean": 0.7792,
+        "population_std": 0.0,
+        "min": 0.7792,
+        "max": 0.7792
+      },
+      "recall": {
+        "mean": 1.0,
+        "population_std": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "f1": {
+        "mean": 0.8759,
+        "population_std": 0.0,
+        "min": 0.8759,
+        "max": 0.8759
+      }
+    },
+    "complaint_escalation": {
+      "precision": {
+        "mean": 0.7857,
+        "population_std": 0.0,
+        "min": 0.7857,
+        "max": 0.7857
+      },
+      "recall": {
+        "mean": 0.3667,
+        "population_std": 0.0,
+        "min": 0.3667,
+        "max": 0.3667
+      },
+      "f1": {
+        "mean": 0.5,
+        "population_std": 0.0,
+        "min": 0.5,
+        "max": 0.5
+      }
+    },
+    "partial_refund": {
+      "precision": {
+        "mean": 1.0,
+        "population_std": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "recall": {
+        "mean": 0.6583,
+        "population_std": 0.0145,
+        "min": 0.6333,
+        "max": 0.6667
+      },
+      "f1": {
+        "mean": 0.7939,
+        "population_std": 0.0106,
+        "min": 0.7755,
+        "max": 0.8
+      }
+    }
+  },
+  "category_failure_counts": {
+    "20260901": {
+      "complaint_only": 7,
+      "delivery_refund": 6,
+      "explicit_pair": 6,
+      "refund_only": 10,
+      "three_intent": 8
+    },
+    "20260902": {
+      "complaint_only": 7,
+      "delivery_refund": 5,
+      "explicit_pair": 6,
+      "refund_only": 10,
+      "three_intent": 8
+    },
+    "20260903": {
+      "complaint_only": 7,
+      "delivery_refund": 5,
+      "explicit_pair": 6,
+      "refund_only": 10,
+      "three_intent": 8
+    },
+    "20260904": {
+      "complaint_only": 7,
+      "delivery_refund": 5,
+      "explicit_pair": 6,
+      "refund_only": 10,
+      "three_intent": 8
+    }
+  },
+  "training_label_prevalence": {
+    "delivery_delay": 0.875,
+    "complaint_escalation": 0.4375,
+    "partial_refund": 0.125
+  },
+  "diagnosis": [
+    "delivery_label_prevalence_and_template_shortcut",
+    "complaint_paraphrase_generalization_failure",
+    "partial_refund_recall_and_label_composition_failure",
+    "negligible_seed_variance_points_to_data_representation_not_optimizer_instability"
+  ],
+  "decision": "reject_multilabel_linear_head_v1",
+  "agent_integration_allowed": false,
+  "holdout_consumed": true,
+  "rerun_allowed": false,
+  "retuning_on_holdout_allowed": false,
+  "next_step": "redesign_train_only_data_and_representation_then_freeze_new_holdout_version"
+}
