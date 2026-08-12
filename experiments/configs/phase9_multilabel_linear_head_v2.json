@@ -1,0 +1,45 @@
+{
+  "protocol_version": "servicepilot-multilabel-linear-head-v2-screen",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "adapter_path": "artifacts/checkpoints/phase9_classifier_sft_v5_screen_seed20260816/checkpoint-10",
+  "dataset": "data/training/phase9_multilabel_composition_v2.jsonl",
+  "dataset_sha256": "8991dae67ebff149ac62df0fb362b172cb5855e7c05058d3288c5d47c79a43ec",
+  "labels": ["delivery_delay", "complaint_escalation", "partial_refund"],
+  "representations": [
+    {
+      "id": "raw_attention_masked_mean",
+      "input_template": "{text}",
+      "pooling": "attention_masked_mean"
+    },
+    {
+      "id": "instruction_last_token",
+      "input_template": "任务：独立判断用户当前明确要求的标签。delivery_delay=当前订单配送已延误；complaint_escalation=现在要求人工介入或正式投诉；partial_refund=现在要求部分退款。否定、未来条件、历史动作和规则咨询不算当前请求。用户请求：{text}\n标签：",
+      "pooling": "last_non_padding_token"
+    }
+  ],
+  "head": "single_linear_layer",
+  "loss": "bce_with_logits_train_derived_pos_weight",
+  "optimizer": "adamw",
+  "learning_rate": 0.01,
+  "weight_decay": 0.0001,
+  "epochs": 200,
+  "threshold": 0.5,
+  "formal_seeds": [20261001, 20261002, 20261003, 20261004],
+  "acceptance_gates": {
+    "required_seed_pass_count": 4,
+    "macro_f1_min": 0.85,
+    "exact_set_accuracy_min": 0.8,
+    "complaint_escalation_recall_min": 0.8,
+    "complaint_escalation_false_positive_rate_max": 0.05
+  },
+  "selection_order": [
+    "all_acceptance_gates_pass",
+    "higher_mean_exact_set_accuracy",
+    "higher_mean_macro_f1",
+    "lower_mean_complaint_escalation_false_positive_rate",
+    "lower_embedding_latency"
+  ],
+  "dev_selection_allowed_between_declared_representations": true,
+  "threshold_tuning_allowed": false,
+  "sealed_records": 0
+}

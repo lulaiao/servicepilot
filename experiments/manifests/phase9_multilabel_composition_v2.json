@@ -1,0 +1,44 @@
+{
+  "schema_version": "servicepilot-multilabel-composition-v2-manifest",
+  "code_revision_before_freeze": "78a4136",
+  "output": "data/training/phase9_multilabel_composition_v2.jsonl",
+  "output_sha256": "8991dae67ebff149ac62df0fb362b172cb5855e7c05058d3288c5d47c79a43ec",
+  "record_count": 640,
+  "family_count": 320,
+  "split_counts": {
+    "dev": 128,
+    "train": 512
+  },
+  "split_family_counts": {
+    "train": 256,
+    "dev": 64
+  },
+  "category_counts": {
+    "label_set_000": 80,
+    "label_set_001": 80,
+    "label_set_010": 80,
+    "label_set_011": 80,
+    "label_set_100": 80,
+    "label_set_101": 80,
+    "label_set_110": 80,
+    "label_set_111": 80
+  },
+  "label_positive_counts": {
+    "complaint_escalation": 320,
+    "delivery_delay": 320,
+    "partial_refund": 320
+  },
+  "label_prevalence": {
+    "complaint_escalation": 0.5,
+    "delivery_delay": 0.5,
+    "partial_refund": 0.5
+  },
+  "exact_cross_split_overlap_count": 0,
+  "semantic_signature_cross_split_overlap_count": 0,
+  "max_cross_split_character_5gram_similarity": 0.7733,
+  "near_duplicate_threshold": 0.8,
+  "split_unit": "semantic_family",
+  "sealed_record_count": 0,
+  "consumed_holdout_text_used": false,
+  "passed": true
+}
