@@ -1,0 +1,23 @@
+{
+  "schema_version": "servicepilot-phase10-demo-v1-manifest",
+  "code_revision": "f0011aa",
+  "demo_count": 4,
+  "demo_ids": [
+    "confirmation_refusal",
+    "false_success_interception",
+    "fault_recovery",
+    "successful_transaction"
+  ],
+  "bundle": "artifacts/demo/phase10_demo.json",
+  "bundle_sha256": "1463ed54ad4e590f4d3a4d0ed8a860a57040996d73ab7dac63ba67d4c971f6a5",
+  "traces": "artifacts/demo/phase10_demo.jsonl",
+  "traces_sha256": "c2539fbe4461b578fe65862597d64761dab00507fa23b43ebc2788b4fbb52728",
+  "viewer": "artifacts/demo/trace_viewer.html",
+  "viewer_sha256": "5e038368563aa009200745d14cb867422655b303cb80846a926f46b5a996e661",
+  "fault_retry_observed": true,
+  "duplicate_refund_count": 0,
+  "confirmation_refusal_prevented_write": true,
+  "false_success_intercepted": true,
+  "passed": true,
+  "runtime_scope": "cpu_deterministic_local_demo"
+}

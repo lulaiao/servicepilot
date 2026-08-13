@@ -5,10 +5,10 @@ and local services. It is designed around executable business state, policy
 evidence, reliable MCP tool boundaries, stateful routing, layered memory, and
 deterministic evaluation.
 
-The repository has completed **Phase 3**: a deterministic FSM user simulator,
-rule-based single Agent, 36 executable scenarios, unified JSONL trajectories and
-an authoritative-state Judge now run through the reliable MCP/Gateway boundary.
-No model weights or paid APIs are required.
+The repository is in **Phase 10 delivery** after completing the deterministic
+domain, MCP/Gateway, executable Agent Harness, layered memory, retrieval,
+monitoring, trajectory-data and bounded local-model research phases. The
+supported demo needs no model weights, paid API, network, Docker or GPU.
 
 ## Quick start
 
@@ -37,11 +37,22 @@ Phase 2 uses the project-private environment with the pinned MCP v2 SDK:
 PYTHONPATH=src .venv/bin/python -m mypy src
 ```
 
-Run the Phase 3 evaluation and regenerate raw evidence:
+Run the 36-scenario deterministic evaluation:
 
 ```bash
 PYTHONPATH=src .venv/bin/python scripts/run_eval.py
 ```
+
+Run the four portfolio demos and build a self-contained HTML Trace Viewer:
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/run_phase10_demo.py \
+  --code-revision "$(git rev-parse --short HEAD)"
+```
+
+Open `artifacts/demo/trace_viewer.html` locally. The demo includes a successful
+transaction, transient-fault recovery, rejected high-risk confirmation, and an
+intentional false-success claim caught by the authoritative-state Judge.
 
 Docker is optional until the persistence phase. The current host cannot access
 the Docker daemon as the active user; see
@@ -49,6 +60,8 @@ the Docker daemon as the active user; see
 
 ## Project status
 
-See [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) for gated phases and
-[`CHANGELOG.md`](CHANGELOG.md) for completed work. Experimental numbers remain
-`TBD` until produced by fixed, reproducible evaluation runs.
+See [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) for gated phases,
+[`docs/architecture.md`](docs/architecture.md) for system boundaries,
+[`docs/resume_evidence.md`](docs/resume_evidence.md) for claim-to-evidence links,
+and [`docs/adr/`](docs/adr/) for technology and model decisions. Failed model
+experiments are retained rather than hidden; unsupported metrics remain `TBD`.

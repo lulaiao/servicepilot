@@ -53,10 +53,10 @@ order ID and transactional slots, previews high-risk writes, explains the
 preview, waits for confirmation, and only then executes. The Judge is outside
 the Agent and has read-only access to the final authoritative state.
 
-## Phase 4B Harness boundary
+## Agent Harness boundary
 
-Phase 4B will move runtime assembly behind a typed `AgentRuntimeHarness` and
-trial assembly behind an `EvaluationHarness`. The Runtime Harness owns sessions,
+Runtime assembly is behind a typed `AgentRuntimeHarness` and trial assembly is
+behind an `EvaluationHarness`. The Runtime Harness owns sessions,
 budgets, guardrail ordering, dependency injection, trace/checkpoint recording
 and termination. The Evaluation Harness owns isolated environment setup, user
 simulation, authoritative grading and aggregation.
@@ -65,3 +65,14 @@ The Harness is not a new business authority. Writes still flow exclusively
 through `ReliableToolGateway` to `TransactionService`; replay and evaluation
 paths are forbidden from issuing writes. Detailed contracts and acceptance
 criteria are in `docs/harness_design.md`.
+
+## Evidence and delivery boundary
+
+Evaluation artifacts are produced from fixed scenario catalogs and deterministic
+Judges. Reports never become claims by themselves: tracked Manifests bind data,
+protocol, revision, seed and raw-result hashes, while ADRs record whether a gate
+accepted or rejected a candidate.
+
+The Phase 10 demo runs four CPU-only executable cases and renders their escaped
+JSONL events into a dependency-free HTML viewer. The viewer is presentation
+only: it cannot execute tools or mutate business state.

@@ -228,5 +228,6 @@ High-risk alignment evidence:
 
 ## Phase 10 — open-source delivery
 
-Status: pending. Validate a clean-environment quick start, demo, trace viewer,
-reports, ablations, and evidence-linked resume statements.
+Status: in progress. CPU-only four-case demo, self-contained Trace Viewer,
+updated quick start and evidence-linked resume statements are implemented.
+Clean-environment validation and the consolidated report/ablation index remain.
