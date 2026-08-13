@@ -26,10 +26,14 @@ The tracked-file and metadata checks are automated by
 `scripts/run_phase10_release_readiness.py`; the command exits nonzero on a local
 gate failure and never authorizes publication.
 
+The first GitHub-hosted quality workflow, run
+[`31664664535`](https://github.com/lulaiao/servicepilot/actions/runs/31664664535),
+passed on exact revision `ade76451015ae29ebb8bbd3c4b5f1deac7d64255` for both
+Python 3.11 and Python 3.12. Dependabot configuration was also observed running.
+
 ## Deliberately open external gates
 
-- The public repository is selected as `https://github.com/lulaiao/servicepilot`,
-  but the first push has not yet been observed from this environment.
+- The public repository is live at `https://github.com/lulaiao/servicepilot`.
 - The repository files point to GitHub's private advisory form; private
   vulnerability reporting still must be enabled in GitHub settings.
 - GitHub Actions is configured locally, but no hosted run exists before the

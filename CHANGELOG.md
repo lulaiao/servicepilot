@@ -45,6 +45,7 @@
 - Least-privilege GitHub Actions quality matrix, Dependabot configuration, and
   contribution templates for public-repository handoff.
 - Public GitHub repository metadata and private security-advisory routing.
+- First hosted GitHub quality matrix accepted on Python 3.11 and 3.12.
 
 ### Verification
 

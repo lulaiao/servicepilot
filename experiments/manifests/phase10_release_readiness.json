@@ -25,7 +25,11 @@
     "private_security_advisory_path_configured": true,
     "github_private_vulnerability_reporting_enabled": false,
     "hosted_ci_configuration_committed": true,
-    "hosted_ci_first_run_passed": false,
+    "hosted_ci_first_run_passed": true,
+    "hosted_ci_run_id": 31664664535,
+    "hosted_ci_revision": "ade76451015ae29ebb8bbd3c4b5f1deac7d64255",
+    "hosted_ci_python_3_11_passed": true,
+    "hosted_ci_python_3_12_passed": true,
     "release_tag_created": false,
     "package_published": false
   },
