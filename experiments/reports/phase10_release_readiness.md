@@ -30,7 +30,8 @@ gate failure and never authorizes publication.
 
 - Public repository URL and hosting owner are not yet selected.
 - A monitored private vulnerability-reporting contact is not yet configured.
-- Hosted CI is not configured because there is no selected remote platform.
+- GitHub Actions is configured locally, but no hosted run exists before the
+  first push.
 - No release tag or package publication is authorized.
 
 These values were not invented in package metadata. They require the owner to

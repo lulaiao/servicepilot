@@ -310,15 +310,15 @@
       "resolved_evidence": [
         {
           "path": "experiments/reports/phase10_release_readiness.md",
-          "sha256": "9eb21ac0a5efd8eb0b3f130a3a5db8e4af8ce7458fea900ee6ba33eea12f889e"
+          "sha256": "658e1ab22c61afaa84a6d17f2948af8bce3bb1aa063737a47b300413c198608a"
         },
         {
           "path": "experiments/manifests/phase10_release_readiness.json",
-          "sha256": "4a707406785752cff038e96e9f56773d4674c1ffa940841bf1619ffd93b86514"
+          "sha256": "ad7f21ed7badbb55d5c8dd15ab3cace1c9d2324bfe257ad055c5fd727ac0714e"
         },
         {
           "path": "docs/release_checklist.md",
-          "sha256": "dce1a678ac32e74c56b181aa4fa49fa6bfbbf7daca624204b5239814864edc0d"
+          "sha256": "97108630950d8b23d3a88fce716c2acb62afd366831220c5d484abbc6d02aabf"
         }
       ]
     }

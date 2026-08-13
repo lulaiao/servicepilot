@@ -1,0 +1,36 @@
+name: Bug report
+description: Report reproducible incorrect behavior without secrets or personal data.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, personal data, real payment data or exploit details.
+  - type: input
+    id: revision
+    attributes:
+      label: Revision
+      description: Commit SHA or release tag where the problem occurs.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description: Include a minimal synthetic reproduction and relevant failure category.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Python version, operating system and commands used.
+    validations:
+      required: true
+

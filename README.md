@@ -76,3 +76,8 @@ The source is licensed under Apache-2.0. See [`CONTRIBUTING.md`](CONTRIBUTING.md
 [`SECURITY.md`](SECURITY.md), and the
 [`release checklist`](docs/release_checklist.md) before publishing or extending
 the project.
+
+GitHub publication and branch-protection steps are documented in
+[`docs/github_publication.md`](docs/github_publication.md). The hosted workflow
+runs deterministic CPU-only gates on Python 3.11 and 3.12; local model and GPU
+experiments are intentionally outside CI.

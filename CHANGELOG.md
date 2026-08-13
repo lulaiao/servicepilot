@@ -42,6 +42,8 @@
 - Apache-2.0 license, contribution/security guidance and release checklist.
 - Deterministic release-readiness checker for package/license metadata and
   tracked sensitive-file boundaries.
+- Least-privilege GitHub Actions quality matrix, Dependabot configuration, and
+  contribution templates for public-repository handoff.
 
 ### Verification
 

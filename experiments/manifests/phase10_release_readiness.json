@@ -22,7 +22,8 @@
   "external_gates": {
     "public_repository_url_configured": false,
     "monitored_security_contact_configured": false,
-    "hosted_ci_configured": false,
+    "hosted_ci_configuration_committed": true,
+    "hosted_ci_first_run_passed": false,
     "release_tag_created": false,
     "package_published": false
   },

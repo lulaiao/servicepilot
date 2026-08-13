@@ -19,12 +19,17 @@ actions that still require an owner and hosting destination.
 
 - [ ] Choose and record the public repository URL.
 - [ ] Configure a monitored private vulnerability-reporting contact.
-- [ ] Add CI using the same quality commands.
+- [x] Add GitHub Actions configuration using the same quality commands.
+- [ ] Observe the first GitHub-hosted Python 3.11/3.12 workflow passing.
+- [ ] Configure default-branch protection to require both matrix checks.
 - [ ] Choose a release tag only after the final revision passes all local gates.
 - [ ] Attach or link immutable reports; do not claim unexecuted metrics.
 
 The external items remain intentionally open because the current local
 repository does not establish an owner account, hosting URL or release tag.
+
+See `docs/github_publication.md` for the non-destructive first-push procedure
+and post-push GitHub settings.
 
 The `release-check` target validates tracked-file boundaries and package/license
 metadata after running the complete quality suite. Its generated JSON is placed
