@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "servicepilot"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A reproducible local-first after-sales agent evaluation platform"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
@@ -32,6 +32,9 @@ Homepage = "https://github.com/lulaiao/servicepilot"
 Repository = "https://github.com/lulaiao/servicepilot.git"
 Issues = "https://github.com/lulaiao/servicepilot/issues"
 Documentation = "https://github.com/lulaiao/servicepilot/tree/main/docs"
+
+[tool.setuptools.dynamic]
+version = {attr = "servicepilot._version.__version__"}
 
 [project.optional-dependencies]
 dev = [

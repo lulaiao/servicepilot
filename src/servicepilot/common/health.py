@@ -3,6 +3,8 @@
 import platform
 from dataclasses import dataclass
 
+from servicepilot._version import __version__
+
 
 @dataclass(frozen=True)
 class HealthReport:
@@ -16,7 +18,7 @@ def check_health() -> HealthReport:
     """Return a stable health record without touching external services."""
     return HealthReport(
         service="servicepilot",
-        version="0.1.0",
+        version=__version__,
         status="ok",
         python_version=platform.python_version(),
     )

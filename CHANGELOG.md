@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.1.0rc1] - 2026-08-13
 
 ### Added
 
@@ -64,3 +64,5 @@
 - Phase 3 full test suite: 50 tests passed before final documentation update.
 - Phase 10 clean-source suite: 261 tests, Ruff over source/tests/scripts and
   strict MyPy over 109 source files passed.
+
+[0.1.0rc1]: https://github.com/lulaiao/servicepilot/releases/tag/v0.1.0-rc1

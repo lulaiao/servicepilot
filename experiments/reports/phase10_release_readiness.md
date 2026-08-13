@@ -8,16 +8,18 @@ Status: **local gates accepted; external publication gates open**
 | Gate | Result |
 | --- | ---: |
 | Ruff over `src`, `tests`, `scripts` | pass |
-| Strict MyPy | 110 source files passed |
-| Full deterministic suite | 268 tests passed |
+| Strict MyPy | 111 source files passed |
+| Full deterministic suite | 269 tests passed |
 | Wheel build without dependency resolution | pass |
 | Apache-2.0 text included in wheel | pass |
 | Tracked private-key/access-key signature scan | no match |
 | Tracked `.env`, private-key and model-weight filename scan | no match |
 
-The locally built `servicepilot-0.1.0-py3-none-any.whl` had SHA256
-`7e86dc0f7e59bdab1aa887cae56eba2c2425629898cf73bbe9a9abf926e180c2`.
+The RC locally built `servicepilot-0.1.0rc1-py3-none-any.whl` had SHA256
+`2673612699f5b6f79800a5c6c4d067d3b08df441f257208e9423e73e60006b47`.
 It is a disposable verification artifact under `/tmp`, not a published release.
+The `v0.1.0-rc1` candidate uses PEP 440 package version `0.1.0rc1`; wheel
+METADATA, runtime health and package `__version__` share one version source.
 
 The repository now contains the Apache-2.0 license text, contribution guidance,
 a security policy and an explicit release checklist. Package classifiers mark
@@ -35,10 +37,9 @@ its open MyPy 2.x range-expansion PR remains unmerged pending compatibility revi
 ## Deliberately open external gates
 
 - The public repository is live at `https://github.com/lulaiao/servicepilot`.
-- The repository files point to GitHub's private advisory form; private
-  vulnerability reporting still must be enabled in GitHub settings.
-- Branch protection and private vulnerability reporting still require GitHub
-  owner settings.
+- GitHub private vulnerability reporting is enabled.
+- Active Ruleset `Protect main` blocks deletion and force pushes, requires PRs,
+  linear history, strict up-to-date branches, and Python 3.11/3.12 checks.
 - No release tag or package publication is authorized.
 
 These values were not invented in package metadata. They require the owner to

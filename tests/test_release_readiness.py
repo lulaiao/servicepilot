@@ -5,10 +5,10 @@ import pytest
 from servicepilot.delivery.release_readiness import audit_release_readiness
 
 
-def _write_minimum_project(root: Path) -> list[str]:
+def _write_minimum_project(root: Path, *, version: str = "0.1.0") -> list[str]:
     files = {
         "pyproject.toml": (
-            '[project]\nname = "servicepilot"\nversion = "0.1.0"\n'
+            f'[project]\nname = "servicepilot"\nversion = "{version}"\n'
             'license = {text = "Apache-2.0"}\n'
         ),
         "LICENSE": "Apache License\nVersion 2.0, January 2004\n",
@@ -81,3 +81,11 @@ def test_release_readiness_rejects_license_metadata_mismatch(tmp_path: Path) -> 
 
     assert result.local_readiness_passed is False
     assert "license_metadata_is_apache_2_0" in result.failed_checks
+
+
+def test_release_readiness_accepts_pep440_release_candidate(tmp_path: Path) -> None:
+    tracked = _write_minimum_project(tmp_path, version="0.1.0rc1")
+
+    result = audit_release_readiness(tmp_path, tracked)
+
+    assert result.package_version == "0.1.0rc1"
