@@ -1,0 +1,93 @@
+{
+  "schema_version": "servicepilot-phase10-evidence-catalog-v1",
+  "entries": [
+    {
+      "id": "phase1-domain-core",
+      "capability": "Deterministic domain and transactional invariants",
+      "status": "accepted",
+      "scope": "In-memory repository and synthetic deterministic tests",
+      "evidence": ["experiments/reports/phase1_acceptance.md", "docs/adr/0001-core-stack.md"],
+      "reproduce": "PYTHONPATH=src .venv/bin/python -m pytest -q tests/unit/test_transaction_services.py tests/unit/test_state_machine.py"
+    },
+    {
+      "id": "phase2-mcp-boundary",
+      "capability": "MCP services and reliable tool Gateway",
+      "status": "accepted",
+      "scope": "Contract tests with pinned MCP SDK and deterministic faults",
+      "evidence": ["experiments/reports/phase2_acceptance.md", "docs/adr/0003-mcp-sdk-and-gateway.md"],
+      "reproduce": "PYTHONPATH=src .venv/bin/python -m pytest -q tests/contract"
+    },
+    {
+      "id": "phase3-agent-loop",
+      "capability": "Executable Agent loop with authoritative-state Judge",
+      "status": "accepted",
+      "scope": "36 synthetic deterministic scenarios",
+      "evidence": ["experiments/reports/phase3_acceptance.md", "experiments/manifests/phase3_scenarios.md"],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_eval.py"
+    },
+    {
+      "id": "phase4-model-comparison",
+      "capability": "Rule Agent versus Qwen2.5-7B executable comparison",
+      "status": "accepted_rule_baseline",
+      "scope": "Same 36 scenarios and tool budgets; learned extractor rejected",
+      "evidence": ["experiments/reports/phase4_agent_e2e_comparison.md", "experiments/manifests/phase4_agent_e2e.json"],
+      "reproduce": "See commands and fixed model revision in the comparison report"
+    },
+    {
+      "id": "phase4b-harness",
+      "capability": "Agent Harness, checkpoints, guardrails, budgets and ablations",
+      "status": "accepted",
+      "scope": "Deterministic catalog and injected lost-response recovery",
+      "evidence": ["experiments/reports/phase4b_harness_progress.md", "experiments/manifests/phase4b_harness_ablations.json", "experiments/manifests/phase4b_resilience_acceptance.json"],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase4b_resilience_acceptance.py --code-revision local"
+    },
+    {
+      "id": "phase5-memory",
+      "capability": "Layered memory with privacy and stale-state controls",
+      "status": "accepted",
+      "scope": "Deterministic long-horizon and conflict fixtures",
+      "evidence": ["experiments/reports/phase5_acceptance.md", "experiments/manifests/phase5_memory_eval.json", "docs/adr/0006-layered-memory-boundary.md"],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase5_memory_eval.py"
+    },
+    {
+      "id": "phase6-retrieval",
+      "capability": "Policy retrieval component selection and transactional gating",
+      "status": "accepted_bounded",
+      "scope": "Frozen policy corpus and sealed retrieval set",
+      "evidence": ["experiments/reports/phase6_acceptance.md", "experiments/manifests/phase6_sealed_and_transactional.json", "docs/adr/0007-phase6-retrieval-components.md"],
+      "reproduce": "See offline model paths and commands in phase6_acceptance.md"
+    },
+    {
+      "id": "phase7-monitor",
+      "capability": "Least-privilege synchronous/asynchronous Monitor",
+      "status": "accepted_bounded",
+      "scope": "13 deterministic fault classes and 1008 executable trajectories",
+      "evidence": ["experiments/reports/phase7_acceptance.md", "experiments/manifests/phase7_executable_monitor.json", "docs/adr/0008-phase7-monitor-boundary.md"],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase7_executable_monitor_eval.py"
+    },
+    {
+      "id": "phase8-data",
+      "capability": "Versioned trajectory dataset, redaction, deduplication and leakage gates",
+      "status": "accepted",
+      "scope": "Synthetic executable trajectories only",
+      "evidence": ["experiments/reports/phase8_acceptance.md", "experiments/manifests/phase8_trajectory_dataset_v1.json", "docs/adr/0009-phase8-trajectory-data-boundary.md"],
+      "reproduce": "See deterministic export and audit commands in phase8_acceptance.md"
+    },
+    {
+      "id": "phase9-training-research",
+      "capability": "LoRA, bounded GRPO and multi-label enhancement research",
+      "status": "stopped_after_rejection",
+      "scope": "Local synthetic train/dev plus independently frozen holdouts",
+      "evidence": ["experiments/reports/phase9_progress.md", "docs/adr/0021-stop-outcome-grpo-after-screen.md", "docs/adr/0035-reject-multilabel-linear-head-v1.md", "docs/adr/0039-reject-multilabel-linear-head-v2.md", "docs/adr/0041-reject-multilabel-structural-candidates.md"],
+      "reproduce": "Use individual frozen protocols; consumed sealed evaluations must not be rerun"
+    },
+    {
+      "id": "phase10-demo",
+      "capability": "CPU portfolio demo and self-contained Trace Viewer",
+      "status": "accepted",
+      "scope": "Four deterministic demonstrations, including intentional false-success interception",
+      "evidence": ["docs/demo.md", "experiments/manifests/phase10_demo_v1.json"],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase10_demo.py --code-revision local"
+    }
+  ]
+}

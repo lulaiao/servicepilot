@@ -1,0 +1,282 @@
+{
+  "schema_version": "servicepilot-phase10-evidence-index-v1",
+  "catalog": "experiments/configs/phase10_evidence_catalog.json",
+  "catalog_sha256": "94ab458bb99878c04521b2274ef1aaddd750b4fc12441eb69a6418ead7981678",
+  "entry_count": 11,
+  "entries": [
+    {
+      "id": "phase1-domain-core",
+      "capability": "Deterministic domain and transactional invariants",
+      "status": "accepted",
+      "scope": "In-memory repository and synthetic deterministic tests",
+      "evidence": [
+        "experiments/reports/phase1_acceptance.md",
+        "docs/adr/0001-core-stack.md"
+      ],
+      "reproduce": "PYTHONPATH=src .venv/bin/python -m pytest -q tests/unit/test_transaction_services.py tests/unit/test_state_machine.py",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase1_acceptance.md",
+          "sha256": "7ffb8b1109f73fb54e4958a9210446c55bd88b766fda2775b6a6d848f9ecd895"
+        },
+        {
+          "path": "docs/adr/0001-core-stack.md",
+          "sha256": "1ff966ae0d49e5f878957af189ea07a0a5aaa87d9a086e4c5ad36108ed1092ab"
+        }
+      ]
+    },
+    {
+      "id": "phase2-mcp-boundary",
+      "capability": "MCP services and reliable tool Gateway",
+      "status": "accepted",
+      "scope": "Contract tests with pinned MCP SDK and deterministic faults",
+      "evidence": [
+        "experiments/reports/phase2_acceptance.md",
+        "docs/adr/0003-mcp-sdk-and-gateway.md"
+      ],
+      "reproduce": "PYTHONPATH=src .venv/bin/python -m pytest -q tests/contract",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase2_acceptance.md",
+          "sha256": "5e81baf940bef8e295c2a59ba49b079a47f17fa18c3b7863c14b7989f183c613"
+        },
+        {
+          "path": "docs/adr/0003-mcp-sdk-and-gateway.md",
+          "sha256": "ce0e8a88e61c9cf969430950bf2dd117f679f6d2b24283bde779ff71376d3bd6"
+        }
+      ]
+    },
+    {
+      "id": "phase3-agent-loop",
+      "capability": "Executable Agent loop with authoritative-state Judge",
+      "status": "accepted",
+      "scope": "36 synthetic deterministic scenarios",
+      "evidence": [
+        "experiments/reports/phase3_acceptance.md",
+        "experiments/manifests/phase3_scenarios.md"
+      ],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_eval.py",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase3_acceptance.md",
+          "sha256": "d5ac0de3849fe7ac7e5320180e074c0de0f0368082e742cdd0dfb4e52451392d"
+        },
+        {
+          "path": "experiments/manifests/phase3_scenarios.md",
+          "sha256": "34deedacd33e22698acea37e584fa644db69cf79670fd3cc17d6233935ac6df3"
+        }
+      ]
+    },
+    {
+      "id": "phase4-model-comparison",
+      "capability": "Rule Agent versus Qwen2.5-7B executable comparison",
+      "status": "accepted_rule_baseline",
+      "scope": "Same 36 scenarios and tool budgets; learned extractor rejected",
+      "evidence": [
+        "experiments/reports/phase4_agent_e2e_comparison.md",
+        "experiments/manifests/phase4_agent_e2e.json"
+      ],
+      "reproduce": "See commands and fixed model revision in the comparison report",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase4_agent_e2e_comparison.md",
+          "sha256": "a79e8d1499c81493efdc6926731a42a5478ce06ca4420b5070ed518fbc2ab3f7"
+        },
+        {
+          "path": "experiments/manifests/phase4_agent_e2e.json",
+          "sha256": "6487a147b546f767596ba3624e05a612b078ec8de23440c1217b300feafc9df3"
+        }
+      ]
+    },
+    {
+      "id": "phase4b-harness",
+      "capability": "Agent Harness, checkpoints, guardrails, budgets and ablations",
+      "status": "accepted",
+      "scope": "Deterministic catalog and injected lost-response recovery",
+      "evidence": [
+        "experiments/reports/phase4b_harness_progress.md",
+        "experiments/manifests/phase4b_harness_ablations.json",
+        "experiments/manifests/phase4b_resilience_acceptance.json"
+      ],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase4b_resilience_acceptance.py --code-revision local",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase4b_harness_progress.md",
+          "sha256": "8b41739f4635055b12452cdc2d418df09fc4f63caaae35b268b0ff7cd55e792c"
+        },
+        {
+          "path": "experiments/manifests/phase4b_harness_ablations.json",
+          "sha256": "294eb6a5ca30e7ab78aec1abbae7fc365c6e7a00b2d7ed88f7b2ddeb334ff8d0"
+        },
+        {
+          "path": "experiments/manifests/phase4b_resilience_acceptance.json",
+          "sha256": "b32ee892f9e385466d79d0f39ef2a02d0cbdceac923e77b2bd7b749baf982b8a"
+        }
+      ]
+    },
+    {
+      "id": "phase5-memory",
+      "capability": "Layered memory with privacy and stale-state controls",
+      "status": "accepted",
+      "scope": "Deterministic long-horizon and conflict fixtures",
+      "evidence": [
+        "experiments/reports/phase5_acceptance.md",
+        "experiments/manifests/phase5_memory_eval.json",
+        "docs/adr/0006-layered-memory-boundary.md"
+      ],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase5_memory_eval.py",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase5_acceptance.md",
+          "sha256": "2331a77f25b78c8673176f5122606f892deed90f2d6c8f0bda26810cc4f32c84"
+        },
+        {
+          "path": "experiments/manifests/phase5_memory_eval.json",
+          "sha256": "3e85600619ca146029e6562ee31ca8093aed38d8f76593cc5705d540713e528b"
+        },
+        {
+          "path": "docs/adr/0006-layered-memory-boundary.md",
+          "sha256": "7b4b695af48fd6b5024be2a05233c0d38faff2e7327ef96c88d75383755edeca"
+        }
+      ]
+    },
+    {
+      "id": "phase6-retrieval",
+      "capability": "Policy retrieval component selection and transactional gating",
+      "status": "accepted_bounded",
+      "scope": "Frozen policy corpus and sealed retrieval set",
+      "evidence": [
+        "experiments/reports/phase6_acceptance.md",
+        "experiments/manifests/phase6_sealed_and_transactional.json",
+        "docs/adr/0007-phase6-retrieval-components.md"
+      ],
+      "reproduce": "See offline model paths and commands in phase6_acceptance.md",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase6_acceptance.md",
+          "sha256": "5a65ff1a19e4271db2aaae32e9ac23e20a77f7df4f0c4e5efd446d1c74678447"
+        },
+        {
+          "path": "experiments/manifests/phase6_sealed_and_transactional.json",
+          "sha256": "86bc48be64970440f375f138365c52ca6c614f6608d4294ab90dc8cd682f6c7c"
+        },
+        {
+          "path": "docs/adr/0007-phase6-retrieval-components.md",
+          "sha256": "bdc8490bb4096a52bcfa05a844910d7c1a19d14d9c9aaaaca47dc967da5fa13e"
+        }
+      ]
+    },
+    {
+      "id": "phase7-monitor",
+      "capability": "Least-privilege synchronous/asynchronous Monitor",
+      "status": "accepted_bounded",
+      "scope": "13 deterministic fault classes and 1008 executable trajectories",
+      "evidence": [
+        "experiments/reports/phase7_acceptance.md",
+        "experiments/manifests/phase7_executable_monitor.json",
+        "docs/adr/0008-phase7-monitor-boundary.md"
+      ],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase7_executable_monitor_eval.py",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase7_acceptance.md",
+          "sha256": "e0ef6b98a290de2c252027e273b663f0fff8922c6561c7a4f57eec0a419abd00"
+        },
+        {
+          "path": "experiments/manifests/phase7_executable_monitor.json",
+          "sha256": "299cf2b18f18ba08140b181fd544ac64a034b4a6eac2908e432c1628c95efc5d"
+        },
+        {
+          "path": "docs/adr/0008-phase7-monitor-boundary.md",
+          "sha256": "90221285e6f87e4dc75d49a31fd92fa57b22b591c32403ffec37345a53f0683d"
+        }
+      ]
+    },
+    {
+      "id": "phase8-data",
+      "capability": "Versioned trajectory dataset, redaction, deduplication and leakage gates",
+      "status": "accepted",
+      "scope": "Synthetic executable trajectories only",
+      "evidence": [
+        "experiments/reports/phase8_acceptance.md",
+        "experiments/manifests/phase8_trajectory_dataset_v1.json",
+        "docs/adr/0009-phase8-trajectory-data-boundary.md"
+      ],
+      "reproduce": "See deterministic export and audit commands in phase8_acceptance.md",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase8_acceptance.md",
+          "sha256": "e52a6c55dffae187eaf616651534149cfe00c6b9c32ecd348be8c474535c2291"
+        },
+        {
+          "path": "experiments/manifests/phase8_trajectory_dataset_v1.json",
+          "sha256": "a8679ef7e7424bef0677674faa49faaf2729c5e697d25bf4294ce22175a2b088"
+        },
+        {
+          "path": "docs/adr/0009-phase8-trajectory-data-boundary.md",
+          "sha256": "b99e542f720f485b7895b46ec68e8aa78d328b7b7c020edf67de2520f2ef976d"
+        }
+      ]
+    },
+    {
+      "id": "phase9-training-research",
+      "capability": "LoRA, bounded GRPO and multi-label enhancement research",
+      "status": "stopped_after_rejection",
+      "scope": "Local synthetic train/dev plus independently frozen holdouts",
+      "evidence": [
+        "experiments/reports/phase9_progress.md",
+        "docs/adr/0021-stop-outcome-grpo-after-screen.md",
+        "docs/adr/0035-reject-multilabel-linear-head-v1.md",
+        "docs/adr/0039-reject-multilabel-linear-head-v2.md",
+        "docs/adr/0041-reject-multilabel-structural-candidates.md"
+      ],
+      "reproduce": "Use individual frozen protocols; consumed sealed evaluations must not be rerun",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase9_progress.md",
+          "sha256": "49071507153df6a1454584ed9fb6b1a51d20a4f5e9b23a769728218a0d86fca7"
+        },
+        {
+          "path": "docs/adr/0021-stop-outcome-grpo-after-screen.md",
+          "sha256": "398d81e967fb7e5fa6f624b2a37374109e59ebfe6044ff44945b1fada93f6a0e"
+        },
+        {
+          "path": "docs/adr/0035-reject-multilabel-linear-head-v1.md",
+          "sha256": "fe57c3e6c10690c395c0a7930196e384db246e9ddc452cb38d1cdb94d518ba9d"
+        },
+        {
+          "path": "docs/adr/0039-reject-multilabel-linear-head-v2.md",
+          "sha256": "8195a8334466bdcab91a571aa18d7c03d4bc1337970ab3a36c27dea0fb1338dd"
+        },
+        {
+          "path": "docs/adr/0041-reject-multilabel-structural-candidates.md",
+          "sha256": "8fa0991416a64cadf424f73d48927b4f3e9b84d8c5cfae28e251b7f02573cb77"
+        }
+      ]
+    },
+    {
+      "id": "phase10-demo",
+      "capability": "CPU portfolio demo and self-contained Trace Viewer",
+      "status": "accepted",
+      "scope": "Four deterministic demonstrations, including intentional false-success interception",
+      "evidence": [
+        "docs/demo.md",
+        "experiments/manifests/phase10_demo_v1.json"
+      ],
+      "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase10_demo.py --code-revision local",
+      "resolved_evidence": [
+        {
+          "path": "docs/demo.md",
+          "sha256": "625ee9bfeac04a255d7b9f159c620d48e87f827a8d246ede6e35767496e2b1de"
+        },
+        {
+          "path": "experiments/manifests/phase10_demo_v1.json",
+          "sha256": "dec9cd537d3620ecaf801e648506d62792fc8b87447f902bf59d59c25683498b"
+        }
+      ]
+    }
+  ],
+  "all_evidence_present": true,
+  "markdown_output": "docs/evidence_index.md",
+  "markdown_sha256": "9b837ad3679c40525e5a33f2518e91ba749703aa0afccb04fb0fe07a82a4ea21"
+}

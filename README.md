@@ -62,6 +62,7 @@ the Docker daemon as the active user; see
 
 See [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) for gated phases,
 [`docs/architecture.md`](docs/architecture.md) for system boundaries,
+[`docs/evidence_index.md`](docs/evidence_index.md) for the report and ablation index,
 [`docs/resume_evidence.md`](docs/resume_evidence.md) for claim-to-evidence links,
 and [`docs/adr/`](docs/adr/) for technology and model decisions. Failed model
 experiments are retained rather than hidden; unsupported metrics remain `TBD`.
