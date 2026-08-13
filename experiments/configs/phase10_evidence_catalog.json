@@ -88,6 +88,14 @@
       "scope": "Four deterministic demonstrations, including intentional false-success interception",
       "evidence": ["docs/demo.md", "experiments/manifests/phase10_demo_v1.json"],
       "reproduce": "PYTHONPATH=src .venv/bin/python scripts/run_phase10_demo.py --code-revision local"
+    },
+    {
+      "id": "phase10-clean-environment",
+      "capability": "Clean archived-source installation and quick-start verification",
+      "status": "accepted",
+      "scope": "Fresh CPython 3.11 venv; CPU-only install, lint, tests, demo and evidence validation",
+      "evidence": ["experiments/reports/phase10_clean_environment_acceptance.md", "experiments/manifests/phase10_clean_environment.json"],
+      "reproduce": "Follow the isolation contract and commands in phase10_clean_environment_acceptance.md"
     }
   ]
 }

@@ -16,6 +16,7 @@ Metrics apply only to the scope shown; rejected work is intentionally retained.
 | Versioned trajectory dataset, redaction, deduplication and leakage gates | `accepted` | Synthetic executable trajectories only | [`phase8_acceptance.md`](../experiments/reports/phase8_acceptance.md), [`phase8_trajectory_dataset_v1.json`](../experiments/manifests/phase8_trajectory_dataset_v1.json), [`0009-phase8-trajectory-data-boundary.md`](../docs/adr/0009-phase8-trajectory-data-boundary.md) |
 | LoRA, bounded GRPO and multi-label enhancement research | `stopped_after_rejection` | Local synthetic train/dev plus independently frozen holdouts | [`phase9_progress.md`](../experiments/reports/phase9_progress.md), [`0021-stop-outcome-grpo-after-screen.md`](../docs/adr/0021-stop-outcome-grpo-after-screen.md), [`0035-reject-multilabel-linear-head-v1.md`](../docs/adr/0035-reject-multilabel-linear-head-v1.md), [`0039-reject-multilabel-linear-head-v2.md`](../docs/adr/0039-reject-multilabel-linear-head-v2.md), [`0041-reject-multilabel-structural-candidates.md`](../docs/adr/0041-reject-multilabel-structural-candidates.md) |
 | CPU portfolio demo and self-contained Trace Viewer | `accepted` | Four deterministic demonstrations, including intentional false-success interception | [`demo.md`](../docs/demo.md), [`phase10_demo_v1.json`](../experiments/manifests/phase10_demo_v1.json) |
+| Clean archived-source installation and quick-start verification | `accepted` | Fresh CPython 3.11 venv; CPU-only install, lint, tests, demo and evidence validation | [`phase10_clean_environment_acceptance.md`](../experiments/reports/phase10_clean_environment_acceptance.md), [`phase10_clean_environment.json`](../experiments/manifests/phase10_clean_environment.json) |
 
 ## Reproduction commands
 
@@ -62,3 +63,7 @@ Metrics apply only to the scope shown; rejected work is intentionally retained.
 ### CPU portfolio demo and self-contained Trace Viewer
 
 `PYTHONPATH=src .venv/bin/python scripts/run_phase10_demo.py --code-revision local`
+
+### Clean archived-source installation and quick-start verification
+
+`Follow the isolation contract and commands in phase10_clean_environment_acceptance.md`

@@ -1,0 +1,44 @@
+{
+  "schema_version": "servicepilot-phase10-clean-environment-v1",
+  "date": "2026-08-13",
+  "source_revision": "754aa0d",
+  "source_distribution": "git_archive",
+  "source_archive_sha256": "095f23f2620656bd7091bdc1190a0511a73380228f6db517dedc1fea1edb7ad6",
+  "python_version": "3.11.15",
+  "pip_version": "24.0",
+  "fresh_venv": true,
+  "source_import_verified": true,
+  "environment_freeze_line_count": 53,
+  "environment_freeze_sha256": "4ad635eea468f4263c2cafdc6e2ba898d395883e6061283cc2e895dcc1031d62",
+  "package_install": {
+    "command": "python -m pip install --no-input -e .[dev]",
+    "passed": true,
+    "network_required_without_wheelhouse": true
+  },
+  "pytest": {
+    "command": "python -m pytest -q",
+    "passed": true,
+    "test_count": 261
+  },
+  "ruff": {
+    "command": "python -m ruff check src tests scripts",
+    "passed": true
+  },
+  "demo": {
+    "command": "python scripts/run_phase10_demo.py --code-revision 754aa0d",
+    "passed": true,
+    "demo_count": 4,
+    "bundle_sha256": "92a4f524dd9a2985aec5fcc73ee4dcd919689fd27d6ec7412c42b5bd141f914b"
+  },
+  "evidence_index": {
+    "command": "python scripts/build_evidence_index.py --catalog experiments/configs/phase10_evidence_catalog.json --markdown-output evidence_index.md --manifest-output evidence_index.json",
+    "passed": true,
+    "entry_count": 11,
+    "markdown_sha256": "9b837ad3679c40525e5a33f2518e91ba749703aa0afccb04fb0fe07a82a4ea21"
+  },
+  "docker_used": false,
+  "gpu_used": false,
+  "model_weights_used": false,
+  "paid_api_used": false,
+  "passed": true
+}

@@ -22,11 +22,16 @@ make smoke
 When Python 3.11 is available:
 
 ```bash
-python3.11 -m venv .venv
+python3.11 -m venv .venv  # or: /absolute/path/to/python3.11 -m venv .venv
 . .venv/bin/activate
 python -m pip install -e ".[dev]"
 pytest
 ```
+
+If `python3.11` is not on `PATH`, use any explicit CPython 3.11 executable.
+The clean-source acceptance used Python 3.11.15. Initial dependency installation
+requires access to the configured Python package index unless a wheelhouse is
+provided.
 
 Phase 2 uses the project-private environment with the pinned MCP v2 SDK:
 

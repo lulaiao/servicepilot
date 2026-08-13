@@ -1,8 +1,8 @@
 {
   "schema_version": "servicepilot-phase10-evidence-index-v1",
   "catalog": "experiments/configs/phase10_evidence_catalog.json",
-  "catalog_sha256": "94ab458bb99878c04521b2274ef1aaddd750b4fc12441eb69a6418ead7981678",
-  "entry_count": 11,
+  "catalog_sha256": "99168c19be972bf13ff69cedd74e4a15b0991c399d3b17e933f71889f3ba8be6",
+  "entry_count": 12,
   "entries": [
     {
       "id": "phase1-domain-core",
@@ -274,9 +274,30 @@
           "sha256": "dec9cd537d3620ecaf801e648506d62792fc8b87447f902bf59d59c25683498b"
         }
       ]
+    },
+    {
+      "id": "phase10-clean-environment",
+      "capability": "Clean archived-source installation and quick-start verification",
+      "status": "accepted",
+      "scope": "Fresh CPython 3.11 venv; CPU-only install, lint, tests, demo and evidence validation",
+      "evidence": [
+        "experiments/reports/phase10_clean_environment_acceptance.md",
+        "experiments/manifests/phase10_clean_environment.json"
+      ],
+      "reproduce": "Follow the isolation contract and commands in phase10_clean_environment_acceptance.md",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase10_clean_environment_acceptance.md",
+          "sha256": "25c680d7fe03707c0a96ab66c46266a59bfb066e1de2da4d80ced6ad417e61cd"
+        },
+        {
+          "path": "experiments/manifests/phase10_clean_environment.json",
+          "sha256": "6d82efc7330a3e983cd7092194b1ab768677d2c0fd5dbf4c32b347ba63607aa1"
+        }
+      ]
     }
   ],
   "all_evidence_present": true,
   "markdown_output": "docs/evidence_index.md",
-  "markdown_sha256": "9b837ad3679c40525e5a33f2518e91ba749703aa0afccb04fb0fe07a82a4ea21"
+  "markdown_sha256": "5809f4bf34241f8f4a68c172638cf5cdb20a4ab1f1530e710d84914577bd050d"
 }
