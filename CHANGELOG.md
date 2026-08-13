@@ -48,6 +48,8 @@
 - First hosted GitHub quality matrix accepted on Python 3.11 and 3.12.
 - Phase 10 public-delivery status and 13-entry release checklist reconciled with
   the latest hosted workflow evidence.
+- Protected RC PR #2 merge and hosted Python 3.11/3.12 evidence recorded before
+  tag creation.
 
 ### Verification
 

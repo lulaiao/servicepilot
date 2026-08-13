@@ -3,7 +3,7 @@
   "date": "2026-08-13",
   "package_version": "0.1.0rc1",
   "release_tag_candidate": "v0.1.0-rc1",
-  "release_status": "release_candidate_preparation",
+  "release_status": "release_candidate_evidence_finalization",
   "local_gates": {
     "ruff_passed": true,
     "mypy_passed": true,
@@ -36,10 +36,12 @@
     "main_ruleset_requires_linear_history": true,
     "hosted_ci_configuration_committed": true,
     "hosted_ci_first_run_passed": true,
-    "hosted_ci_run_id": 31664789064,
-    "hosted_ci_revision": "afd90427ca09d6a1248105d88841e60c54d81752",
+    "hosted_ci_run_id": 31676640225,
+    "hosted_ci_revision": "94695859bd685c882375b21e7ab6d15eca056b51",
     "hosted_ci_python_3_11_passed": true,
     "hosted_ci_python_3_12_passed": true,
+    "release_pr_number": 2,
+    "release_pr_merged": true,
     "release_tag_created": false,
     "package_published": false
   },

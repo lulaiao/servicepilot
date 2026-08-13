@@ -23,8 +23,11 @@ actions that still require repository-owner settings or an explicit release deci
 - [x] Add GitHub Actions configuration using the same quality commands.
 - [x] Observe the first GitHub-hosted Python 3.11/3.12 workflow passing.
 - [x] Configure default-branch protection to require both matrix checks.
-- [ ] Choose a release tag only after the final revision passes all local gates.
-- [ ] Attach or link immutable reports; do not claim unexecuted metrics.
+- [x] Choose `v0.1.0-rc1` as the candidate tag after protected RC CI passed.
+- [x] Attach or link immutable reports; do not claim unexecuted metrics.
+- [ ] Merge the evidence-finalization PR after both protected checks pass.
+- [ ] Create annotated tag `v0.1.0-rc1` on the finalized merge revision.
+- [ ] Create a GitHub prerelease without publishing to PyPI.
 
 The remaining external items are intentionally open because branch protection,
 private vulnerability reporting and release creation require repository-owner
