@@ -1,0 +1,145 @@
+{
+  "schema_version": "servicepilot-multilabel-holdout-v2-decision",
+  "result": "artifacts/reports/phase9_multilabel_holdout_v2.json",
+  "result_sha256": "a0728e21a30a24d6ea4edfd27d31352f75647b90dd1e7890f5cceadc6cdae696",
+  "freeze_manifest_sha256": "0a4688e3685d4c9dab6e8a5f370973931a2d967945c2256daa89a66f078b4251",
+  "candidate_decision_sha256": "016e0631ee0b7e1ddd38bc620a5caeec327140de4217f4e9af4a8a380bb47353",
+  "passed_seed_count": 0,
+  "required_seed_pass_count": 4,
+  "metrics": {
+    "macro_f1": {
+      "mean": 0.7152,
+      "population_std": 0.002,
+      "min": 0.7134,
+      "max": 0.7181
+    },
+    "exact_set_accuracy": {
+      "mean": 0.3086,
+      "population_std": 0.0129,
+      "min": 0.2969,
+      "max": 0.3281
+    },
+    "complaint_escalation_false_positive_rate": {
+      "mean": 0.6719,
+      "population_std": 0.0156,
+      "min": 0.6562,
+      "max": 0.6875
+    }
+  },
+  "per_label": {
+    "delivery_delay": {
+      "precision": {
+        "mean": 0.6865,
+        "population_std": 0.007,
+        "min": 0.6744,
+        "max": 0.6905
+      },
+      "recall": {
+        "mean": 0.9062,
+        "population_std": 0.0,
+        "min": 0.9062,
+        "max": 0.9062
+      },
+      "f1": {
+        "mean": 0.7812,
+        "population_std": 0.0045,
+        "min": 0.7733,
+        "max": 0.7838
+      }
+    },
+    "complaint_escalation": {
+      "precision": {
+        "mean": 0.5568,
+        "population_std": 0.0057,
+        "min": 0.551,
+        "max": 0.5625
+      },
+      "recall": {
+        "mean": 0.8438,
+        "population_std": 0.0,
+        "min": 0.8438,
+        "max": 0.8438
+      },
+      "f1": {
+        "mean": 0.6708,
+        "population_std": 0.0042,
+        "min": 0.6667,
+        "max": 0.675
+      }
+    },
+    "partial_refund": {
+      "precision": {
+        "mean": 0.5506,
+        "population_std": 0.0089,
+        "min": 0.5455,
+        "max": 0.566
+      },
+      "recall": {
+        "mean": 0.9375,
+        "population_std": 0.0,
+        "min": 0.9375,
+        "max": 0.9375
+      },
+      "f1": {
+        "mean": 0.6937,
+        "population_std": 0.007,
+        "min": 0.6897,
+        "max": 0.7059
+      }
+    }
+  },
+  "category_failure_counts": {
+    "20261001": {
+      "label_set_000": 7,
+      "label_set_001": 6,
+      "label_set_010": 7,
+      "label_set_011": 3,
+      "label_set_100": 7,
+      "label_set_101": 5,
+      "label_set_110": 8,
+      "label_set_111": 2
+    },
+    "20261002": {
+      "label_set_000": 7,
+      "label_set_001": 5,
+      "label_set_010": 6,
+      "label_set_011": 3,
+      "label_set_100": 7,
+      "label_set_101": 5,
+      "label_set_110": 8,
+      "label_set_111": 2
+    },
+    "20261003": {
+      "label_set_000": 7,
+      "label_set_001": 6,
+      "label_set_010": 7,
+      "label_set_011": 3,
+      "label_set_100": 7,
+      "label_set_101": 5,
+      "label_set_110": 8,
+      "label_set_111": 2
+    },
+    "20261004": {
+      "label_set_000": 7,
+      "label_set_001": 5,
+      "label_set_010": 7,
+      "label_set_011": 3,
+      "label_set_100": 7,
+      "label_set_101": 5,
+      "label_set_110": 8,
+      "label_set_111": 2
+    }
+  },
+  "diagnosis": [
+    "balanced_synthetic_clauses_reduced_recall_bias_but_created_overprediction",
+    "lexical_presence_did_not_generalize_to_contextual_label_boundaries",
+    "mean_pooling_linear_head_is_insufficient_for_compositional_scope",
+    "negligible_seed_variance_rules_out_optimizer_seed_as_primary_cause"
+  ],
+  "decision": "reject_multilabel_linear_head_v2",
+  "agent_integration_allowed": false,
+  "holdout_consumed": true,
+  "rerun_allowed": false,
+  "retuning_on_holdout_allowed": false,
+  "next_step": "stop_linear_head_line_and_test_structured_generative_or_cross_encoder_dev_only"
+}
