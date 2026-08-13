@@ -1,0 +1,42 @@
+{
+  "schema_version": "servicepilot-multilabel-structural-screen-v1-decision",
+  "result": "artifacts/reports/phase9_multilabel_structural_screen_v1.json",
+  "result_sha256": "b1fabbfdaa911f32e21543722dbeb069c92b351f2c5e575325a67117cd15a809",
+  "protocol_sha256": "661293992b8fea02da15c687032552f383d9a619f3b0ac910423a9ec36de39c1",
+  "example_count": 128,
+  "candidate_summary": {
+    "generative_json": {
+      "schema_valid_rate": 1.0,
+      "macro_f1": 0.8698,
+      "exact_set_accuracy": 0.6953,
+      "complaint_escalation_recall": 0.5938,
+      "complaint_escalation_false_positive_rate": 0.0,
+      "mean_latency_seconds": 0.9221,
+      "peak_vram_allocated_mib": 14622.76,
+      "passed": false
+    },
+    "cross_encoder": {
+      "schema_valid_rate": 1.0,
+      "macro_f1": 0.3706,
+      "exact_set_accuracy": 0.2266,
+      "complaint_escalation_recall": 0.0,
+      "complaint_escalation_false_positive_rate": 0.0,
+      "mean_latency_seconds": 0.0114,
+      "peak_vram_allocated_mib": 1107.18,
+      "passed": false
+    }
+  },
+  "generative_output_contract_audit": {
+    "parser_valid_count": 128,
+    "bare_json_count": 0,
+    "markdown_fence_count": 128,
+    "strict_bare_json_rate": 0.0,
+    "finding": "lenient_brace_extraction_hides_bare_json_contract_violation"
+  },
+  "decision": "reject_both_structural_candidates",
+  "selected_candidate": null,
+  "sealed_v3_allowed": false,
+  "agent_integration_allowed": false,
+  "next_step": "stop_secondary_intent_enhancement_and_prepare_phase10_delivery",
+  "sealed_accessed": false
+}
