@@ -83,14 +83,11 @@ def main() -> None:
     args = parse_args()
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is required")
-    protocol = SFTExperimentProtocol.model_validate_json(
-        args.protocol.read_text(encoding="utf-8")
-    )
+    protocol = SFTExperimentProtocol.model_validate_json(args.protocol.read_text(encoding="utf-8"))
     if args.seed not in protocol.seeds:
         raise RuntimeError("seed is not declared in the frozen protocol")
     if args.max_steps > 0 and (
-        args.seed != protocol.screening_seed
-        or args.max_steps != protocol.screening_max_steps
+        args.seed != protocol.screening_seed or args.max_steps != protocol.screening_max_steps
     ):
         raise RuntimeError("bounded screening run does not match the frozen protocol")
     data_path = Path(protocol.train_data)

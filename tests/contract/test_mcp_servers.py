@@ -65,21 +65,37 @@ async def test_in_memory_mcp_call_returns_structured_order() -> None:
 async def test_each_business_server_executes_a_structured_read() -> None:
     servers, _ = build_seeded_servers()
     calls = (
-        ("payment_refund", "check_refund_eligibility", {
-            "order_id": "ord-001",
-            "reason": "missing_item",
-            "requested_amount": "12.00",
-        }),
-        ("coupon", "get_coupon_status", {
-            "user_id": "synthetic-user-001",
-            "coupon_id": "coupon-001",
-        }),
-        ("policy", "get_policy_section", {
-            "evidence_id": "policy_partial_refund_2026_1_section_3",
-        }),
-        ("merchant_delivery", "get_delivery_status", {
-            "order_id": "ord-001",
-        }),
+        (
+            "payment_refund",
+            "check_refund_eligibility",
+            {
+                "order_id": "ord-001",
+                "reason": "missing_item",
+                "requested_amount": "12.00",
+            },
+        ),
+        (
+            "coupon",
+            "get_coupon_status",
+            {
+                "user_id": "synthetic-user-001",
+                "coupon_id": "coupon-001",
+            },
+        ),
+        (
+            "policy",
+            "get_policy_section",
+            {
+                "evidence_id": "policy_partial_refund_2026_1_section_3",
+            },
+        ),
+        (
+            "merchant_delivery",
+            "get_delivery_status",
+            {
+                "order_id": "ord-001",
+            },
+        ),
     )
 
     for server_name, tool_name, arguments in calls:

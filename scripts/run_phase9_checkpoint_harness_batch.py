@@ -82,9 +82,7 @@ async def run_job(
         )
         return_code = await process.wait()
     if return_code != 0 or not report.exists():
-        raise RuntimeError(
-            f"Harness failed gpu={gpu} seed={seed} step={step}; see {log}"
-        )
+        raise RuntimeError(f"Harness failed gpu={gpu} seed={seed} step={step}; see {log}")
     print(f"done gpu={gpu} seed={seed} step={step}", flush=True)
 
 

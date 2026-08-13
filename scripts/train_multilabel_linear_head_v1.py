@@ -4,14 +4,12 @@
 import argparse
 import hashlib
 import json
-import math
 import resource
 import time
 from pathlib import Path
 
 from servicepilot.eval.models import Intent
 from servicepilot.training.multilabel_composition_data import MultiLabelCompositionRecord
-
 
 LABELS = (Intent.DELIVERY_DELAY, Intent.COMPLAINT_ESCALATION, Intent.PARTIAL_REFUND)
 
@@ -61,9 +59,7 @@ def main() -> None:
         torch_dtype=torch.bfloat16,
         device_map={"": 0},
     )
-    model = PeftModel.from_pretrained(
-        base, Path(protocol["adapter_path"]), is_trainable=False
-    )
+    model = PeftModel.from_pretrained(base, Path(protocol["adapter_path"]), is_trainable=False)
     model.eval()
     if any(parameter.requires_grad for parameter in model.parameters()):
         raise RuntimeError("backbone or adapter is unexpectedly trainable")
@@ -202,7 +198,9 @@ def main() -> None:
         "claim_scope": "single_seed_synthetic_pilot_screen",
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.output.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 

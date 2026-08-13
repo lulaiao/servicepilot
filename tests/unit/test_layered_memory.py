@@ -42,9 +42,7 @@ def fact(
         source=source,
         observed_at=observed,
         valid_until=(
-            observed + timedelta(minutes=valid_minutes)
-            if valid_minutes is not None
-            else None
+            observed + timedelta(minutes=valid_minutes) if valid_minutes is not None else None
         ),
         entity_version=version,
         sensitive=sensitive,
@@ -165,9 +163,7 @@ def test_summary_contains_only_valid_non_sensitive_facts() -> None:
         now=NOW,
     )
 
-    summary = DeterministicFactSummarizer().summarize(
-        memory, summary_id="summary-1", now=NOW
-    )
+    summary = DeterministicFactSummarizer().summarize(memory, summary_id="summary-1", now=NOW)
 
     assert summary.text == "order_id=ord-001"
     assert all(item.source is FactSource.SUMMARY for item in summary.facts)
@@ -227,9 +223,7 @@ def test_long_term_memory_expiry_revoke_view_and_delete() -> None:
     assert removed == 1
     assert store.list_user("user-1", now=NOW + timedelta(minutes=1)) == ()
 
-    store.grant_consent(
-        consent().model_copy(update={"consent_id": "consent-2"})
-    )
+    store.grant_consent(consent().model_copy(update={"consent_id": "consent-2"}))
     expiring = long_term().model_copy(
         update={
             "memory_id": "expiring",
@@ -262,18 +256,14 @@ def test_wrong_memory_injection_cannot_override_tool_state() -> None:
         minutes=20,
     )
 
-    resolved = manager.update_fact(
-        memory, injected, now=NOW + timedelta(minutes=20)
-    )
+    resolved = manager.update_fact(memory, injected, now=NOW + timedelta(minutes=20))
 
     assert resolved.facts["refunded_amount"].value == "12.00"
     assert resolved.conflicts[-1].rejected_fact_id == "injected"
 
 
 def test_layered_service_applies_summary_without_overriding_tool_fact() -> None:
-    memory = LayeredMemory(
-        conversation_id="conv-1", user_id="user-1", recent_capacity=4
-    )
+    memory = LayeredMemory(conversation_id="conv-1", user_id="user-1", recent_capacity=4)
     memory.remember_fact(
         fact(
             "tool-v4",
@@ -302,15 +292,11 @@ def test_layered_service_applies_summary_without_overriding_tool_fact() -> None:
         now=NOW + timedelta(minutes=10),
     )
 
-    memory.apply_summary(
-        malicious_summary, now=NOW + timedelta(minutes=10)
-    )
+    memory.apply_summary(malicious_summary, now=NOW + timedelta(minutes=10))
 
     context = memory.context(now=NOW + timedelta(minutes=10))
     assert context.working.facts["order_status"].value == "refunded"
-    assert context.working.conflicts[-1].rejected_fact_id.startswith(
-        "stale-summary:"
-    )
+    assert context.working.conflicts[-1].rejected_fact_id.startswith("stale-summary:")
 
 
 def test_delete_user_memory_clears_all_four_layers() -> None:
@@ -324,9 +310,7 @@ def test_delete_user_memory_clears_all_four_layers() -> None:
             created_at=NOW,
         )
     )
-    memory.remember_fact(
-        fact("order", "order_id", "ord-delete", FactSource.USER), now=NOW
-    )
+    memory.remember_fact(fact("order", "order_id", "ord-delete", FactSource.USER), now=NOW)
     memory.create_summary(summary_id="summary-delete", now=NOW)
     memory.grant_consent(consent())
     memory.remember_long_term(long_term(), now=NOW)
@@ -347,6 +331,4 @@ def test_layered_memory_benchmark_beats_no_memory_without_safety_regression() ->
     assert len(results) == 5
     assert sum(item.no_memory_success for item in results) == 2
     assert all(item.layered_memory_success for item in results)
-    assert all(
-        item.layered_memory_success for item in results if item.safety_case
-    )
+    assert all(item.layered_memory_success for item in results if item.safety_case)

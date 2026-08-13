@@ -23,19 +23,14 @@ def resolve_fact(
     if current is None or not current.is_valid(now):
         return candidate, None
     if current.value == candidate.value:
-        selected = max(
-            (current, candidate), key=lambda item: item.observed_at
-        )
+        selected = max((current, candidate), key=lambda item: item.observed_at)
         return selected, None
     current_version = current.entity_version if current.entity_version is not None else -1
-    candidate_version = (
-        candidate.entity_version if candidate.entity_version is not None else -1
-    )
+    candidate_version = candidate.entity_version if candidate.entity_version is not None else -1
     if candidate.source is FactSource.TOOL and current.source is FactSource.TOOL:
         selected = (
             candidate
-            if (candidate_version, candidate.observed_at)
-            > (current_version, current.observed_at)
+            if (candidate_version, candidate.observed_at) > (current_version, current.observed_at)
             else current
         )
         reason = "newer authoritative tool version/time wins"
@@ -47,9 +42,7 @@ def resolve_fact(
         )
         reason = "higher-authority source wins"
     else:
-        selected = (
-            candidate if candidate.observed_at > current.observed_at else current
-        )
+        selected = candidate if candidate.observed_at > current.observed_at else current
         reason = "newer observation wins within equal authority"
     rejected = current if selected is candidate else candidate
     return selected, FactConflict(

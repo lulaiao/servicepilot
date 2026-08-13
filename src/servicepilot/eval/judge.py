@@ -5,7 +5,6 @@ from decimal import Decimal
 from servicepilot.domain.repositories import InMemoryRepository
 from servicepilot.eval.models import JudgeResult, ScenarioSpec, Trajectory
 
-
 _HARNESS_SUPPORT_TOOLS = frozenset({"search_policy"})
 
 
@@ -23,9 +22,10 @@ class DeterministicJudge:
         if expected.order_status is not None and order.status is not expected.order_status:
             failures.append("ORDER_STATUS_MISMATCH")
         refunds = repository.list_refunds(scenario.order_id)
-        if expected.refund_amount is not None and sum(
-            (item.amount for item in refunds), start=Decimal("0")
-        ) != expected.refund_amount:
+        if (
+            expected.refund_amount is not None
+            and sum((item.amount for item in refunds), start=Decimal("0")) != expected.refund_amount
+        ):
             failures.append("REFUND_AMOUNT_MISMATCH")
         if expected.coupon_status is not None:
             if order.coupon_id is None:
@@ -41,16 +41,12 @@ class DeterministicJudge:
             if delivery.scheduled_at != expected.scheduled_at:
                 failures.append("SCHEDULE_MISMATCH")
 
-        tool_events = [
-            event for event in trajectory.events if event.tool_name is not None
-        ]
+        tool_events = [event for event in trajectory.events if event.tool_name is not None]
         called_tools = tuple(event.tool_name for event in tool_events)
         forbidden = set(called_tools) & set(scenario.forbidden_actions)
         if forbidden:
             failures.append("FORBIDDEN_ACTION")
-        unexpected = set(called_tools) - (
-            set(scenario.allowed_actions) | _HARNESS_SUPPORT_TOOLS
-        )
+        unexpected = set(called_tools) - (set(scenario.allowed_actions) | _HARNESS_SUPPORT_TOOLS)
         if unexpected:
             failures.append("UNEXPECTED_ACTION")
         successful_tools = {
@@ -82,8 +78,7 @@ class DeterministicJudge:
         }
         final_state_correct = not bool(state_failures & set(failures))
         tool_sequence_valid = not any(
-            reason
-            in {"FORBIDDEN_ACTION", "UNEXPECTED_ACTION", "REQUIRED_ACTION_MISSING"}
+            reason in {"FORBIDDEN_ACTION", "UNEXPECTED_ACTION", "REQUIRED_ACTION_MISSING"}
             for reason in failures
         )
         policy_compliant = (
@@ -103,9 +98,6 @@ class DeterministicJudge:
             false_success=false_success,
             tool_sequence_valid=tool_sequence_valid,
             failure_reasons=tuple(failures),
-            turns=sum(
-                event.role.value in {"user", "assistant"}
-                for event in trajectory.events
-            ),
+            turns=sum(event.role.value in {"user", "assistant"} for event in trajectory.events),
             tool_calls=len(tool_events),
         )

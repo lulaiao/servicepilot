@@ -10,7 +10,6 @@ from servicepilot.eval.models import Intent
 from servicepilot.routing.secondary_head import CharNgramCentroidBinaryHead
 from servicepilot.training.multilabel_composition_data import MultiLabelCompositionRecord
 
-
 LABELS = (Intent.DELIVERY_DELAY, Intent.COMPLAINT_ESCALATION, Intent.PARTIAL_REFUND)
 
 
@@ -87,8 +86,23 @@ def main() -> None:
         "sealed_accessed": False,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({**payload, "nearest_train_similarity": {key: value for key, value in payload["nearest_train_similarity"].items() if key != "records"}}, ensure_ascii=False, indent=2))
+    args.output.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {
+                **payload,
+                "nearest_train_similarity": {
+                    key: value
+                    for key, value in payload["nearest_train_similarity"].items()
+                    if key != "records"
+                },
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -19,9 +19,7 @@ from servicepilot.retrieval import (
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--code-revision", required=True)
-    parser.add_argument(
-        "--corpus", type=Path, default=Path("data/policies/phase6_corpus.jsonl")
-    )
+    parser.add_argument("--corpus", type=Path, default=Path("data/policies/phase6_corpus.jsonl"))
     parser.add_argument(
         "--queries",
         type=Path,
@@ -60,9 +58,9 @@ def main() -> None:
         }
         elapsed = perf_counter() - started
         variants[name] = {
-            "metrics": evaluate_retrieval(
-                queries, results, top_k=args.top_k
-            ).model_dump(mode="json"),
+            "metrics": evaluate_retrieval(queries, results, top_k=args.top_k).model_dump(
+                mode="json"
+            ),
             "total_latency_ms": round(elapsed * 1000, 4),
             "mean_latency_ms": round(elapsed * 1000 / len(queries), 4),
         }

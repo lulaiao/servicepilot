@@ -27,9 +27,7 @@ async def run_suite(
     scenarios: tuple[ScenarioSpec, ...],
     agent_factory: Callable[[], RuleBasedSingleAgent] = RuleBasedSingleAgent,
 ) -> tuple[tuple[Trajectory, ...], tuple[JudgeResult, ...], EvalReport]:
-    return await EvaluationHarness().run_suite(
-        scenarios, agent_factory=agent_factory
-    )
+    return await EvaluationHarness().run_suite(scenarios, agent_factory=agent_factory)
 
 
 __all__ = ["build_report", "run_scenario", "run_suite"]

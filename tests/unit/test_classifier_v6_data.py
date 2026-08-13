@@ -37,8 +37,7 @@ def test_v6_domain_incidents_remain_primary_and_amounts_are_strings() -> None:
     }
 
     assert all(
-        item["primary_intent"] == "missing_or_wrong_item"
-        and item["secondary_intents"] == []
+        item["primary_intent"] == "missing_or_wrong_item" and item["secondary_intents"] == []
         for item in by_category["missing_item_primary"]
     )
     assert all(

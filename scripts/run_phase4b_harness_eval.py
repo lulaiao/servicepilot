@@ -55,9 +55,7 @@ async def run_direct(
             FSMUserSimulator(scenario),
             environment.gateway,
         )
-        result = DeterministicJudge().evaluate(
-            scenario, trajectory, environment.repository
-        )
+        result = DeterministicJudge().evaluate(scenario, trajectory, environment.repository)
         trajectories.append(trajectory)
         results.append(result)
     return tuple(trajectories), tuple(results), time.perf_counter() - started
@@ -96,9 +94,7 @@ async def main_async() -> None:
         )
 
         if repetition % 2 == 0:
-            direct_trajectories, direct_results, direct_elapsed = (
-                await run_direct(budgets)
-            )
+            direct_trajectories, direct_results, direct_elapsed = await run_direct(budgets)
             (
                 harness_trajectories,
                 harness_results,
@@ -112,9 +108,7 @@ async def main_async() -> None:
                 harness_report,
                 harness_elapsed,
             ) = await run_formal(current_harness, scenarios)
-            direct_trajectories, direct_results, direct_elapsed = (
-                await run_direct(budgets)
-            )
+            direct_trajectories, direct_results, direct_elapsed = await run_direct(budgets)
         direct_times.append(direct_elapsed)
         harness_times.append(harness_elapsed)
         paired_overheads.append(harness_elapsed - direct_elapsed)
@@ -137,14 +131,10 @@ async def main_async() -> None:
                 mode=ReplayMode.VERIFY_ONLY,
             )
         )
-    scenario_bytes = b"\n".join(
-        item.model_dump_json().encode() for item in scenarios
-    )
+    scenario_bytes = b"\n".join(item.model_dump_json().encode() for item in scenarios)
     identical_judgments = all(
         direct.model_dump() == formal.model_dump()
-        for direct, formal in zip(
-            direct_results, harness_results, strict=True
-        )
+        for direct, formal in zip(direct_results, harness_results, strict=True)
     )
 
     def p95(values: list[float]) -> float:
@@ -170,18 +160,12 @@ async def main_async() -> None:
             "p95_elapsed_seconds": round(p95(harness_times), 6),
             "report": harness_report.model_dump(mode="json"),
             "session_count": len(harness.sessions),
-            "event_count": sum(
-                len(item.events) for item in harness.sessions.values()
-            ),
+            "event_count": sum(len(item.events) for item in harness.sessions.values()),
             "replay_session_count": len(replay_sessions),
         },
         "identical_judgments": identical_judgments,
-        "paired_overhead_seconds": [
-            round(item, 6) for item in paired_overheads
-        ],
-        "mean_absolute_overhead_seconds": round(
-            statistics.mean(paired_overheads), 6
-        ),
+        "paired_overhead_seconds": [round(item, 6) for item in paired_overheads],
+        "mean_absolute_overhead_seconds": round(statistics.mean(paired_overheads), 6),
         "mean_overhead_milliseconds_per_scenario": round(
             statistics.mean(paired_overheads) * 1000 / len(scenarios), 4
         ),
@@ -193,8 +177,7 @@ async def main_async() -> None:
         encoding="utf-8",
     )
     args.trace_output.write_text(
-        "\n".join(item.model_dump_json() for item in harness_trajectories)
-        + "\n",
+        "\n".join(item.model_dump_json() for item in harness_trajectories) + "\n",
         encoding="utf-8",
     )
     print(json.dumps(payload, ensure_ascii=False, indent=2))

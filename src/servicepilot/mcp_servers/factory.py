@@ -28,9 +28,7 @@ def build_servers(registry: ServiceRegistry) -> dict[str, MCPServer]:
     payment_refund = MCPServer("ServicePilot Payment Refund", version="0.2.0")
     coupon = MCPServer("ServicePilot Coupon", version="0.2.0")
     policy = MCPServer("ServicePilot Policy", version="0.2.0")
-    merchant_delivery = MCPServer(
-        "ServicePilot Merchant Delivery", version="0.2.0"
-    )
+    merchant_delivery = MCPServer("ServicePilot Merchant Delivery", version="0.2.0")
 
     @order.tool()
     async def get_order(order_id: str) -> dict[str, Any]:
@@ -38,13 +36,9 @@ def build_servers(registry: ServiceRegistry) -> dict[str, MCPServer]:
         return registry.call("get_order", {"order_id": order_id})
 
     @order.tool()
-    async def list_recent_orders(
-        user_id: str, limit: int = 10
-    ) -> dict[str, Any]:
+    async def list_recent_orders(user_id: str, limit: int = 10) -> dict[str, Any]:
         """List a user's recent synthetic orders."""
-        return registry.call(
-            "list_recent_orders", {"user_id": user_id, "limit": limit}
-        )
+        return registry.call("list_recent_orders", {"user_id": user_id, "limit": limit})
 
     @order.tool()
     async def preview_cancel(order_id: str) -> dict[str, Any]:
@@ -70,9 +64,7 @@ def build_servers(registry: ServiceRegistry) -> dict[str, MCPServer]:
         )
 
     @order.tool()
-    async def preview_reschedule(
-        order_id: str, new_time: datetime
-    ) -> dict[str, Any]:
+    async def preview_reschedule(order_id: str, new_time: datetime) -> dict[str, Any]:
         """Preview a delivery or appointment reschedule."""
         return registry.call(
             "preview_reschedule",
@@ -160,9 +152,7 @@ def build_servers(registry: ServiceRegistry) -> dict[str, MCPServer]:
         return registry.call("get_refund_status", {"refund_id": refund_id})
 
     @coupon.tool()
-    async def get_coupon_status(
-        user_id: str, coupon_id: str
-    ) -> dict[str, Any]:
+    async def get_coupon_status(user_id: str, coupon_id: str) -> dict[str, Any]:
         """Get a user's coupon state."""
         return registry.call(
             "get_coupon_status",
@@ -174,16 +164,12 @@ def build_servers(registry: ServiceRegistry) -> dict[str, MCPServer]:
         order_id: str,
     ) -> dict[str, Any]:
         """Check coupon restoration policy."""
-        return registry.call(
-            "check_coupon_restore_eligibility", {"order_id": order_id}
-        )
+        return registry.call("check_coupon_restore_eligibility", {"order_id": order_id})
 
     @coupon.tool()
     async def preview_coupon_restore(order_id: str) -> dict[str, Any]:
         """Preview coupon restoration."""
-        return registry.call(
-            "preview_coupon_restore", {"order_id": order_id}
-        )
+        return registry.call("preview_coupon_restore", {"order_id": order_id})
 
     @coupon.tool()
     async def restore_coupon(
@@ -222,14 +208,10 @@ def build_servers(registry: ServiceRegistry) -> dict[str, MCPServer]:
     @policy.tool()
     async def get_policy_section(evidence_id: str) -> dict[str, Any]:
         """Get a policy section by stable evidence ID."""
-        return registry.call(
-            "get_policy_section", {"evidence_id": evidence_id}
-        )
+        return registry.call("get_policy_section", {"evidence_id": evidence_id})
 
     @policy.tool()
-    async def verify_policy_applicability(
-        evidence_ids: list[str], order_id: str
-    ) -> dict[str, Any]:
+    async def verify_policy_applicability(evidence_ids: list[str], order_id: str) -> dict[str, Any]:
         """Verify evidence IDs and policy version against an order."""
         return registry.call(
             "verify_policy_applicability",
@@ -239,9 +221,7 @@ def build_servers(registry: ServiceRegistry) -> dict[str, MCPServer]:
     @merchant_delivery.tool()
     async def get_merchant_status(merchant_id: str) -> dict[str, Any]:
         """Get authoritative merchant status."""
-        return registry.call(
-            "get_merchant_status", {"merchant_id": merchant_id}
-        )
+        return registry.call("get_merchant_status", {"merchant_id": merchant_id})
 
     @merchant_delivery.tool()
     async def get_delivery_status(order_id: str) -> dict[str, Any]:
@@ -292,9 +272,7 @@ def build_seeded_servers() -> tuple[dict[str, MCPServer], ServiceRegistry]:
     seed_order = build_seed_order()
     repository.add_order(seed_order)
     repository.add_coupon(build_seed_coupon())
-    repository.add_merchant(
-        Merchant(seed_order.merchant_id, MerchantStatus.OPEN, seed_order.city)
-    )
+    repository.add_merchant(Merchant(seed_order.merchant_id, MerchantStatus.OPEN, seed_order.city))
     repository.add_delivery(
         Delivery(
             seed_order.order_id,
@@ -303,7 +281,5 @@ def build_seeded_servers() -> tuple[dict[str, MCPServer], ServiceRegistry]:
         )
     )
     policies = PolicyEngine.default()
-    registry = ServiceRegistry(
-        repository, TransactionService(repository, policies), policies
-    )
+    registry = ServiceRegistry(repository, TransactionService(repository, policies), policies)
     return build_servers(registry), registry

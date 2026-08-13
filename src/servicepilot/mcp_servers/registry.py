@@ -178,9 +178,7 @@ class ServiceRegistry:
         )
 
     def _preview_reschedule(self, request: PreviewRescheduleRequest) -> Any:
-        return self.transactions.preview_reschedule(
-            request.order_id, request.new_time
-        )
+        return self.transactions.preview_reschedule(request.order_id, request.new_time)
 
     def _reschedule_order(self, request: RescheduleOrderRequest) -> Any:
         return self.transactions.execute_reschedule(
@@ -196,9 +194,7 @@ class ServiceRegistry:
 
     def _check_refund(self, request: RefundEligibilityRequest) -> Any:
         order = self.repository.get_order(request.order_id)
-        return self.policies.check_refund(
-            order, request.reason, request.requested_amount
-        )
+        return self.policies.check_refund(order, request.reason, request.requested_amount)
 
     def _preview_refund(self, request: RefundEligibilityRequest) -> Any:
         return self.transactions.preview_refund(
@@ -225,9 +221,7 @@ class ServiceRegistry:
         return coupon
 
     def _check_coupon(self, request: CouponEligibilityRequest) -> Any:
-        return self.policies.check_coupon_restore(
-            self.repository.get_order(request.order_id)
-        )
+        return self.policies.check_coupon_restore(self.repository.get_order(request.order_id))
 
     def _preview_coupon(self, request: CouponEligibilityRequest) -> Any:
         return self.transactions.preview_coupon_restore(request.order_id)
@@ -348,9 +342,7 @@ class ServiceRegistry:
             )
             return ticket
 
-    def _simple_idempotency(
-        self, action: str, key: str, payload: dict[str, str]
-    ) -> Any | None:
+    def _simple_idempotency(self, action: str, key: str, payload: dict[str, str]) -> Any | None:
         previous = self.repository.get_idempotent_result(action, key)
         if previous is None:
             return None
@@ -362,13 +354,9 @@ class ServiceRegistry:
     def _save_simple_idempotency(
         self, action: str, key: str, payload: dict[str, str], result: Any
     ) -> None:
-        self.repository.save_idempotent_result(
-            action, key, self._hash(payload), result
-        )
+        self.repository.save_idempotent_result(action, key, self._hash(payload), result)
 
-    def _audit_write(
-        self, action: str, target_id: str, idempotency_key: str
-    ) -> None:
+    def _audit_write(self, action: str, target_id: str, idempotency_key: str) -> None:
         self.repository.add_audit_event(
             AuditEvent(
                 event_id=f"audit-{uuid4().hex}",

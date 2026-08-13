@@ -37,7 +37,13 @@ def main() -> None:
             right_shingles = _shingles(_text(right))
             score = len(left_shingles & right_shingles) / len(left_shingles | right_shingles)
             if score >= 0.8:
-                near.append({"train_id": left.record_id, "dev_id": right.record_id, "score": round(score, 4)})
+                near.append(
+                    {
+                        "train_id": left.record_id,
+                        "dev_id": right.record_id,
+                        "score": round(score, 4),
+                    }
+                )
     counts = Counter(item.split.value for item in records)
     passed = (
         counts == {"train": 56, "dev": 28}

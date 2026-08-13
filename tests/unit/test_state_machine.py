@@ -41,11 +41,8 @@ def test_legal_order_transitions_increment_version(
         (OrderStatus.PREPARING, OrderStatus.CANCELLED),
     ],
 )
-def test_illegal_order_transitions_are_rejected(
-    current: OrderStatus, target: OrderStatus
-) -> None:
+def test_illegal_order_transitions_are_rejected(current: OrderStatus, target: OrderStatus) -> None:
     order = replace(build_seed_order(), status=current)
 
     with pytest.raises(InvalidTransitionError):
         transition_order(order, target)
-

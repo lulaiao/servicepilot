@@ -117,9 +117,11 @@ def main() -> None:
             )
         )
 
-    texts = list(dict.fromkeys(
-        [text for text, _ in augmented_examples] + [text for _, text, _, _ in dev_examples]
-    ))
+    texts = list(
+        dict.fromkeys(
+            [text for text, _ in augmented_examples] + [text for _, text, _, _ in dev_examples]
+        )
+    )
     embeddings: dict[str, torch.Tensor] = {}
     torch.cuda.reset_peak_memory_stats()
     started = time.perf_counter()
@@ -157,9 +159,7 @@ def main() -> None:
     gold = [value for _, _, value, _ in dev_examples]
     generated = [value for _, _, _, value in dev_examples]
     base_predictions = [predict(train_examples, text) for _, text, _, _ in dev_examples]
-    augmented_predictions = [
-        predict(augmented_examples, text) for _, text, _, _ in dev_examples
-    ]
+    augmented_predictions = [predict(augmented_examples, text) for _, text, _, _ in dev_examples]
     payload = {
         "schema_version": "servicepilot-frozen-embedding-secondary-head-v1",
         "candidate": {
@@ -202,7 +202,9 @@ def main() -> None:
         "claim_scope": "reused_dev_representation_screen",
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.output.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 

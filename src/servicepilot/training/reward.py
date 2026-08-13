@@ -12,9 +12,7 @@ _WRITE_CONTROL_KEYS = {
     "create_refund_request": frozenset(
         {"confirmation_token", "idempotency_key", "expected_version"}
     ),
-    "reschedule_order": frozenset(
-        {"confirmation_token", "idempotency_key", "expected_version"}
-    ),
+    "reschedule_order": frozenset({"confirmation_token", "idempotency_key", "expected_version"}),
     "restore_coupon": frozenset(
         {"confirmation_token", "idempotency_key", "expected_order_version"}
     ),

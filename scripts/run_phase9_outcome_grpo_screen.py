@@ -49,10 +49,7 @@ def main() -> None:
     torch.cuda.manual_seed_all(protocol["seed"])
     torch.cuda.reset_peak_memory_stats()
 
-    catalog = {
-        item.scenario_id: item
-        for item in model_owned_scenarios(build_phase3_scenarios())
-    }
+    catalog = {item.scenario_id: item for item in model_owned_scenarios(build_phase3_scenarios())}
     scenarios = tuple(catalog[item] for item in protocol["scenario_ids"])
     dataset = Dataset.from_list(list(classifier_grpo_examples(scenarios)))
     reward_adapter = ExecutableClassifierReward(scenarios)
@@ -174,8 +171,7 @@ def main() -> None:
         >= protocol["completion_gates"]["minimum_nonzero_reward_std_steps"],
         "runtime_error_rate": runtime_error_rate
         <= protocol["completion_gates"]["maximum_runtime_error_rate"],
-        "kl_within_limit": not kl_values
-        or max(kl_values) <= protocol["termination"]["maximum_kl"],
+        "kl_within_limit": not kl_values or max(kl_values) <= protocol["termination"]["maximum_kl"],
         "parameter_updated": parameter_delta_l2 > 0,
         "no_safety_termination": termination_reason is None,
     }

@@ -6,7 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from servicepilot.eval.models import Intent, ScenarioSpec
+from servicepilot.eval.models import ScenarioSpec
 from servicepilot.routing.composition_evidence import bind_composition_evidence
 from servicepilot.routing.models import IntentResult
 from servicepilot.training.classifier_data import classifier_target
@@ -50,7 +50,11 @@ def main() -> None:
                     "before": [item.value for item in before_tuple],
                     "after": [item.value for item in after_tuple],
                     "expected": [item.value for item in expected],
-                    "effect": "rescue" if not was_correct and is_correct else "harm" if was_correct else "neutral",
+                    "effect": "rescue"
+                    if not was_correct and is_correct
+                    else "harm"
+                    if was_correct
+                    else "neutral",
                 }
             )
     count = len(scenarios)

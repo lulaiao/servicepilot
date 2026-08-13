@@ -12,7 +12,10 @@ from typing import Any
 
 from servicepilot.eval.factored_metrics import factored_metrics
 from servicepilot.routing.factored_intent import FactoredIntentResult, project_legacy_intent
-from servicepilot.routing.structured_output import build_factored_intent_prompt, parse_factored_intent_output
+from servicepilot.routing.structured_output import (
+    build_factored_intent_prompt,
+    parse_factored_intent_output,
+)
 from servicepilot.training.data_models import DataSplit, SFTTrainingRecord
 
 
@@ -60,10 +63,18 @@ def main() -> None:
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    device = "cuda" if args.device == "auto" and torch.cuda.is_available() else "cpu" if args.device == "auto" else args.device
+    device = (
+        "cuda"
+        if args.device == "auto" and torch.cuda.is_available()
+        else "cpu"
+        if args.device == "auto"
+        else args.device
+    )
     if device == "cuda" and not torch.cuda.is_available():
         raise SystemExit("--device cuda requested but CUDA is unavailable")
-    dtype = {"float32": torch.float32, "float16": torch.float16, "bfloat16": torch.bfloat16}[args.dtype]
+    dtype = {"float32": torch.float32, "float16": torch.float16, "bfloat16": torch.bfloat16}[
+        args.dtype
+    ]
     torch.manual_seed(args.seed)
     if device == "cuda":
         torch.cuda.manual_seed_all(args.seed)
@@ -79,9 +90,12 @@ def main() -> None:
     load_started = time.perf_counter()
     print(f"loading model on {device} with {args.dtype}", file=sys.stderr, flush=True)
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, local_files_only=True)
-    model = AutoModelForCausalLM.from_pretrained(args.model_path, local_files_only=True, torch_dtype=dtype).to(device)
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model_path, local_files_only=True, torch_dtype=dtype
+    ).to(device)
     if args.adapter_path:
         from peft import PeftModel
+
         model = PeftModel.from_pretrained(model, args.adapter_path, is_trainable=False)
     model.eval()
     if device == "cuda":
@@ -141,40 +155,90 @@ def main() -> None:
         predictions.append(prediction)
         gold_legacy = project_legacy_intent(target)
         predicted_legacy = project_legacy_intent(prediction) if prediction else None
-        records.append({
-            "example_id": example_id,
-            "gold": target.model_dump(mode="json"),
-            "prediction": prediction.model_dump(mode="json") if prediction else None,
-            "schema_valid": prediction is not None,
-            "issue_correct": prediction is not None and prediction.issue_type is target.issue_type,
-            "actions_exact": prediction is not None and set(prediction.requested_actions) == set(target.requested_actions),
-            "issue_action_exact": prediction is not None and prediction.issue_type is target.issue_type and set(prediction.requested_actions) == set(target.requested_actions),
-            "unrequested_actions": sorted({item.value for item in prediction.requested_actions} - {item.value for item in target.requested_actions}) if prediction else [],
-            "gold_legacy_tuple": [gold_legacy.primary_intent.value, *[item.value for item in gold_legacy.secondary_intents]],
-            "predicted_legacy_tuple": [predicted_legacy.primary_intent.value, *[item.value for item in predicted_legacy.secondary_intents]] if predicted_legacy else None,
-            "latency_seconds": round(sum(latencies) / len(latencies), 4),
-            "input_tokens": input_tokens,
-            "generated_tokens": generated_tokens,
-            "output_consistent_across_repetitions": all(torch.equal(outputs[0], item) for item in outputs[1:]),
-            "error": error,
-            "raw_output": raw,
-        })
+        records.append(
+            {
+                "example_id": example_id,
+                "gold": target.model_dump(mode="json"),
+                "prediction": prediction.model_dump(mode="json") if prediction else None,
+                "schema_valid": prediction is not None,
+                "issue_correct": prediction is not None
+                and prediction.issue_type is target.issue_type,
+                "actions_exact": prediction is not None
+                and set(prediction.requested_actions) == set(target.requested_actions),
+                "issue_action_exact": prediction is not None
+                and prediction.issue_type is target.issue_type
+                and set(prediction.requested_actions) == set(target.requested_actions),
+                "unrequested_actions": sorted(
+                    {item.value for item in prediction.requested_actions}
+                    - {item.value for item in target.requested_actions}
+                )
+                if prediction
+                else [],
+                "gold_legacy_tuple": [
+                    gold_legacy.primary_intent.value,
+                    *[item.value for item in gold_legacy.secondary_intents],
+                ],
+                "predicted_legacy_tuple": [
+                    predicted_legacy.primary_intent.value,
+                    *[item.value for item in predicted_legacy.secondary_intents],
+                ]
+                if predicted_legacy
+                else None,
+                "latency_seconds": round(sum(latencies) / len(latencies), 4),
+                "input_tokens": input_tokens,
+                "generated_tokens": generated_tokens,
+                "output_consistent_across_repetitions": all(
+                    torch.equal(outputs[0], item) for item in outputs[1:]
+                ),
+                "error": error,
+                "raw_output": raw,
+            }
+        )
     metrics = factored_metrics(targets, predictions)
     report = {
-        "candidate": {"path": str(args.model_path.resolve()), "revision": args.revision, "adapter_path": str(args.adapter_path.resolve()) if args.adapter_path else None, "dtype": args.dtype, "device": device, "offline": True},
-        "runtime": {"torch_version": torch.__version__, "cuda_runtime": torch.version.cuda, "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"), "gpu_name": torch.cuda.get_device_name(0) if device == "cuda" else None, "seed": args.seed, "warmup_runs": args.warmup_runs, "repetitions": args.repetitions, "max_new_tokens": args.max_new_tokens, "model_load_seconds": round(model_load_seconds, 4)},
+        "candidate": {
+            "path": str(args.model_path.resolve()),
+            "revision": args.revision,
+            "adapter_path": str(args.adapter_path.resolve()) if args.adapter_path else None,
+            "dtype": args.dtype,
+            "device": device,
+            "offline": True,
+        },
+        "runtime": {
+            "torch_version": torch.__version__,
+            "cuda_runtime": torch.version.cuda,
+            "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+            "gpu_name": torch.cuda.get_device_name(0) if device == "cuda" else None,
+            "seed": args.seed,
+            "warmup_runs": args.warmup_runs,
+            "repetitions": args.repetitions,
+            "max_new_tokens": args.max_new_tokens,
+            "model_load_seconds": round(model_load_seconds, 4),
+        },
         "split": args.split,
         "dataset": str(args.dataset),
         **metrics,
-        "mean_latency_seconds": round(sum(item["latency_seconds"] for item in records) / len(records), 4),
+        "mean_latency_seconds": round(
+            sum(item["latency_seconds"] for item in records) / len(records), 4
+        ),
         "peak_rss_mib": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),
-        "peak_vram_allocated_mib": round(torch.cuda.max_memory_allocated() / 1024**2, 1) if device == "cuda" else None,
-        "peak_vram_reserved_mib": round(torch.cuda.max_memory_reserved() / 1024**2, 1) if device == "cuda" else None,
+        "peak_vram_allocated_mib": round(torch.cuda.max_memory_allocated() / 1024**2, 1)
+        if device == "cuda"
+        else None,
+        "peak_vram_reserved_mib": round(torch.cuda.max_memory_reserved() / 1024**2, 1)
+        if device == "cuda"
+        else None,
         "records": records,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
-    print(json.dumps({key: value for key, value in report.items() if key != "records"}, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {key: value for key, value in report.items() if key != "records"},
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

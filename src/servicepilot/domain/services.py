@@ -42,17 +42,13 @@ class _Confirmation:
 class TransactionService:
     """Only Phase 1 service authorized to perform authoritative writes."""
 
-    def __init__(
-        self, repository: DomainRepository, policy_engine: PolicyEngine
-    ) -> None:
+    def __init__(self, repository: DomainRepository, policy_engine: PolicyEngine) -> None:
         self.repository = repository
         self.policy_engine = policy_engine
         self._confirmations: dict[str, _Confirmation] = {}
         self._confirmation_lock = RLock()
 
-    def preview_refund(
-        self, order_id: str, reason: str, amount: Decimal
-    ) -> WritePreview:
+    def preview_refund(self, order_id: str, reason: str, amount: Decimal) -> WritePreview:
         order = self.repository.get_order(order_id)
         decision = self.policy_engine.check_refund(order, reason, amount)
         if not decision.allowed:
@@ -117,13 +113,9 @@ class TransactionService:
             )
             self.repository.add_refund(refund)
             self.repository.save_order(replace(order, version=order.version + 1))
-            self.repository.save_idempotent_result(
-                action, idempotency_key, fingerprint, refund
-            )
+            self.repository.save_idempotent_result(action, idempotency_key, fingerprint, refund)
             self._consume_confirmation(confirmation_token)
-            self._audit(
-                action, order_id, "succeeded", idempotency_key, order.version + 1
-            )
+            self._audit(action, order_id, "succeeded", idempotency_key, order.version + 1)
             return refund
 
     def preview_cancel(self, order_id: str) -> WritePreview:
@@ -163,13 +155,9 @@ class TransactionService:
                 raise PolicyViolationError(decision.reason_code)
             updated = transition_order(order, OrderStatus.CANCELLED)
             self.repository.save_order(updated)
-            self.repository.save_idempotent_result(
-                action, idempotency_key, fingerprint, updated
-            )
+            self.repository.save_idempotent_result(action, idempotency_key, fingerprint, updated)
             self._consume_confirmation(confirmation_token)
-            self._audit(
-                action, order_id, "succeeded", idempotency_key, updated.version
-            )
+            self._audit(action, order_id, "succeeded", idempotency_key, updated.version)
             return updated
 
     def preview_coupon_restore(self, order_id: str) -> WritePreview:
@@ -186,9 +174,7 @@ class TransactionService:
             f"Restore coupon {order.coupon_id}",
         )
 
-    def preview_reschedule(
-        self, order_id: str, new_time: datetime
-    ) -> WritePreview:
+    def preview_reschedule(self, order_id: str, new_time: datetime) -> WritePreview:
         if new_time.tzinfo is None:
             raise PolicyViolationError("NEW_TIME_MUST_HAVE_TIMEZONE")
         order = self.repository.get_order(order_id)
@@ -235,13 +221,9 @@ class TransactionService:
             )
             self.repository.save_delivery(updated)
             self.repository.save_order(replace(order, version=order.version + 1))
-            self.repository.save_idempotent_result(
-                action, idempotency_key, fingerprint, updated
-            )
+            self.repository.save_idempotent_result(action, idempotency_key, fingerprint, updated)
             self._consume_confirmation(confirmation_token)
-            self._audit(
-                action, order_id, "succeeded", idempotency_key, order.version + 1
-            )
+            self._audit(action, order_id, "succeeded", idempotency_key, order.version + 1)
             return updated
 
     def execute_coupon_restore(
@@ -277,13 +259,9 @@ class TransactionService:
             )
             self.repository.save_coupon(restored)
             self.repository.save_order(replace(order, version=order.version + 1))
-            self.repository.save_idempotent_result(
-                action, idempotency_key, fingerprint, restored
-            )
+            self.repository.save_idempotent_result(action, idempotency_key, fingerprint, restored)
             self._consume_confirmation(confirmation_token)
-            self._audit(
-                action, order_id, "succeeded", idempotency_key, order.version + 1
-            )
+            self._audit(action, order_id, "succeeded", idempotency_key, order.version + 1)
             return restored
 
     def _create_preview(
@@ -298,9 +276,7 @@ class TransactionService:
         fingerprint = self._fingerprint(payload)
         token = uuid4().hex
         with self._confirmation_lock:
-            self._confirmations[token] = _Confirmation(
-                action, order.order_id, fingerprint
-            )
+            self._confirmations[token] = _Confirmation(action, order.order_id, fingerprint)
         self._audit(action, order.order_id, "previewed", None, order.version)
         return WritePreview(
             action,
@@ -324,9 +300,7 @@ class TransactionService:
             confirmation = self._confirmations.get(token)
         expected = _Confirmation(action, target_id, fingerprint)
         if confirmation != expected:
-            self._audit(
-                action, target_id, "rejected", idempotency_key, None, "confirmation"
-            )
+            self._audit(action, target_id, "rejected", idempotency_key, None, "confirmation")
             raise ConfirmationError("missing or mismatched confirmation token")
 
     def _consume_confirmation(self, token: str) -> None:
@@ -347,9 +321,7 @@ class TransactionService:
                 f"expected version {expected_version}, found {order.version}"
             )
 
-    def _idempotent_result(
-        self, action: str, key: str, fingerprint: str
-    ) -> Any | None:
+    def _idempotent_result(self, action: str, key: str, fingerprint: str) -> Any | None:
         previous = self.repository.get_idempotent_result(action, key)
         if previous is None:
             return None

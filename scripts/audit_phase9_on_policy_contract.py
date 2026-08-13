@@ -54,9 +54,7 @@ def main() -> None:
         "prompt_contract": "deployed_intent_slot_classifier",
         "reward_source": "RoutedRuleAgent+tools+DeterministicJudge",
         "gold_task_success_count": sum(row["gold_task_success"] for row in rows),
-        "guardrail_rescue_probe_count": sum(
-            row["confusable_guardrail_rescue"] for row in rows
-        ),
+        "guardrail_rescue_probe_count": sum(row["confusable_guardrail_rescue"] for row in rows),
         "margin": {
             "mean": statistics.mean(margins),
             "min": min(margins),
@@ -66,8 +64,7 @@ def main() -> None:
         "rows": rows,
     }
     payload["contract_validated"] = (
-        payload["gold_task_success_count"] == len(scenarios)
-        and payload["margin"]["min"] > 0
+        payload["gold_task_success_count"] == len(scenarios) and payload["margin"]["min"] > 0
     )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(

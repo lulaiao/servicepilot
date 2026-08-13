@@ -64,7 +64,9 @@ def main() -> None:
                 "example_id": example_id,
                 "text": text,
                 "gold": target.model_dump(mode="json"),
-                "raw_prediction": raw_prediction.model_dump(mode="json") if raw_prediction else None,
+                "raw_prediction": raw_prediction.model_dump(mode="json")
+                if raw_prediction
+                else None,
                 "bound_prediction": bound.model_dump(mode="json") if bound else None,
                 "action_evidence": [
                     {
@@ -115,7 +117,13 @@ def main() -> None:
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
-    print(json.dumps({key: value for key, value in payload.items() if key != "records"}, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {key: value for key, value in payload.items() if key != "records"},
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

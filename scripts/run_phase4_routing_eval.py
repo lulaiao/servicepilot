@@ -46,14 +46,12 @@ async def run(args: argparse.Namespace) -> None:
     scenarios = build_phase3_scenarios()
     classifier = RuleIntentClassifier()
     evaluated_splits = (
-        tuple(DatasetSplit)
-        if args.include_sealed
-        else (DatasetSplit.TRAIN, DatasetSplit.DEV)
+        tuple(DatasetSplit) if args.include_sealed else (DatasetSplit.TRAIN, DatasetSplit.DEV)
     )
     component = {
-        split.value: evaluate_extractor(
-            examples, classifier.classify, split
-        ).model_dump(mode="json")
+        split.value: evaluate_extractor(examples, classifier.classify, split).model_dump(
+            mode="json"
+        )
         for split in evaluated_splits
     }
     _, _, single_report = await run_suite(scenarios)
@@ -79,17 +77,11 @@ async def run(args: argparse.Namespace) -> None:
             "single_agent": single_report.model_dump(mode="json"),
             "dynamic_multi_role": routed_report.model_dump(mode="json"),
             "routing_event_count": len(route_events),
-            "mean_routing_events_per_scenario": round(
-                len(route_events) / len(scenarios), 3
-            ),
+            "mean_routing_events_per_scenario": round(len(route_events) / len(scenarios), 3),
         },
     }
-    dataset_bytes = b"\n".join(
-        item.model_dump_json().encode() for item in examples
-    )
-    scenario_bytes = b"\n".join(
-        item.model_dump_json().encode() for item in scenarios
-    )
+    dataset_bytes = b"\n".join(item.model_dump_json().encode() for item in examples)
+    scenario_bytes = b"\n".join(item.model_dump_json().encode() for item in scenarios)
     manifest = {
         "routing_example_count": len(examples),
         "routing_dataset_sha256": hashlib.sha256(dataset_bytes).hexdigest(),
@@ -108,8 +100,7 @@ async def run(args: argparse.Namespace) -> None:
         encoding="utf-8",
     )
     args.manifest_output.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True)
-        + "\n",
+        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     args.trace_output.write_text(

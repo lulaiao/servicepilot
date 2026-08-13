@@ -3,8 +3,8 @@
 import json
 from typing import Any
 
-from servicepilot.routing.models import IntentResult
 from servicepilot.routing.factored_intent import FactoredIntentResult
+from servicepilot.routing.models import IntentResult
 
 
 def build_intent_prompt(text: str) -> str:
@@ -15,7 +15,7 @@ def build_intent_prompt(text: str) -> str:
         "duplicate_charge,coupon_issue,reschedule,complaint_escalation,"
         "out_of_scope。secondary_intents是数组。slots必须包含order_id、"
         "reason、requested_amount；requested_amount已知时必须是JSON字符串"
-        "（例如\"12\"），未知用null，绝不能输出JSON数字。risk_level取low/medium/high；"
+        '（例如"12"），未知用null，绝不能输出JSON数字。risk_level取low/medium/high；'
         "confidence为0到1；needs_clarification和injection_detected为布尔值。"
         f"\n用户输入：{text}"
     )
@@ -35,7 +35,7 @@ def build_intent_prompt_v2(text: str) -> str:
         "用户要求改变日期或时段时才选reschedule。partial_refund只用于用户直接要求退回部分"
         "金额且没有更具体业务问题的情况。secondary_intents只放独立并列诉求，不放主问题的"
         "补救动作。slots必须包含order_id、reason、requested_amount；requested_amount已知时"
-        "必须是JSON字符串（例如\"12\"），未知用null，绝不能输出JSON数字。risk_level取"
+        '必须是JSON字符串（例如"12"），未知用null，绝不能输出JSON数字。risk_level取'
         "low/medium/high；confidence为0到1；needs_clarification和injection_detected为布尔值。"
         f"\n用户输入：{text}"
     )

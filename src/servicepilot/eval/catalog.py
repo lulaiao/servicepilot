@@ -96,9 +96,7 @@ def _scenario(intent: Intent, variant: int, utterance: str) -> ScenarioSpec:
         accept_confirmation = False
     first_tool = allowed[0] if allowed else None
     faults: dict[str, tuple[FaultKind, ...]] = (
-        {first_tool: (FaultKind.TRANSIENT,)}
-        if variant == 3 and first_tool is not None
-        else {}
+        {first_tool: (FaultKind.TRANSIENT,)} if variant == 3 and first_tool is not None else {}
     )
     return ScenarioSpec(
         scenario_id=order_id,
@@ -109,11 +107,7 @@ def _scenario(intent: Intent, variant: int, utterance: str) -> ScenarioSpec:
         initial_order_status=status,
         requested_amount=_requested_amount(intent),
         reason=_reason(intent),
-        new_time=(
-            datetime(2026, 8, 6, 15, 0, tzinfo=UTC)
-            if intent is Intent.RESCHEDULE
-            else None
-        ),
+        new_time=(datetime(2026, 8, 6, 15, 0, tzinfo=UTC) if intent is Intent.RESCHEDULE else None),
         accept_confirmation=accept_confirmation,
         allowed_actions=allowed,
         forbidden_actions=forbidden,
@@ -216,26 +210,18 @@ def _gold_evidence(intent: Intent) -> tuple[str, ...]:
 
 def _expected(intent: Intent) -> ExpectedFinalState:
     if intent is Intent.CANCEL_ORDER:
-        return ExpectedFinalState(
-            order_status=OrderStatus.CANCELLED, write_expected=True
-        )
+        return ExpectedFinalState(order_status=OrderStatus.CANCELLED, write_expected=True)
     if intent in {
         Intent.FULL_REFUND,
         Intent.DUPLICATE_CHARGE,
     }:
-        return ExpectedFinalState(
-            refund_amount=Decimal("58.00"), write_expected=True
-        )
+        return ExpectedFinalState(refund_amount=Decimal("58.00"), write_expected=True)
     if intent in {Intent.PARTIAL_REFUND, Intent.MISSING_OR_WRONG_ITEM}:
-        return ExpectedFinalState(
-            refund_amount=Decimal("12.00"), write_expected=True
-        )
+        return ExpectedFinalState(refund_amount=Decimal("12.00"), write_expected=True)
     if intent is Intent.DELIVERY_DELAY:
         return ExpectedFinalState(delivery_issue_count=1, write_expected=True)
     if intent is Intent.COUPON_ISSUE:
-        return ExpectedFinalState(
-            coupon_status=CouponStatus.AVAILABLE, write_expected=True
-        )
+        return ExpectedFinalState(coupon_status=CouponStatus.AVAILABLE, write_expected=True)
     if intent is Intent.RESCHEDULE:
         return ExpectedFinalState(
             scheduled_at=datetime(2026, 8, 6, 15, 0, tzinfo=UTC),

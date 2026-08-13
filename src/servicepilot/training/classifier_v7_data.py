@@ -9,7 +9,6 @@ from servicepilot.training.classifier_data import classifier_target_for_text
 from servicepilot.training.classifier_v5_data import build_classifier_v5_sft
 from servicepilot.training.data_models import DataSplit, SFTTrainingRecord
 
-
 REMEDIATION_RATIONALE = (
     "Use the selected v5 dataset rather than the rejected v6 continuation.",
     "Cover lifecycle-stop semantics without copying a consumed holdout utterance.",
@@ -53,8 +52,11 @@ _AMOUNT_STRING_CONTRACT: tuple[tuple[Intent, str], ...] = (
 
 def build_classifier_v7_remediation() -> tuple[SFTTrainingRecord, ...]:
     examples = [
-        *(('lifecycle_stop', Intent.CANCEL_ORDER, text) for text in _LIFECYCLE_STOP),
-        *(("discount_entitlement_restore", Intent.COUPON_ISSUE, text) for text in _DISCOUNT_ENTITLEMENT_RESTORE),
+        *(("lifecycle_stop", Intent.CANCEL_ORDER, text) for text in _LIFECYCLE_STOP),
+        *(
+            ("discount_entitlement_restore", Intent.COUPON_ISSUE, text)
+            for text in _DISCOUNT_ENTITLEMENT_RESTORE
+        ),
         *(("amount_string_contract", intent, text) for intent, text in _AMOUNT_STRING_CONTRACT),
     ]
     counters: dict[str, int] = {}

@@ -9,4 +9,6 @@ def test_holdout_is_sealed_typed_and_unique() -> None:
     assert len(CASES) == len(records) == 24
     assert all(item.split is DataSplit.SEALED_TEST for item in records)
     assert len({item.record_id for item in records}) == len(records)
-    assert all(FactoredIntentResult.model_validate_json(item.messages[1]["content"]) for item in records)
+    assert all(
+        FactoredIntentResult.model_validate_json(item.messages[1]["content"]) for item in records
+    )

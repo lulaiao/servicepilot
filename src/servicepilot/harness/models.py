@@ -63,9 +63,7 @@ class HarnessRunConfig(BaseModel):
     model_revision: str = "deterministic-rule"
     prompt_revision: str = "phase4-rule-v1"
     seed: int = 20260805
-    decoding: dict[str, str | int | float | bool | None] = Field(
-        default_factory=dict
-    )
+    decoding: dict[str, str | int | float | bool | None] = Field(default_factory=dict)
     budgets: HarnessBudgets = Field(default_factory=HarnessBudgets)
 
     def fingerprint(self) -> str:
@@ -81,12 +79,8 @@ class HarnessEvent(BaseModel):
     payload_sha256: str
 
     @classmethod
-    def create(
-        cls, sequence: int, kind: str, payload: dict[str, Any]
-    ) -> "HarnessEvent":
-        encoded = json.dumps(
-            payload, ensure_ascii=False, sort_keys=True, default=str
-        ).encode()
+    def create(cls, sequence: int, kind: str, payload: dict[str, Any]) -> "HarnessEvent":
+        encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str).encode()
         return cls(
             sequence=sequence,
             kind=kind,

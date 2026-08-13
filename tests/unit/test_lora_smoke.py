@@ -14,9 +14,7 @@ def test_assistant_only_labels_masks_non_assistant_prefixes() -> None:
 
 
 def test_assistant_only_labels_handles_template_boundary_rewrite() -> None:
-    input_ids, labels = assistant_only_labels(
-        ((1, 2, 9), (1, 2, 8, 3)), ("user", "assistant")
-    )
+    input_ids, labels = assistant_only_labels(((1, 2, 9), (1, 2, 8, 3)), ("user", "assistant"))
     assert input_ids == (1, 2, 8, 3)
     assert labels == (-100, -100, 8, 3)
 

@@ -27,4 +27,3 @@ class IdempotencyConflictError(DomainError):
 
 class PolicyViolationError(DomainError):
     """A deterministic policy assertion rejected an operation."""
-

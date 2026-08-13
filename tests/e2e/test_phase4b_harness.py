@@ -22,10 +22,7 @@ class IsolatedFlakyAgent(RoutedRuleAgent):
 
     async def run(self, scenario, simulator, gateway):  # type: ignore[no-untyped-def]
         self.calls[scenario.scenario_id] = self.calls.get(scenario.scenario_id, 0) + 1
-        if (
-            scenario.scenario_id == self.fail_scenario_id
-            and self.calls[scenario.scenario_id] == 1
-        ):
+        if scenario.scenario_id == self.fail_scenario_id and self.calls[scenario.scenario_id] == 1:
             raise RuntimeError("injected isolated trial failure")
         return await super().run(scenario, simulator, gateway)
 
@@ -61,8 +58,7 @@ async def test_formal_evaluation_harness_preserves_all_phase3_outcomes() -> None
     assert all(
         session.status is HarnessSessionStatus.COMPLETED
         and session.termination_reason is HarnessTerminationReason.COMPLETED
-        and [event.sequence for event in session.events]
-        == list(range(len(session.events)))
+        and [event.sequence for event in session.events] == list(range(len(session.events)))
         for session in harness.sessions.values()
     )
 
@@ -104,10 +100,7 @@ async def test_resumable_manifest_isolates_failure_and_skips_completed_trials(
     assert attempts[scenarios[0].scenario_id] == 1
     assert attempts[scenarios[2].scenario_id] == 1
     assert sum(IsolatedFlakyAgent.calls.values()) == 4
-    assert all(
-        item.status is EvaluationTrialStatus.COMPLETED
-        for item in resumed.records
-    )
+    assert all(item.status is EvaluationTrialStatus.COMPLETED for item in resumed.records)
 
 
 @pytest.mark.asyncio

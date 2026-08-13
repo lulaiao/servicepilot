@@ -11,7 +11,6 @@ from servicepilot.eval.models import Intent
 from servicepilot.routing.composition_evidence import bind_composition_evidence
 from servicepilot.routing.models import IntentResult, RiskLevel
 
-
 TARGET = (Intent.DELIVERY_DELAY, Intent.COMPLAINT_ESCALATION)
 
 
@@ -78,9 +77,7 @@ def main() -> None:
         "case_count": count,
         "baseline": metrics("baseline"),
         "composition_binder": metrics("binder"),
-        "changed_count": sum(
-            item["baseline_bound"] != item["binder_bound"] for item in records
-        ),
+        "changed_count": sum(item["baseline_bound"] != item["binder_bound"] for item in records),
         "records": records,
         "claim_scope": "composition_binding_functional_holdout",
         "model_inference_executed": False,
@@ -92,7 +89,13 @@ def main() -> None:
     args.output.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    print(json.dumps({key: value for key, value in payload.items() if key != "records"}, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {key: value for key, value in payload.items() if key != "records"},
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

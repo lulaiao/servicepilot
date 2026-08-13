@@ -33,4 +33,3 @@ class EmptyResultError(Exception):
 
 class PartialResultError(Exception):
     """A fault hook truncated a result."""
-

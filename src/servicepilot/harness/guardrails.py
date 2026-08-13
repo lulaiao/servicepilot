@@ -10,9 +10,7 @@ from servicepilot.harness.protocols import Guardrail
 class PromptInjectionInputGuardrail:
     name = "prompt_injection_input_guardrail"
 
-    def evaluate(
-        self, stage: GuardrailStage, payload: dict[str, object]
-    ) -> GuardrailDecision:
+    def evaluate(self, stage: GuardrailStage, payload: dict[str, object]) -> GuardrailDecision:
         text = str(payload.get("text", ""))
         blocked = stage is GuardrailStage.INPUT and any(
             marker in text for marker in ("忽略规则", "直接修改数据库")
@@ -21,9 +19,7 @@ class PromptInjectionInputGuardrail:
             allowed=not blocked,
             guardrail=self.name,
             reason=(
-                "policy-bypass pattern detected"
-                if blocked
-                else "no policy-bypass pattern detected"
+                "policy-bypass pattern detected" if blocked else "no policy-bypass pattern detected"
             ),
         )
 

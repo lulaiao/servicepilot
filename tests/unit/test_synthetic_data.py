@@ -10,4 +10,3 @@ def test_synthetic_data_is_deterministic_for_seed() -> None:
     assert first != different
     assert len(first.orders) == 12
     assert all(order.user_id.startswith("synthetic-user-") for order in first.orders)
-

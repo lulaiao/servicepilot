@@ -108,9 +108,7 @@ def generate_dataset(seed: int, order_count: int) -> SyntheticDataset:
             if status is OrderStatus.DELIVERED
             else DeliveryStatus.UNASSIGNED
         )
-        deliveries.append(
-            Delivery(order_id, delivery_status, created_at + timedelta(hours=1))
-        )
+        deliveries.append(Delivery(order_id, delivery_status, created_at + timedelta(hours=1)))
 
     return SyntheticDataset(
         tuple(orders),

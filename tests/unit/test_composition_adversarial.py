@@ -12,9 +12,7 @@ def test_composition_adversarial_v1_is_balanced_and_unique() -> None:
 
     assert len(cases) == 120
     assert len({item.case_id for item in cases}) == 120
-    assert len(
-        {(item.text, item.model_primary, item.model_secondary) for item in cases}
-    ) == 120
+    assert len({(item.text, item.model_primary, item.model_secondary) for item in cases}) == 120
     assert counts == {
         "explicit_pair": 32,
         "negated_escalation": 24,

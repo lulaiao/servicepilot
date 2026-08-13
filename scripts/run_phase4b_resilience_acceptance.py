@@ -48,11 +48,7 @@ async def run(args: argparse.Namespace) -> None:
         agent_factory=RoutedRuleAgent,
         max_concurrency=args.max_concurrency,
     )
-    results = [
-        record.judge_result
-        for record in resumed.records
-        if record.judge_result is not None
-    ]
+    results = [record.judge_result for record in resumed.records if record.judge_result is not None]
     report = build_report(scenarios, results)
     attempts_unchanged = [item.attempts for item in first.records] == [
         item.attempts for item in resumed.records

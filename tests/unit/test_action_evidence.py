@@ -15,7 +15,9 @@ def test_deterministic_actions_match_every_factored_catalog_target() -> None:
         text = record.messages[0]["content"].rsplit("用户输入：", maxsplit=1)[-1]
         target = FactoredIntentResult.model_validate_json(record.messages[1]["content"])
 
-        assert set(extract_requested_actions(text)) == set(target.requested_actions), record.source_record_id
+        assert set(extract_requested_actions(text)) == set(target.requested_actions), (
+            record.source_record_id
+        )
 
 
 @pytest.mark.parametrize(
@@ -32,9 +34,7 @@ def test_negated_or_undecided_actions_are_not_emitted(text: str) -> None:
 
 
 def test_full_refund_dominates_generic_refund_match() -> None:
-    assert extract_requested_actions("请办理整单全额退款58元") == (
-        RequestedAction.FULL_REFUND,
-    )
+    assert extract_requested_actions("请办理整单全额退款58元") == (RequestedAction.FULL_REFUND,)
 
 
 def test_action_evidence_contains_auditable_source_span() -> None:

@@ -9,12 +9,12 @@ from servicepilot.training.classifier_data import classifier_target_for_text
 from servicepilot.training.classifier_v5_data import build_classifier_v5_sft
 from servicepilot.training.data_models import DataSplit, SFTTrainingRecord
 
-
 LABEL_BOUNDARY_RULES = (
     "Ending an order without requesting money back is cancel_order, not reschedule.",
     "A missing or wrong item remains missing_or_wrong_item when refund is its remedy.",
     "A duplicate charge remains duplicate_charge when refund is its remedy.",
-    "partial_refund is primary only when the user directly requests a partial amount without a more specific incident.",
+    "partial_refund is primary only when the user directly requests a partial amount "
+    "without a more specific incident.",
     "requested_amount is serialized as a JSON string when known and null otherwise.",
 )
 

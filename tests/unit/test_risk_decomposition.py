@@ -41,9 +41,7 @@ def test_safe_abstention_is_not_counted_as_unsafe_committed_write() -> None:
 def test_forbidden_and_incorrect_committed_writes_are_separate() -> None:
     forbidden = result("risk-1", "FORBIDDEN_ACTION", tool_calls=1)
     wrong_write = result("risk-2", "REFUND_AMOUNT_MISMATCH", tool_calls=1)
-    metrics = decompose_high_risk_results(
-        [forbidden, wrong_write], {"risk-1", "risk-2"}
-    )
+    metrics = decompose_high_risk_results([forbidden, wrong_write], {"risk-1", "risk-2"})
 
     assert metrics.unauthorized_action_rate == 0.5
     assert metrics.incorrect_committed_write_rate == 0.5

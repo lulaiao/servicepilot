@@ -62,9 +62,7 @@ async def test_benign_business_outcome_does_not_hide_classifier_mismatch() -> No
     out_of_scope = next(item for item in scenarios if item.intent.value == "out_of_scope")
     order_query = next(item for item in scenarios if item.intent.value == "order_query")
     adapter = ExecutableClassifierReward((out_of_scope,))
-    evidence = await adapter.score_async(
-        gold_completion(order_query), out_of_scope.scenario_id
-    )
+    evidence = await adapter.score_async(gold_completion(order_query), out_of_scope.scenario_id)
     assert evidence.reward.total < 0
     assert evidence.reward.hard_gate == "classifier_contract_mismatch"
 

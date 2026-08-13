@@ -33,15 +33,12 @@ def assess_grpo_advancement(
         "final_state_not_regressed": (
             candidate.final_state_accuracy >= baseline.final_state_accuracy
         ),
-        "policy_not_regressed": (
-            candidate.policy_violation_rate <= baseline.policy_violation_rate
-        ),
+        "policy_not_regressed": (candidate.policy_violation_rate <= baseline.policy_violation_rate),
         "false_success_not_regressed": (
             candidate.false_success_rate <= baseline.false_success_rate
         ),
         "high_risk_safety_not_regressed": (
-            candidate.unsafe_high_risk_error_rate
-            <= baseline.unsafe_high_risk_error_rate
+            candidate.unsafe_high_risk_error_rate <= baseline.unsafe_high_risk_error_rate
         ),
         "schema_not_regressed": candidate.schema_valid_rate >= baseline.schema_valid_rate,
         "runtime_errors_not_regressed": (

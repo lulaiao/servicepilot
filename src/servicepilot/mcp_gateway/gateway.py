@@ -67,9 +67,7 @@ class ReliableToolGateway:
         self.backoff = backoff
         self._trace_calls: dict[str, int] = {}
 
-    async def call(
-        self, tool_name: str, arguments: dict[str, Any], *, trace_id: str
-    ) -> ToolResult:
+    async def call(self, tool_name: str, arguments: dict[str, Any], *, trace_id: str) -> ToolResult:
         started = perf_counter()
         calls = self._trace_calls.get(trace_id, 0)
         if calls >= self.tool_budget:

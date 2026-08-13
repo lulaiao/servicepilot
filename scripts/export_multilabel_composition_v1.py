@@ -62,7 +62,9 @@ def main() -> None:
         "split_counts": {"train": len(train), "dev": len(dev), "sealed_test": 0},
         "family_counts": {"train": len(train_families), "dev": len(dev_families)},
         "category_counts": dict(sorted(Counter(item.category for item in records).items())),
-        "label_positive_counts": dict(sorted(Counter(label.value for item in records for label in item.labels).items())),
+        "label_positive_counts": dict(
+            sorted(Counter(label.value for item in records for label in item.labels).items())
+        ),
         "exact_cross_split_overlap_count": len(exact_overlap),
         "semantic_signature_cross_split_overlap_count": len(signature_overlap),
         "near_duplicate_threshold": 0.8,
@@ -72,7 +74,9 @@ def main() -> None:
         "passed": passed,
     }
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 

@@ -21,8 +21,12 @@ _HIGH_RISK_ACTIONS = frozenset(
 
 def _label_f1(gold: Sequence[set[str]], predicted: Sequence[set[str]], label: str) -> float:
     tp = sum(label in left and label in right for left, right in zip(gold, predicted, strict=True))
-    fp = sum(label not in left and label in right for left, right in zip(gold, predicted, strict=True))
-    fn = sum(label in left and label not in right for left, right in zip(gold, predicted, strict=True))
+    fp = sum(
+        label not in left and label in right for left, right in zip(gold, predicted, strict=True)
+    )
+    fn = sum(
+        label in left and label not in right for left, right in zip(gold, predicted, strict=True)
+    )
     precision = tp / (tp + fp) if tp + fp else 0.0
     recall = tp / (tp + fn) if tp + fn else 0.0
     return 2 * precision * recall / (precision + recall) if precision + recall else 0.0
@@ -42,9 +46,9 @@ def factored_metrics(
         {action.value for action in item.requested_actions} if item else set()
         for item in predictions
     ]
-    issue_macro = sum(
-        _label_f1(issue_gold, issue_pred, label.value) for label in IssueType
-    ) / len(IssueType)
+    issue_macro = sum(_label_f1(issue_gold, issue_pred, label.value) for label in IssueType) / len(
+        IssueType
+    )
     action_macro = sum(
         _label_f1(action_gold, action_pred, label.value) for label in RequestedAction
     ) / len(RequestedAction)
@@ -76,11 +80,19 @@ def factored_metrics(
         "example_count": count,
         "schema_valid_rate": round(sum(item is not None for item in predictions) / count, 4),
         "issue_accuracy": round(
-            sum(item is not None and item.issue_type is target.issue_type for target, item in zip(targets, predictions, strict=True)) / count,
+            sum(
+                item is not None and item.issue_type is target.issue_type
+                for target, item in zip(targets, predictions, strict=True)
+            )
+            / count,
             4,
         ),
         "issue_macro_f1": round(issue_macro, 4),
-        "requested_action_exact_match": round(sum(left == right for left, right in zip(action_gold, action_pred, strict=True)) / count, 4),
+        "requested_action_exact_match": round(
+            sum(left == right for left, right in zip(action_gold, action_pred, strict=True))
+            / count,
+            4,
+        ),
         "requested_action_micro_f1": round(action_micro, 4),
         "requested_action_macro_f1": round(action_macro, 4),
         "issue_action_exact_match": round(
@@ -89,7 +101,8 @@ def factored_metrics(
                 and prediction.issue_type is target.issue_type
                 and set(prediction.requested_actions) == set(target.requested_actions)
                 for target, prediction in zip(targets, predictions, strict=True)
-            ) / count,
+            )
+            / count,
             4,
         ),
         "unrequested_action_rate": round(sum(bool(item) for item in hallucinated) / count, 4),

@@ -41,7 +41,13 @@ def main() -> None:
             right_shingles = shingles(text(right))
             score = len(left_shingles & right_shingles) / len(left_shingles | right_shingles)
             if score >= 0.8:
-                near.append({"holdout_id": left.record_id, "development_id": right.record_id, "score": round(score, 4)})
+                near.append(
+                    {
+                        "holdout_id": left.record_id,
+                        "development_id": right.record_id,
+                        "score": round(score, 4),
+                    }
+                )
     if exact or near or len(holdout) != 24:
         raise RuntimeError("holdout integrity freeze failed")
     encoded = "".join(item.model_dump_json() + "\n" for item in holdout).encode()
@@ -61,7 +67,7 @@ def main() -> None:
         "one_shot_execution": True,
         "retuning_or_reexecution_after_observation_allowed": False,
         "hard_eval_v2_accessed": False,
-        "passed": True
+        "passed": True,
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")

@@ -29,9 +29,7 @@ def is_sensitive(key: str, value: object) -> bool:
         return True
     text = str(value)
     return bool(
-        re.search(r"\b1[3-9]\d{9}\b", text)
-        or re.search(r"\b\d{15,19}\b", text)
-        or "@" in text
+        re.search(r"\b1[3-9]\d{9}\b", text) or re.search(r"\b\d{15,19}\b", text) or "@" in text
     )
 
 
@@ -48,14 +46,8 @@ class InMemoryLongTermMemoryStore:
     def revoke_consent(self, consent_id: str, *, now: datetime) -> int:
         with self._lock:
             consent = self._consents[consent_id]
-            self._consents[consent_id] = consent.model_copy(
-                update={"revoked_at": now}
-            )
-            targets = [
-                key
-                for key, item in self._items.items()
-                if item.consent_id == consent_id
-            ]
+            self._consents[consent_id] = consent.model_copy(update={"revoked_at": now})
+            targets = [key for key, item in self._items.items() if item.consent_id == consent_id]
             for key in targets:
                 del self._items[key]
             return len(targets)
@@ -76,15 +68,11 @@ class InMemoryLongTermMemoryStore:
     def list_user(self, user_id: str, *, now: datetime) -> tuple[LongTermMemoryItem, ...]:
         with self._lock:
             self._purge_expired(now)
-            return tuple(
-                item for item in self._items.values() if item.user_id == user_id
-            )
+            return tuple(item for item in self._items.values() if item.user_id == user_id)
 
     def delete_user(self, user_id: str) -> int:
         with self._lock:
-            targets = [
-                key for key, item in self._items.items() if item.user_id == user_id
-            ]
+            targets = [key for key, item in self._items.items() if item.user_id == user_id]
             for key in targets:
                 del self._items[key]
             return len(targets)
@@ -98,8 +86,6 @@ class InMemoryLongTermMemoryStore:
             return True
 
     def _purge_expired(self, now: datetime) -> None:
-        targets = [
-            key for key, item in self._items.items() if not item.is_valid(now)
-        ]
+        targets = [key for key, item in self._items.items() if not item.is_valid(now)]
         for key in targets:
             del self._items[key]

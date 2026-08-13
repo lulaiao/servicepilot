@@ -7,4 +7,3 @@ from servicepilot.routing.models import IntentResult
 
 class IntentClassifier(Protocol):
     def classify(self, text: str) -> IntentResult: ...
-

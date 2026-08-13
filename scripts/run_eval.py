@@ -34,9 +34,7 @@ def parse_args() -> argparse.Namespace:
 async def run(args: argparse.Namespace) -> None:
     scenarios = build_phase3_scenarios()
     trajectories, _, report = await run_suite(scenarios)
-    scenario_payload = "\n".join(
-        scenario.model_dump_json() for scenario in scenarios
-    ).encode()
+    scenario_payload = "\n".join(scenario.model_dump_json() for scenario in scenarios).encode()
     args.trace_output.parent.mkdir(parents=True, exist_ok=True)
     args.report_output.parent.mkdir(parents=True, exist_ok=True)
     args.manifest_output.parent.mkdir(parents=True, exist_ok=True)
@@ -44,9 +42,7 @@ async def run(args: argparse.Namespace) -> None:
         "\n".join(item.model_dump_json() for item in trajectories) + "\n",
         encoding="utf-8",
     )
-    args.report_output.write_text(
-        report.model_dump_json(indent=2) + "\n", encoding="utf-8"
-    )
+    args.report_output.write_text(report.model_dump_json(indent=2) + "\n", encoding="utf-8")
     manifest = {
         "scenario_count": len(scenarios),
         "scenario_sha256": hashlib.sha256(scenario_payload).hexdigest(),

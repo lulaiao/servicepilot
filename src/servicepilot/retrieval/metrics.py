@@ -22,11 +22,7 @@ def evaluate_retrieval(
         relevant = [identifier in gold for identifier in returned]
         recalls.append(len(set(returned) & gold) / len(gold))
         first_rank = next(
-            (
-                rank
-                for rank, is_relevant in enumerate(relevant, start=1)
-                if is_relevant
-            ),
+            (rank for rank, is_relevant in enumerate(relevant, start=1) if is_relevant),
             None,
         )
         reciprocal_ranks.append(0.0 if first_rank is None else 1 / first_rank)
@@ -35,10 +31,7 @@ def evaluate_retrieval(
             for rank, is_relevant in enumerate(relevant, start=1)
             if is_relevant
         )
-        ideal_gain = sum(
-            1 / math.log2(rank + 1)
-            for rank in range(1, min(len(gold), top_k) + 1)
-        )
+        ideal_gain = sum(1 / math.log2(rank + 1) for rank in range(1, min(len(gold), top_k) + 1))
         ndcgs.append(discounted_gain / ideal_gain)
         citation_accuracies.append(
             0.0 if not returned else len(set(returned) & gold) / len(returned)

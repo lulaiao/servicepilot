@@ -63,9 +63,7 @@ class AgentRuntimeHarness:
             ):
                 return existing
             if existing.status is not HarnessSessionStatus.INTERRUPTED:
-                raise UnsupportedResumeError(
-                    "checkpoint is not at a safe resumable boundary"
-                )
+                raise UnsupportedResumeError("checkpoint is not at a safe resumable boundary")
             session = self._append(
                 existing,
                 "session_resumed",
@@ -92,9 +90,9 @@ class AgentRuntimeHarness:
 
             assert isinstance(step, ToolStepCheckpoint)
             current = session_holder[0]
-            steps = tuple(
-                old for old in current.tool_steps if old.call_key != step.call_key
-            ) + (step,)
+            steps = tuple(old for old in current.tool_steps if old.call_key != step.call_key) + (
+                step,
+            )
             current = self._append(
                 current.model_copy(update={"tool_steps": steps}),
                 f"tool_{step.status.value}",
@@ -120,12 +118,7 @@ class AgentRuntimeHarness:
             stopped = self._append(
                 session,
                 "guardrail_stop",
-                {
-                    "decisions": [
-                        item.model_dump(mode="json")
-                        for item in input_decisions
-                    ]
-                },
+                {"decisions": [item.model_dump(mode="json") for item in input_decisions]},
                 status=HarnessSessionStatus.FAILED,
                 termination=HarnessTerminationReason.GUARDRAIL_STOP,
             )
@@ -143,9 +136,7 @@ class AgentRuntimeHarness:
                 dispatcher,
             )
         except HarnessControlStop as exc:
-            return self._stop(
-                session_holder[0], exc.reason, str(exc), dispatcher
-            )
+            return self._stop(session_holder[0], exc.reason, str(exc), dispatcher)
         except SimulatedHarnessInterruption as exc:
             interrupted = self._append(
                 session_holder[0],
@@ -168,10 +159,7 @@ class AgentRuntimeHarness:
             )
             self.checkpoints.save(failed)
             raise
-        turns_used = sum(
-            event.role.value in {"user", "assistant"}
-            for event in trajectory.events
-        )
+        turns_used = sum(event.role.value in {"user", "assistant"} for event in trajectory.events)
         model_tokens_used = int(getattr(agent, "model_tokens_used", 0))
         session = session.model_copy(
             update={
@@ -221,10 +209,7 @@ class AgentRuntimeHarness:
                 "trajectory_sha256": hashlib.sha256(
                     trajectory.model_dump_json().encode()
                 ).hexdigest(),
-                "output_guardrails": [
-                    item.model_dump(mode="json")
-                    for item in output_decisions
-                ],
+                "output_guardrails": [item.model_dump(mode="json") for item in output_decisions],
             },
             status=status,
             termination=termination,

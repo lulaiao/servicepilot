@@ -45,11 +45,7 @@ def summarize_diversity(samples: tuple[DiversitySample, ...]) -> DiversitySummar
     schema_valid_rate = sum(item.parsed for item in samples) / len(samples)
     unsafe_rate = sum(item.hard_gate == "unsafe" for item in samples) / len(samples)
     unique_rate = len({item.completion for item in samples}) / len(samples)
-    eligible = (
-        schema_valid_rate >= 0.95
-        and valid_nonzero_groups > 0
-        and unsafe_rate <= 0.1
-    )
+    eligible = schema_valid_rate >= 0.95 and valid_nonzero_groups > 0 and unsafe_rate <= 0.1
     return DiversitySummary(
         sample_count=len(samples),
         scenario_count=len(by_scenario),

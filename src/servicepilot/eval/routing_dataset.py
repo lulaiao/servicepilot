@@ -27,9 +27,7 @@ class RoutingExample(BaseModel):
 
 def build_routing_dataset() -> tuple[RoutingExample, ...]:
     """Return 60 frozen examples; sealed strings are not used by rule code."""
-    samples: dict[
-        Intent, tuple[tuple[str, str | None], ...]
-    ] = {
+    samples: dict[Intent, tuple[tuple[str, str | None], ...]] = {
         Intent.ORDER_QUERY: (
             ("查下订单 ord-101 的状态", "ord-101"),
             ("我那单现在什么进度", None),
@@ -127,14 +125,8 @@ def build_routing_dataset() -> tuple[RoutingExample, ...]:
         for index, ((text, order_id), split) in enumerate(
             zip(rows, split_by_index, strict=True), start=1
         ):
-            primary = (
-                Intent.DELIVERY_DELAY if intent is Intent.MULTI_INTENT else intent
-            )
-            secondary = (
-                (Intent.COMPLAINT_ESCALATION,)
-                if intent is Intent.MULTI_INTENT
-                else ()
-            )
+            primary = Intent.DELIVERY_DELAY if intent is Intent.MULTI_INTENT else intent
+            secondary = (Intent.COMPLAINT_ESCALATION,) if intent is Intent.MULTI_INTENT else ()
             examples.append(
                 RoutingExample(
                     example_id=f"{intent.value}-{index}",
@@ -168,4 +160,3 @@ def _amount(intent: Intent, text: str) -> str | None:
     if intent in {Intent.FULL_REFUND, Intent.DUPLICATE_CHARGE}:
         return "58" if "58" in text else None
     return None
-

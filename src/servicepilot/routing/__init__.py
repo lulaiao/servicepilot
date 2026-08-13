@@ -1,12 +1,12 @@
 """Stateful routing primitives."""
 
-from servicepilot.routing.classifiers import IntentClassifier
 from servicepilot.routing.action_evidence import (
     ActionEvidence,
     bind_evidence_backed_actions,
     extract_requested_action_evidence,
     extract_requested_actions,
 )
+from servicepilot.routing.classifiers import IntentClassifier
 from servicepilot.routing.factored_intent import (
     FactoredIntentResult,
     FactoredSlots,

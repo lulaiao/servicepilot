@@ -33,9 +33,7 @@ def main() -> None:
         "no_memory_success_rate": round(
             sum(item.no_memory_success for item in cases) / len(cases), 4
         ),
-        "layered_memory_success_count": sum(
-            item.layered_memory_success for item in cases
-        ),
+        "layered_memory_success_count": sum(item.layered_memory_success for item in cases),
         "layered_memory_success_rate": round(
             sum(item.layered_memory_success for item in cases) / len(cases), 4
         ),

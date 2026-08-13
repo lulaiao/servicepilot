@@ -28,4 +28,3 @@ def test_refund_request_requires_positive_amount_and_nonempty_keys() -> None:
 def test_policy_top_k_is_bounded() -> None:
     with pytest.raises(ValidationError):
         SearchPolicyRequest(query="refund", top_k=101)
-

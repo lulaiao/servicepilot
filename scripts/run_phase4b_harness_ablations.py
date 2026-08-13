@@ -54,14 +54,10 @@ def report_metrics(report: object) -> dict[str, Any]:
 
 async def run(args: argparse.Namespace) -> None:
     scenarios = build_phase3_scenarios()
-    scenario_bytes = b"\n".join(
-        item.model_dump_json().encode() for item in scenarios
-    )
+    scenario_bytes = b"\n".join(item.model_dump_json().encode() for item in scenarios)
     baseline_harness = EvaluationHarness(code_revision=args.code_revision)
-    baseline_trajectories, baseline_results, baseline_report = (
-        await baseline_harness.run_suite(
-            scenarios, agent_factory=RoutedRuleAgent
-        )
+    baseline_trajectories, baseline_results, baseline_report = await baseline_harness.run_suite(
+        scenarios, agent_factory=RoutedRuleAgent
     )
 
     constrained = EvaluationHarness(
@@ -73,9 +69,7 @@ async def run(args: argparse.Namespace) -> None:
             timeout_seconds=0.1,
         ),
     )
-    _, _, constrained_report = await constrained.run_suite(
-        scenarios, agent_factory=RoutedRuleAgent
-    )
+    _, _, constrained_report = await constrained.run_suite(scenarios, agent_factory=RoutedRuleAgent)
 
     no_reroute = EvaluationHarness(code_revision=args.code_revision)
     no_reroute_trajectories, _, no_reroute_report = await no_reroute.run_suite(
@@ -106,9 +100,7 @@ async def run(args: argparse.Namespace) -> None:
         environment = build_trial_environment(scenario, budgets)
         config = HarnessRunConfig(
             code_revision=args.code_revision,
-            scenario_sha256=hashlib.sha256(
-                scenario.model_dump_json().encode()
-            ).hexdigest(),
+            scenario_sha256=hashlib.sha256(scenario.model_dump_json().encode()).hexdigest(),
             budgets=budgets,
         )
         runtime = AgentRuntimeHarness(
@@ -127,9 +119,7 @@ async def run(args: argparse.Namespace) -> None:
     claim_only_acceptance = tuple(
         trajectory.claimed_success for trajectory in baseline_trajectories
     )
-    authoritative_acceptance = tuple(
-        result.task_success for result in baseline_results
-    )
+    authoritative_acceptance = tuple(result.task_success for result in baseline_results)
     verifier_disagreements = sum(
         claim != authoritative
         for claim, authoritative in zip(
@@ -160,14 +150,11 @@ async def run(args: argparse.Namespace) -> None:
                 "enabled_tool_steps": blocked_tool_steps,
                 "disabled_authoritative_safe_outcomes": sum(
                     result.task_success
-                    for scenario, result in zip(
-                        scenarios, baseline_results, strict=True
-                    )
+                    for scenario, result in zip(scenarios, baseline_results, strict=True)
                     if scenario in injection_scenarios
                 ),
                 "interpretation": (
-                    "The Agent policy is a redundant second deterministic "
-                    "injection boundary."
+                    "The Agent policy is a redundant second deterministic injection boundary."
                 ),
             },
             "observation_rerouting": {

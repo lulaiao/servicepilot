@@ -33,9 +33,7 @@ from servicepilot.mcp_gateway.faults import FaultKind
 class BlockingGuardrail:
     name = "blocking_test_guardrail"
 
-    def evaluate(
-        self, stage: GuardrailStage, payload: dict[str, object]
-    ) -> GuardrailDecision:
+    def evaluate(self, stage: GuardrailStage, payload: dict[str, object]) -> GuardrailDecision:
         return GuardrailDecision(
             allowed=stage is not GuardrailStage.INPUT,
             guardrail=self.name,
@@ -46,12 +44,9 @@ class BlockingGuardrail:
 class ToolBlockingGuardrail:
     name = "tool_blocking_test_guardrail"
 
-    def evaluate(
-        self, stage: GuardrailStage, payload: dict[str, object]
-    ) -> GuardrailDecision:
+    def evaluate(self, stage: GuardrailStage, payload: dict[str, object]) -> GuardrailDecision:
         blocked = (
-            stage is GuardrailStage.TOOL
-            and payload.get("tool_name") == "create_refund_request"
+            stage is GuardrailStage.TOOL and payload.get("tool_name") == "create_refund_request"
         )
         return GuardrailDecision(
             allowed=not blocked,
@@ -128,9 +123,7 @@ async def test_replay_is_verify_only_and_does_not_mutate_repository() -> None:
         for item in build_phase3_scenarios()
         if item.intent is Intent.CANCEL_ORDER and item.accept_confirmation
     )
-    trajectory, result, repository = await EvaluationHarness().run_scenario(
-        scenario
-    )
+    trajectory, result, repository = await EvaluationHarness().run_scenario(scenario)
     audits_before = repository.list_audit_events()
 
     session = AgentRuntimeHarness().replay(
@@ -208,13 +201,7 @@ async def test_resume_after_checkpointed_high_risk_write_does_not_repeat_refund(
         item
         for item in build_phase3_scenarios()
         if item.intent is Intent.PARTIAL_REFUND and not item.faults
-    ).model_copy(
-        update={
-            "faults": {
-                "create_refund_request": (FaultKind.LOST_RESPONSE,)
-            }
-        }
-    )
+    ).model_copy(update={"faults": {"create_refund_request": (FaultKind.LOST_RESPONSE,)}})
     config = config_for(scenario.scenario_id)
     store = InMemoryCheckpointStore()
     runtime = AgentRuntimeHarness(checkpoint_store=store)
@@ -236,8 +223,7 @@ async def test_resume_after_checkpointed_high_risk_write_does_not_repeat_refund(
     committed_writes = [
         step
         for step in interrupted.tool_steps
-        if step.tool_name == "create_refund_request"
-        and step.status.value == "committed"
+        if step.tool_name == "create_refund_request" and step.status.value == "committed"
     ]
     assert len(committed_writes) == 1
     assert committed_writes[0].result is not None
@@ -263,9 +249,7 @@ async def test_resume_after_checkpointed_high_risk_write_does_not_repeat_refund(
 @pytest.mark.asyncio
 async def test_input_guardrail_stops_before_agent_or_tools() -> None:
     scenario = build_phase3_scenarios()[0]
-    runtime = AgentRuntimeHarness(
-        guardrails=GuardrailPipeline((BlockingGuardrail(),))
-    )
+    runtime = AgentRuntimeHarness(guardrails=GuardrailPipeline((BlockingGuardrail(),)))
 
     session = await runtime.run(
         scenario=scenario,
@@ -289,9 +273,7 @@ async def test_tool_guardrail_blocks_write_before_gateway() -> None:
     )
     config = config_for(scenario.scenario_id)
     environment = build_trial_environment(scenario, config.budgets)
-    runtime = AgentRuntimeHarness(
-        guardrails=GuardrailPipeline((ToolBlockingGuardrail(),))
-    )
+    runtime = AgentRuntimeHarness(guardrails=GuardrailPipeline((ToolBlockingGuardrail(),)))
 
     session = await runtime.run(
         scenario=scenario,
@@ -303,9 +285,7 @@ async def test_tool_guardrail_blocks_write_before_gateway() -> None:
 
     assert session.termination_reason is HarnessTerminationReason.GUARDRAIL_STOP
     assert len(environment.repository.list_refunds(scenario.order_id)) == 0
-    blocked = next(
-        step for step in session.tool_steps if step.status.value == "blocked"
-    )
+    blocked = next(step for step in session.tool_steps if step.status.value == "blocked")
     assert blocked.guardrail_decisions[0]["guardrail"] == ToolBlockingGuardrail.name
 
 
@@ -317,9 +297,7 @@ async def test_tool_budget_has_explicit_termination() -> None:
         if item.intent is Intent.CANCEL_ORDER and item.accept_confirmation
     )
     budgets = HarnessBudgets(max_tool_calls=1, timeout_seconds=0.1)
-    config = config_for(scenario.scenario_id).model_copy(
-        update={"budgets": budgets}
-    )
+    config = config_for(scenario.scenario_id).model_copy(update={"budgets": budgets})
     environment = build_trial_environment(scenario, budgets)
 
     session = await AgentRuntimeHarness().run(
@@ -337,16 +315,10 @@ async def test_tool_budget_has_explicit_termination() -> None:
 @pytest.mark.asyncio
 async def test_retry_budget_has_explicit_termination() -> None:
     scenario = next(
-        item
-        for item in build_phase3_scenarios()
-        if item.intent is Intent.ORDER_QUERY
-    ).model_copy(
-        update={"faults": {"get_order": (FaultKind.TIMEOUT,) * 3}}
-    )
+        item for item in build_phase3_scenarios() if item.intent is Intent.ORDER_QUERY
+    ).model_copy(update={"faults": {"get_order": (FaultKind.TIMEOUT,) * 3}})
     budgets = HarnessBudgets(max_retries=2, timeout_seconds=0.1)
-    config = config_for(scenario.scenario_id).model_copy(
-        update={"budgets": budgets}
-    )
+    config = config_for(scenario.scenario_id).model_copy(update={"budgets": budgets})
     environment = build_trial_environment(scenario, budgets)
 
     session = await AgentRuntimeHarness().run(
@@ -365,9 +337,7 @@ async def test_retry_budget_has_explicit_termination() -> None:
 async def test_turn_and_token_budgets_have_explicit_termination() -> None:
     scenario = build_phase3_scenarios()[0]
     turn_budgets = HarnessBudgets(max_turns=1, timeout_seconds=0.1)
-    turn_config = config_for(scenario.scenario_id).model_copy(
-        update={"budgets": turn_budgets}
-    )
+    turn_config = config_for(scenario.scenario_id).model_copy(update={"budgets": turn_budgets})
     turn_environment = build_trial_environment(scenario, turn_budgets)
     turn_session = await AgentRuntimeHarness().run(
         scenario=scenario,
@@ -378,12 +348,8 @@ async def test_turn_and_token_budgets_have_explicit_termination() -> None:
     )
     assert turn_session.termination_reason is HarnessTerminationReason.TURN_BUDGET_EXHAUSTED
 
-    token_budgets = HarnessBudgets(
-        max_model_tokens=1, timeout_seconds=0.1
-    )
-    token_config = config_for(scenario.scenario_id).model_copy(
-        update={"budgets": token_budgets}
-    )
+    token_budgets = HarnessBudgets(max_model_tokens=1, timeout_seconds=0.1)
+    token_config = config_for(scenario.scenario_id).model_copy(update={"budgets": token_budgets})
     token_environment = build_trial_environment(scenario, token_budgets)
     token_session = await AgentRuntimeHarness().run(
         scenario=scenario,
@@ -400,9 +366,7 @@ async def test_turn_and_token_budgets_have_explicit_termination() -> None:
 async def test_time_budget_has_explicit_termination() -> None:
     scenario = build_phase3_scenarios()[0]
     budgets = HarnessBudgets(timeout_seconds=0.001)
-    config = config_for(scenario.scenario_id).model_copy(
-        update={"budgets": budgets}
-    )
+    config = config_for(scenario.scenario_id).model_copy(update={"budgets": budgets})
     environment = build_trial_environment(scenario, budgets)
 
     session = await AgentRuntimeHarness().run(

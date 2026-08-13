@@ -41,9 +41,7 @@ def run_memory_benchmark() -> tuple[MemoryBenchmarkCaseResult, ...]:
 
 def _cross_twenty_turns(now: datetime) -> MemoryBenchmarkCaseResult:
     recent_only = RecentMessageWindow(capacity=6)
-    layered = LayeredMemory(
-        conversation_id="benchmark-20-turn", user_id="benchmark-user"
-    )
+    layered = LayeredMemory(conversation_id="benchmark-20-turn", user_id="benchmark-user")
     layered.remember_fact(
         MemoryFact(
             fact_id="order-reference",
@@ -64,9 +62,7 @@ def _cross_twenty_turns(now: datetime) -> MemoryBenchmarkCaseResult:
         )
         recent_only.append(message)
         layered.record_message(message)
-    no_memory_resolved = any(
-        "ord-memory-20" in item.content for item in recent_only.snapshot()
-    )
+    no_memory_resolved = any("ord-memory-20" in item.content for item in recent_only.snapshot())
     layered_resolved = layered.resolve_reference("这单") == "ord-memory-20"
     return MemoryBenchmarkCaseResult(
         case_id="cross_20_turn_reference",
@@ -77,9 +73,7 @@ def _cross_twenty_turns(now: datetime) -> MemoryBenchmarkCaseResult:
 
 
 def _consented_preference(now: datetime) -> MemoryBenchmarkCaseResult:
-    layered = LayeredMemory(
-        conversation_id="benchmark-preference", user_id="benchmark-user"
-    )
+    layered = LayeredMemory(conversation_id="benchmark-preference", user_id="benchmark-user")
     layered.grant_consent(
         MemoryConsent(
             consent_id="benchmark-consent",
@@ -114,9 +108,7 @@ def _consented_preference(now: datetime) -> MemoryBenchmarkCaseResult:
 
 
 def _tool_summary_conflict(now: datetime) -> MemoryBenchmarkCaseResult:
-    layered = LayeredMemory(
-        conversation_id="benchmark-conflict", user_id="benchmark-user"
-    )
+    layered = LayeredMemory(conversation_id="benchmark-conflict", user_id="benchmark-user")
     layered.remember_fact(
         MemoryFact(
             fact_id="tool-refunded-v3",
@@ -138,9 +130,7 @@ def _tool_summary_conflict(now: datetime) -> MemoryBenchmarkCaseResult:
         ),
         now=now + timedelta(minutes=10),
     )
-    resolved = layered.context(
-        now=now + timedelta(minutes=10)
-    ).working.facts["order_status"].value
+    resolved = layered.context(now=now + timedelta(minutes=10)).working.facts["order_status"].value
     return MemoryBenchmarkCaseResult(
         case_id="tool_over_stale_summary",
         no_memory_success=False,
@@ -151,9 +141,7 @@ def _tool_summary_conflict(now: datetime) -> MemoryBenchmarkCaseResult:
 
 
 def _expired_state_abstention(now: datetime) -> MemoryBenchmarkCaseResult:
-    layered = LayeredMemory(
-        conversation_id="benchmark-expiry", user_id="benchmark-user"
-    )
+    layered = LayeredMemory(conversation_id="benchmark-expiry", user_id="benchmark-user")
     layered.remember_fact(
         MemoryFact(
             fact_id="temporary-status",
@@ -165,9 +153,7 @@ def _expired_state_abstention(now: datetime) -> MemoryBenchmarkCaseResult:
         ),
         now=now,
     )
-    abstained = "order_status" not in layered.context(
-        now=now + timedelta(minutes=6)
-    ).working.facts
+    abstained = "order_status" not in layered.context(now=now + timedelta(minutes=6)).working.facts
     return MemoryBenchmarkCaseResult(
         case_id="expired_state_abstention",
         no_memory_success=True,
@@ -178,9 +164,7 @@ def _expired_state_abstention(now: datetime) -> MemoryBenchmarkCaseResult:
 
 
 def _sensitive_data_rejection(now: datetime) -> MemoryBenchmarkCaseResult:
-    layered = LayeredMemory(
-        conversation_id="benchmark-privacy", user_id="benchmark-user"
-    )
+    layered = LayeredMemory(conversation_id="benchmark-privacy", user_id="benchmark-user")
     layered.grant_consent(
         MemoryConsent(
             consent_id="privacy-consent",

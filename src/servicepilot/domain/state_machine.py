@@ -24,4 +24,3 @@ def transition_order(order: Order, target: OrderStatus) -> Order:
             f"order {order.order_id} cannot transition from {order.status} to {target}"
         )
     return replace(order, status=target, version=order.version + 1)
-

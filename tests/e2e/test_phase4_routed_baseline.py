@@ -14,9 +14,7 @@ async def test_routed_agent_records_dynamic_role_decisions() -> None:
         if item.intent is Intent.MULTI_INTENT and item.accept_confirmation
     )
 
-    trajectory, result, _ = await run_scenario(
-        scenario, agent=RoutedRuleAgent()
-    )
+    trajectory, result, _ = await run_scenario(scenario, agent=RoutedRuleAgent())
     routes = [
         event.content
         for event in trajectory.events
@@ -33,9 +31,7 @@ async def test_routed_agent_records_dynamic_role_decisions() -> None:
 async def test_routed_agent_matches_single_agent_business_outcomes() -> None:
     scenarios = build_phase3_scenarios()
 
-    _, results, report = await run_suite(
-        scenarios, agent_factory=RoutedRuleAgent
-    )
+    _, results, report = await run_suite(scenarios, agent_factory=RoutedRuleAgent)
 
     assert len(results) == 36
     assert report.executable_task_success_rate == 1.0

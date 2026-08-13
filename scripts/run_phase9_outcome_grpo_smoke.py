@@ -120,20 +120,14 @@ def main() -> None:
     elapsed = time.perf_counter() - started
     log_history = trainer.state.log_history
     reward_stds = [
-        float(row["reward_std"])
-        for row in log_history
-        if row.get("reward_std") is not None
+        float(row["reward_std"]) for row in log_history if row.get("reward_std") is not None
     ]
     train_loss = float(result.training_loss)
     learning_rates = [
-        float(row["learning_rate"])
-        for row in log_history
-        if row.get("learning_rate") is not None
+        float(row["learning_rate"]) for row in log_history if row.get("learning_rate") is not None
     ]
     gradient_norms = [
-        float(row["grad_norm"])
-        for row in log_history
-        if row.get("grad_norm") is not None
+        float(row["grad_norm"]) for row in log_history if row.get("grad_norm") is not None
     ]
     parameter_delta_squared = 0.0
     for name, parameter in model.named_parameters():

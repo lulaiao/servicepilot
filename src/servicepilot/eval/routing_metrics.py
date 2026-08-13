@@ -63,34 +63,23 @@ def evaluate_extractor(
     return RoutingMetrics(
         example_count=len(selected),
         primary_accuracy=round(
-            sum(
-                gold is predicted
-                for gold, predicted in zip(labels, predicted_labels, strict=True)
-            )
+            sum(gold is predicted for gold, predicted in zip(labels, predicted_labels, strict=True))
             / len(selected),
             4,
         ),
         macro_f1=round(sum(f1_scores) / len(f1_scores), 4),
         secondary_exact_match=round(
             sum(
-                set(example.secondary_intents)
-                == set(prediction.secondary_intents)
-                for example, prediction in zip(
-                    selected, predictions, strict=True
-                )
+                set(example.secondary_intents) == set(prediction.secondary_intents)
+                for example, prediction in zip(selected, predictions, strict=True)
             )
             / len(selected),
             4,
         ),
         slot_exact_match=round(
             sum(
-                all(
-                    prediction.slots.get(key) == value
-                    for key, value in example.slots.items()
-                )
-                for example, prediction in zip(
-                    selected, predictions, strict=True
-                )
+                all(prediction.slots.get(key) == value for key, value in example.slots.items())
+                for example, prediction in zip(selected, predictions, strict=True)
             )
             / len(selected),
             4,

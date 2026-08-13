@@ -42,9 +42,7 @@ class OutputCompletionVerifier:
         successful = {
             event.tool_name
             for event in events
-            if event.tool_name
-            and event.result
-            and event.result.get("ok") is True
+            if event.tool_name and event.result and event.result.get("ok") is True
         }
         missing = tuple(tool for tool in required if tool not in successful)
         return CompletionDecision(

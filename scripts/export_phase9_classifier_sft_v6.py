@@ -43,7 +43,11 @@ def main() -> None:
             score = len(left_shingles & right_shingles) / len(left_shingles | right_shingles)
             if score >= 0.8:
                 near_pairs.append(
-                    {"train_id": left.record_id, "dev_id": right.record_id, "score": round(score, 4)}
+                    {
+                        "train_id": left.record_id,
+                        "dev_id": right.record_id,
+                        "score": round(score, 4),
+                    }
                 )
     counts = Counter(item.split.value for item in records)
     new_records = [item for item in train if item.source_record_id.startswith("v6-train-")]

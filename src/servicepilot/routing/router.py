@@ -97,4 +97,3 @@ ROLE_INSTRUCTIONS: dict[AgentRole, str] = {
     AgentRole.ESCALATION: "Stop unsafe flows or create a complete human handoff.",
     AgentRole.VERIFIER: "Verify final state; never execute a high-risk write.",
 }
-

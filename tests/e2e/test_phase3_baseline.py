@@ -12,19 +12,13 @@ def test_catalog_has_three_variants_for_every_intent() -> None:
 
     assert len(scenarios) == 36
     assert {scenario.intent for scenario in scenarios} == set(Intent)
-    assert all(
-        sum(item.intent is intent for item in scenarios) == 3 for intent in Intent
-    )
+    assert all(sum(item.intent is intent for item in scenarios) == 3 for intent in Intent)
     assert len({scenario.scenario_id for scenario in scenarios}) == 36
 
 
 @pytest.mark.asyncio
 async def test_confirmed_cancel_changes_authoritative_state() -> None:
-    scenario = next(
-        item
-        for item in build_phase3_scenarios()
-        if item.intent is Intent.CANCEL_ORDER
-    )
+    scenario = next(item for item in build_phase3_scenarios() if item.intent is Intent.CANCEL_ORDER)
 
     trajectory, result, repository = await run_scenario(scenario)
 
@@ -70,18 +64,12 @@ async def test_user_refusal_prevents_cancel_and_is_not_false_success() -> None:
     assert result.false_success is False
     assert trajectory.claimed_success is False
     assert repository.get_order(scenario.order_id).status is OrderStatus.ACCEPTED
-    assert all(
-        event.tool_name != "cancel_order" for event in trajectory.events
-    )
+    assert all(event.tool_name != "cancel_order" for event in trajectory.events)
 
 
 @pytest.mark.asyncio
 async def test_false_success_is_detected_from_state_not_agent_claim() -> None:
-    scenario = next(
-        item
-        for item in build_phase3_scenarios()
-        if item.intent is Intent.ORDER_QUERY
-    )
+    scenario = next(item for item in build_phase3_scenarios() if item.intent is Intent.ORDER_QUERY)
     trajectory, _, repository = await run_scenario(scenario)
     impossible_expectation = scenario.model_copy(
         update={
@@ -92,9 +80,7 @@ async def test_false_success_is_detected_from_state_not_agent_claim() -> None:
         }
     )
 
-    result = DeterministicJudge().evaluate(
-        impossible_expectation, trajectory, repository
-    )
+    result = DeterministicJudge().evaluate(impossible_expectation, trajectory, repository)
 
     assert trajectory.claimed_success is True
     assert result.final_state_correct is False
@@ -104,13 +90,9 @@ async def test_false_success_is_detected_from_state_not_agent_claim() -> None:
 
 @pytest.mark.asyncio
 async def test_judge_rejects_called_tool_outside_allowed_contract() -> None:
-    scenario = next(
-        item for item in build_phase3_scenarios() if item.intent is Intent.ORDER_QUERY
-    )
+    scenario = next(item for item in build_phase3_scenarios() if item.intent is Intent.ORDER_QUERY)
     trajectory, _, repository = await run_scenario(scenario)
-    no_tool_contract = scenario.model_copy(
-        update={"allowed_actions": (), "forbidden_actions": ()}
-    )
+    no_tool_contract = scenario.model_copy(update={"allowed_actions": (), "forbidden_actions": ()})
 
     result = DeterministicJudge().evaluate(no_tool_contract, trajectory, repository)
 

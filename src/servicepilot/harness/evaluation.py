@@ -75,9 +75,7 @@ class EvaluationHarness:
         environment = build_trial_environment(scenario, self.budgets)
         config = HarnessRunConfig(
             code_revision=self.code_revision,
-            scenario_sha256=hashlib.sha256(
-                scenario.model_dump_json().encode()
-            ).hexdigest(),
+            scenario_sha256=hashlib.sha256(scenario.model_dump_json().encode()).hexdigest(),
             model_revision=self.model_revision,
             prompt_revision=self.prompt_revision,
             budgets=self.budgets,
@@ -92,12 +90,8 @@ class EvaluationHarness:
         )
         self.sessions[session.session_id] = session
         if session.trajectory is None:
-            raise RuntimeError(
-                f"Harness stopped without trajectory: {session.termination_reason}"
-            )
-        result = DeterministicJudge().evaluate(
-            scenario, session.trajectory, environment.repository
-        )
+            raise RuntimeError(f"Harness stopped without trajectory: {session.termination_reason}")
+        result = DeterministicJudge().evaluate(scenario, session.trajectory, environment.repository)
         return session.trajectory, result, environment.repository
 
     async def run_suite(
@@ -108,9 +102,7 @@ class EvaluationHarness:
         trajectories: list[Trajectory] = []
         results: list[JudgeResult] = []
         for scenario in scenarios:
-            trajectory, result, _ = await self.run_scenario(
-                scenario, agent=agent_factory()
-            )
+            trajectory, result, _ = await self.run_scenario(scenario, agent=agent_factory())
             trajectories.append(trajectory)
             results.append(result)
         return (
@@ -152,8 +144,7 @@ class EvaluationHarness:
         ):
             raise ValueError("existing evaluation manifest does not match this run")
         records = {
-            item.scenario_id: item
-            for item in (existing.records if existing is not None else ())
+            item.scenario_id: item for item in (existing.records if existing is not None else ())
         }
         scenario_order = {item.scenario_id: index for index, item in enumerate(scenarios)}
         semaphore = asyncio.Semaphore(max_concurrency)
@@ -177,20 +168,13 @@ class EvaluationHarness:
 
         async def execute(scenario: ScenarioSpec) -> None:
             previous = records.get(scenario.scenario_id)
-            if (
-                previous is not None
-                and previous.status is EvaluationTrialStatus.COMPLETED
-            ):
+            if previous is not None and previous.status is EvaluationTrialStatus.COMPLETED:
                 return
             attempts = 1 if previous is None else previous.attempts + 1
-            scenario_sha256 = hashlib.sha256(
-                scenario.model_dump_json().encode()
-            ).hexdigest()
+            scenario_sha256 = hashlib.sha256(scenario.model_dump_json().encode()).hexdigest()
             async with semaphore:
                 try:
-                    trajectory, result, _ = await self.run_scenario(
-                        scenario, agent=agent_factory()
-                    )
+                    trajectory, result, _ = await self.run_scenario(scenario, agent=agent_factory())
                     record = EvaluationTrialRecord(
                         scenario_id=scenario.scenario_id,
                         scenario_sha256=scenario_sha256,
@@ -214,43 +198,27 @@ class EvaluationHarness:
         return current_manifest()
 
 
-def build_report(
-    scenarios: tuple[ScenarioSpec, ...], results: list[JudgeResult]
-) -> EvalReport:
+def build_report(scenarios: tuple[ScenarioSpec, ...], results: list[JudgeResult]) -> EvalReport:
     count = len(results)
     by_intent: dict[str, dict[str, float | int]] = {}
     results_by_id = {item.scenario_id: item for item in results}
     for scenario in scenarios:
-        bucket = by_intent.setdefault(
-            scenario.intent.value, {"count": 0, "success_count": 0}
-        )
+        bucket = by_intent.setdefault(scenario.intent.value, {"count": 0, "success_count": 0})
         bucket["count"] = int(bucket["count"]) + 1
         result = results_by_id[scenario.scenario_id]
-        bucket["success_count"] = int(bucket["success_count"]) + int(
-            result.task_success
-        )
+        bucket["success_count"] = int(bucket["success_count"]) + int(result.task_success)
     for bucket in by_intent.values():
-        bucket["success_rate"] = round(
-            int(bucket["success_count"]) / int(bucket["count"]), 4
-        )
+        bucket["success_rate"] = round(int(bucket["success_count"]) / int(bucket["count"]), 4)
     successes = sum(item.task_success for item in results)
     return EvalReport(
         scenario_count=count,
         task_success_count=successes,
         executable_task_success_rate=round(successes / count, 4),
-        final_state_accuracy=round(
-            sum(item.final_state_correct for item in results) / count, 4
-        ),
-        policy_violation_rate=round(
-            sum(not item.policy_compliant for item in results) / count, 4
-        ),
-        false_success_rate=round(
-            sum(item.false_success for item in results) / count, 4
-        ),
+        final_state_accuracy=round(sum(item.final_state_correct for item in results) / count, 4),
+        policy_violation_rate=round(sum(not item.policy_compliant for item in results) / count, 4),
+        false_success_rate=round(sum(item.false_success for item in results) / count, 4),
         average_turns=round(sum(item.turns for item in results) / count, 3),
-        average_tool_calls=round(
-            sum(item.tool_calls for item in results) / count, 3
-        ),
+        average_tool_calls=round(sum(item.tool_calls for item in results) / count, 3),
         by_intent=by_intent,
         failures=tuple(item for item in results if not item.task_success),
     )
@@ -289,9 +257,7 @@ def seed_repository(scenario: ScenarioSpec) -> InMemoryRepository:
             charged_at=created_at,
         )
     )
-    repository.add_merchant(
-        Merchant(order.merchant_id, MerchantStatus.OPEN, order.city)
-    )
+    repository.add_merchant(Merchant(order.merchant_id, MerchantStatus.OPEN, order.city))
     repository.add_delivery(
         Delivery(
             order.order_id,
@@ -306,22 +272,16 @@ def seed_repository(scenario: ScenarioSpec) -> InMemoryRepository:
     return repository
 
 
-def build_trial_environment(
-    scenario: ScenarioSpec, budgets: HarnessBudgets
-) -> TrialEnvironment:
+def build_trial_environment(scenario: ScenarioSpec, budgets: HarnessBudgets) -> TrialEnvironment:
     repository = seed_repository(scenario)
     policies = PolicyEngine.default()
-    registry = ServiceRegistry(
-        repository, TransactionService(repository, policies), policies
-    )
+    registry = ServiceRegistry(repository, TransactionService(repository, policies), policies)
     gateway = ReliableToolGateway(
         registry,
         timeout_seconds=budgets.timeout_seconds,
         max_retries=budgets.max_retries,
         tool_budget=budgets.max_tool_calls,
-        faults=FaultPlan(
-            {tool: list(faults) for tool, faults in scenario.faults.items()}
-        ),
+        faults=FaultPlan({tool: list(faults) for tool, faults in scenario.faults.items()}),
         backoff=lambda _: None,
     )
     return TrialEnvironment(repository=repository, gateway=gateway)

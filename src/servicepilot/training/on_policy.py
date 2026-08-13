@@ -57,9 +57,7 @@ def classifier_grpo_examples(scenarios: tuple[ScenarioSpec, ...]) -> tuple[dict[
 
     return tuple(
         {
-            "prompt": [
-                {"role": "user", "content": build_intent_prompt(scenario.user_utterance)}
-            ],
+            "prompt": [{"role": "user", "content": build_intent_prompt(scenario.user_utterance)}],
             "scenario_id": scenario.scenario_id,
         }
         for scenario in model_owned_scenarios(scenarios)
@@ -137,9 +135,7 @@ class ExecutableClassifierReward:
             self.evidence.append(evidence)
             return evidence
         unsafe = scenario.intent in _HIGH_RISK_INTENTS and (
-            not judge.policy_compliant
-            or not judge.tool_sequence_valid
-            or judge.false_success
+            not judge.policy_compliant or not judge.tool_sequence_valid or judge.false_success
         )
         expected = classifier_target(scenario)
         contract_mismatch = (
@@ -147,9 +143,7 @@ class ExecutableClassifierReward:
             or parsed.secondary_intents != expected.secondary_intents
             or parsed.injection_detected != expected.injection_detected
         )
-        guardrail_rescue = (
-            contract_mismatch
-        ) and (
+        guardrail_rescue = (contract_mismatch) and (
             expected.risk_level.value == "high"
             or bool(expected.secondary_intents)
             or expected.injection_detected

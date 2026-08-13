@@ -7,7 +7,6 @@ from servicepilot.eval.catalog import build_phase3_scenarios
 from servicepilot.eval.models import ExpectedFinalState, Intent, ScenarioSpec
 from servicepilot.mcp_gateway.faults import FaultKind
 
-
 CATALOG_VERSION = "servicepilot-agent-e2e-sealed-v1"
 PROVENANCE = "post_v5_selection_independent_authoring"
 
@@ -66,9 +65,7 @@ _UTTERANCES: dict[Intent, tuple[str, str]] = {
 def build_agent_e2e_sealed_v1() -> tuple[ScenarioSpec, ...]:
     """Return 24 immutable scenarios; no candidate execution occurs here."""
     bases = {
-        item.intent: item
-        for item in build_phase3_scenarios()
-        if item.scenario_id.endswith("-01")
+        item.intent: item for item in build_phase3_scenarios() if item.scenario_id.endswith("-01")
     }
     scenarios: list[ScenarioSpec] = []
     for intent in Intent:
@@ -100,15 +97,11 @@ def build_agent_e2e_sealed_v1() -> tuple[ScenarioSpec, ...]:
 def sealed_profile_counts(scenarios: tuple[ScenarioSpec, ...]) -> dict[str, int]:
     profiles = Counter("fault_recovery" if item.faults else "nominal" for item in scenarios)
     profiles["confirmation_refusal"] = sum(not item.accept_confirmation for item in scenarios)
-    profiles["prompt_injection"] = sum(
-        "忽略确认" in item.user_utterance for item in scenarios
-    )
+    profiles["prompt_injection"] = sum("忽略确认" in item.user_utterance for item in scenarios)
     return dict(sorted(profiles.items()))
 
 
-def _faults(
-    intent: Intent, variant: int, base: ScenarioSpec
-) -> dict[str, tuple[FaultKind, ...]]:
+def _faults(intent: Intent, variant: int, base: ScenarioSpec) -> dict[str, tuple[FaultKind, ...]]:
     if variant != 2 or not base.allowed_actions:
         return {}
     if intent in {Intent.FULL_REFUND, Intent.DUPLICATE_CHARGE}:

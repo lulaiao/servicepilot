@@ -47,9 +47,7 @@ class DomainRepository(Protocol):
     def list_handoff_tickets(self, order_id: str) -> tuple[HandoffTicket, ...]: ...
     def add_audit_event(self, event: AuditEvent) -> None: ...
     def list_audit_events(self) -> tuple[AuditEvent, ...]: ...
-    def get_idempotent_result(
-        self, action: str, key: str
-    ) -> tuple[str, Any] | None: ...
+    def get_idempotent_result(self, action: str, key: str) -> tuple[str, Any] | None: ...
     def save_idempotent_result(
         self, action: str, key: str, fingerprint: str, result: Any
     ) -> None: ...
@@ -91,11 +89,7 @@ class InMemoryRepository:
         with self._lock:
             return tuple(
                 sorted(
-                    (
-                        order
-                        for order in self._orders.values()
-                        if order.user_id == user_id
-                    ),
+                    (order for order in self._orders.values() if order.user_id == user_id),
                     key=lambda order: order.created_at,
                     reverse=True,
                 )
@@ -126,11 +120,7 @@ class InMemoryRepository:
 
     def list_refunds(self, order_id: str) -> tuple[Refund, ...]:
         with self._lock:
-            return tuple(
-                refund
-                for refund in self._refunds.values()
-                if refund.order_id == order_id
-            )
+            return tuple(refund for refund in self._refunds.values() if refund.order_id == order_id)
 
     def get_refund(self, refund_id: str) -> Refund:
         with self._lock:
@@ -146,9 +136,7 @@ class InMemoryRepository:
     def list_payments(self, order_id: str) -> tuple[PaymentRecord, ...]:
         with self._lock:
             return tuple(
-                payment
-                for payment in self._payments.values()
-                if payment.order_id == order_id
+                payment for payment in self._payments.values() if payment.order_id == order_id
             )
 
     def add_merchant(self, merchant: Merchant) -> None:
@@ -184,9 +172,7 @@ class InMemoryRepository:
     def list_delivery_issues(self, order_id: str) -> tuple[DeliveryIssue, ...]:
         with self._lock:
             return tuple(
-                issue
-                for issue in self._delivery_issues.values()
-                if issue.order_id == order_id
+                issue for issue in self._delivery_issues.values() if issue.order_id == order_id
             )
 
     def add_handoff_ticket(self, ticket: HandoffTicket) -> None:
@@ -196,9 +182,7 @@ class InMemoryRepository:
     def list_handoff_tickets(self, order_id: str) -> tuple[HandoffTicket, ...]:
         with self._lock:
             return tuple(
-                ticket
-                for ticket in self._handoff_tickets.values()
-                if ticket.order_id == order_id
+                ticket for ticket in self._handoff_tickets.values() if ticket.order_id == order_id
             )
 
     def load_dataset(self, dataset: SyntheticDataset) -> None:
@@ -222,14 +206,10 @@ class InMemoryRepository:
         with self._lock:
             return tuple(self._audits)
 
-    def get_idempotent_result(
-        self, action: str, key: str
-    ) -> tuple[str, Any] | None:
+    def get_idempotent_result(self, action: str, key: str) -> tuple[str, Any] | None:
         with self._lock:
             return self._idempotency.get((action, key))
 
-    def save_idempotent_result(
-        self, action: str, key: str, fingerprint: str, result: Any
-    ) -> None:
+    def save_idempotent_result(self, action: str, key: str, fingerprint: str, result: Any) -> None:
         with self._lock:
             self._idempotency[(action, key)] = (fingerprint, result)

@@ -28,9 +28,9 @@ def test_valid_reward_variance_allows_smoke_retry() -> None:
 
 
 def test_malformed_only_variance_does_not_unlock_retry() -> None:
-    samples = tuple(
-        sample("a", f"invalid-{index}", -1.0, parsed=False) for index in range(20)
-    ) + (sample("a", "valid", 1.75),)
+    samples = tuple(sample("a", f"invalid-{index}", -1.0, parsed=False) for index in range(20)) + (
+        sample("a", "valid", 1.75),
+    )
     summary = summarize_diversity(samples)
     assert summary.schema_valid_rate < 0.95
     assert not summary.eligible_for_smoke_retry

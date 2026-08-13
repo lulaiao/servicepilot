@@ -17,4 +17,3 @@ class InMemoryCheckpointStore:
     def load(self, session_id: str) -> HarnessSession | None:
         with self._lock:
             return self._sessions.get(session_id)
-

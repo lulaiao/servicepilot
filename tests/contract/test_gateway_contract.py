@@ -58,9 +58,7 @@ async def test_transient_failure_recovers_with_bounded_retry() -> None:
     faults = FaultPlan({"get_order": [FaultKind.TRANSIENT]})
     gateway, _ = build_gateway(faults)
 
-    result = await gateway.call(
-        "get_order", {"order_id": "ord-001"}, trace_id="trace-retry"
-    )
+    result = await gateway.call("get_order", {"order_id": "ord-001"}, trace_id="trace-retry")
 
     assert result.ok is True
     assert result.attempts == 2
@@ -70,14 +68,10 @@ async def test_transient_failure_recovers_with_bounded_retry() -> None:
 
 @pytest.mark.asyncio
 async def test_timeout_exhaustion_is_stable() -> None:
-    faults = FaultPlan(
-        {"get_order": [FaultKind.TIMEOUT, FaultKind.TIMEOUT, FaultKind.TIMEOUT]}
-    )
+    faults = FaultPlan({"get_order": [FaultKind.TIMEOUT, FaultKind.TIMEOUT, FaultKind.TIMEOUT]})
     gateway, _ = build_gateway(faults)
 
-    result = await gateway.call(
-        "get_order", {"order_id": "ord-001"}, trace_id="trace-timeout"
-    )
+    result = await gateway.call("get_order", {"order_id": "ord-001"}, trace_id="trace-timeout")
 
     assert result.ok is False
     assert result.error is not None
@@ -89,9 +83,7 @@ async def test_timeout_exhaustion_is_stable() -> None:
 async def test_empty_result_fault_is_classified() -> None:
     gateway, _ = build_gateway(FaultPlan({"get_order": [FaultKind.EMPTY_RESULT]}))
 
-    result = await gateway.call(
-        "get_order", {"order_id": "ord-001"}, trace_id="trace-empty"
-    )
+    result = await gateway.call("get_order", {"order_id": "ord-001"}, trace_id="trace-empty")
 
     assert result.ok is False
     assert result.error is not None
@@ -100,13 +92,9 @@ async def test_empty_result_fault_is_classified() -> None:
 
 @pytest.mark.asyncio
 async def test_partial_result_fault_is_classified() -> None:
-    gateway, _ = build_gateway(
-        FaultPlan({"get_order": [FaultKind.PARTIAL_RESULT]})
-    )
+    gateway, _ = build_gateway(FaultPlan({"get_order": [FaultKind.PARTIAL_RESULT]}))
 
-    result = await gateway.call(
-        "get_order", {"order_id": "ord-001"}, trace_id="trace-partial"
-    )
+    result = await gateway.call("get_order", {"order_id": "ord-001"}, trace_id="trace-partial")
 
     assert result.ok is False
     assert result.error is not None
@@ -116,12 +104,8 @@ async def test_partial_result_fault_is_classified() -> None:
 @pytest.mark.asyncio
 async def test_tool_budget_stops_additional_calls() -> None:
     gateway, _ = build_gateway(tool_budget=1)
-    first = await gateway.call(
-        "get_order", {"order_id": "ord-001"}, trace_id="trace-budget"
-    )
-    second = await gateway.call(
-        "get_order", {"order_id": "ord-001"}, trace_id="trace-budget"
-    )
+    first = await gateway.call("get_order", {"order_id": "ord-001"}, trace_id="trace-budget")
+    second = await gateway.call("get_order", {"order_id": "ord-001"}, trace_id="trace-budget")
 
     assert first.ok is True
     assert second.error is not None
@@ -204,18 +188,12 @@ async def test_delivery_issue_is_idempotent_and_audited() -> None:
         "idempotency_key": "delivery-issue-001",
     }
 
-    first = await gateway.call(
-        "report_delivery_issue", arguments, trace_id="trace-issue"
-    )
-    second = await gateway.call(
-        "report_delivery_issue", arguments, trace_id="trace-issue"
-    )
+    first = await gateway.call("report_delivery_issue", arguments, trace_id="trace-issue")
+    second = await gateway.call("report_delivery_issue", arguments, trace_id="trace-issue")
 
     assert first.ok is True
     assert second.data == first.data
     matching_audits = [
-        event
-        for event in repository.list_audit_events()
-        if event.action == "report_delivery_issue"
+        event for event in repository.list_audit_events() if event.action == "report_delivery_issue"
     ]
     assert len(matching_audits) == 1

@@ -40,12 +40,8 @@ def main() -> None:
         Path("data/eval/phase6_retrieval_queries.jsonl"),
         Path("data/eval/phase6_retrieval_queries_hard.jsonl"),
     )
-    corpus = tuple(
-        item for path in corpus_paths for item in load_policy_corpus(path)
-    )
-    queries = tuple(
-        item for path in query_paths for item in load_retrieval_queries(path)
-    )
+    corpus = tuple(item for path in corpus_paths for item in load_policy_corpus(path))
+    queries = tuple(item for path in query_paths for item in load_retrieval_queries(path))
     now = datetime(2026, 8, 8, tzinfo=UTC)
     lexical = BM25PolicyRetriever(corpus)
     multi_query = MultiQueryRRFRetriever(lexical)
@@ -62,19 +58,15 @@ def main() -> None:
             }
         else:
             results = {
-                query.query_id: multi_query.search(
-                    query, now=now, top_k=args.top_k
-                )
+                query.query_id: multi_query.search(query, now=now, top_k=args.top_k)
                 for query in queries
             }
         elapsed = perf_counter() - started
         variants[name] = {
-            "metrics_at_3": evaluate_retrieval(
-                queries, results, top_k=args.top_k
-            ).model_dump(mode="json"),
-            "metrics_at_1": evaluate_retrieval(
-                queries, results, top_k=1
-            ).model_dump(mode="json"),
+            "metrics_at_3": evaluate_retrieval(queries, results, top_k=args.top_k).model_dump(
+                mode="json"
+            ),
+            "metrics_at_1": evaluate_retrieval(queries, results, top_k=1).model_dump(mode="json"),
             "mean_latency_ms": round(elapsed * 1000 / len(queries), 4),
         }
         all_results[name] = {
@@ -88,12 +80,10 @@ def main() -> None:
         "query_count": len(queries),
         "top_k": args.top_k,
         "corpus_files": {
-            str(path): hashlib.sha256(path.read_bytes()).hexdigest()
-            for path in corpus_paths
+            str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in corpus_paths
         },
         "query_files": {
-            str(path): hashlib.sha256(path.read_bytes()).hexdigest()
-            for path in query_paths
+            str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in query_paths
         },
         "mean_query_variants": round(
             sum(len(rewriter.rewrite(query)) for query in queries) / len(queries),

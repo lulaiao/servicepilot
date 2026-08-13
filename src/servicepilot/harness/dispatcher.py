@@ -21,9 +21,7 @@ class SimulatedHarnessInterruption(RuntimeError):
 
 
 class HarnessControlStop(RuntimeError):
-    def __init__(
-        self, reason: HarnessTerminationReason, message: str
-    ) -> None:
+    def __init__(self, reason: HarnessTerminationReason, message: str) -> None:
         super().__init__(message)
         self.reason = reason
 
@@ -56,9 +54,7 @@ class CheckpointingToolDispatcher:
             if step.status is ToolStepStatus.COMMITTED
         }
 
-    async def call(
-        self, tool_name: str, arguments: dict[str, Any], *, trace_id: str
-    ) -> ToolResult:
+    async def call(self, tool_name: str, arguments: dict[str, Any], *, trace_id: str) -> ToolResult:
         arguments_sha = hashlib.sha256(
             json.dumps(arguments, sort_keys=True, default=str).encode()
         ).hexdigest()
@@ -72,9 +68,7 @@ class CheckpointingToolDispatcher:
 
         sequence = len(self._committed) + ordinal
         if self.tool_calls_used >= self.max_tool_calls:
-            self._persist_blocked(
-                sequence, call_key, tool_name, arguments_sha, ()
-            )
+            self._persist_blocked(sequence, call_key, tool_name, arguments_sha, ())
             raise HarnessControlStop(
                 HarnessTerminationReason.TOOL_BUDGET_EXHAUSTED,
                 "Harness tool-call budget exhausted",
@@ -103,9 +97,7 @@ class CheckpointingToolDispatcher:
                 tool_name=tool_name,
                 arguments_sha256=arguments_sha,
                 status=ToolStepStatus.STARTED,
-                guardrail_decisions=tuple(
-                    item.model_dump(mode="json") for item in decisions
-                ),
+                guardrail_decisions=tuple(item.model_dump(mode="json") for item in decisions),
             )
         )
         result = await self.gateway.call(tool_name, arguments, trace_id=trace_id)
@@ -117,9 +109,7 @@ class CheckpointingToolDispatcher:
             arguments_sha256=arguments_sha,
             status=ToolStepStatus.COMMITTED,
             result=result.model_dump(mode="json"),
-            guardrail_decisions=tuple(
-                item.model_dump(mode="json") for item in decisions
-            ),
+            guardrail_decisions=tuple(item.model_dump(mode="json") for item in decisions),
         )
         self._committed[call_key] = committed
         self.persist(committed)
@@ -147,10 +137,7 @@ class CheckpointingToolDispatcher:
                 HarnessTerminationReason.RETRY_BUDGET_EXHAUSTED,
                 "Harness retry budget exhausted",
             )
-        if (
-            tool_name == self.interrupt_after_committed_tool
-            and not self._interrupted
-        ):
+        if tool_name == self.interrupt_after_committed_tool and not self._interrupted:
             self._interrupted = True
             raise SimulatedHarnessInterruption(
                 f"interrupted after checkpointing {tool_name} result"

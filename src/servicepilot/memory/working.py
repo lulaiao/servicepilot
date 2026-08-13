@@ -38,11 +38,7 @@ class WorkingMemoryManager:
     def expire(memory: WorkingMemory, *, now: datetime) -> WorkingMemory:
         return memory.model_copy(
             update={
-                "facts": {
-                    key: fact
-                    for key, fact in memory.facts.items()
-                    if fact.is_valid(now)
-                }
+                "facts": {key: fact for key, fact in memory.facts.items() if fact.is_valid(now)}
             }
         )
 
@@ -54,9 +50,7 @@ class WorkingMemoryManager:
 
 
 class DeterministicFactSummarizer:
-    def summarize(
-        self, memory: WorkingMemory, *, summary_id: str, now: datetime
-    ) -> FactSummary:
+    def summarize(self, memory: WorkingMemory, *, summary_id: str, now: datetime) -> FactSummary:
         facts = tuple(
             fact.model_copy(
                 update={

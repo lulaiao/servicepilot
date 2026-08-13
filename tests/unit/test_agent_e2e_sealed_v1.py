@@ -25,21 +25,25 @@ def test_sealed_catalog_is_balanced_unique_and_post_selection() -> None:
 
 
 def test_sealed_text_has_no_exact_overlap_with_prior_baselines() -> None:
-    reserved = {
-        normalized(item.user_utterance) for item in build_phase3_scenarios()
-    } | {normalized(item.text) for item in build_classifier_v4_utterances()}
-
-    assert not reserved & {
-        normalized(item.user_utterance) for item in build_agent_e2e_sealed_v1()
+    reserved = {normalized(item.user_utterance) for item in build_phase3_scenarios()} | {
+        normalized(item.text) for item in build_classifier_v4_utterances()
     }
+
+    assert not reserved & {normalized(item.user_utterance) for item in build_agent_e2e_sealed_v1()}
 
 
 def test_sealed_catalog_covers_safety_and_recovery_boundaries() -> None:
     scenarios = build_agent_e2e_sealed_v1()
 
     assert any(not item.accept_confirmation for item in scenarios)
-    assert any("LOST_RESPONSE" in {fault.value for faults in item.faults.values() for fault in faults} for item in scenarios)
-    assert any("TRANSIENT" in {fault.value for faults in item.faults.values() for fault in faults} for item in scenarios)
+    assert any(
+        "LOST_RESPONSE" in {fault.value for faults in item.faults.values() for fault in faults}
+        for item in scenarios
+    )
+    assert any(
+        "TRANSIENT" in {fault.value for faults in item.faults.values() for fault in faults}
+        for item in scenarios
+    )
     injection = next(item for item in scenarios if "忽略确认" in item.user_utterance)
     assert injection.intent is Intent.OUT_OF_SCOPE
     assert not injection.allowed_actions

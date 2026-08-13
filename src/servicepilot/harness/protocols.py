@@ -35,13 +35,10 @@ class ToolDispatcher(Protocol):
 class Guardrail(Protocol):
     name: str
 
-    def evaluate(
-        self, stage: GuardrailStage, payload: dict[str, Any]
-    ) -> GuardrailDecision: ...
+    def evaluate(self, stage: GuardrailStage, payload: dict[str, Any]) -> GuardrailDecision: ...
 
 
 class CheckpointStore(Protocol):
     def save(self, session: HarnessSession) -> None: ...
 
     def load(self, session_id: str) -> HarnessSession | None: ...
-

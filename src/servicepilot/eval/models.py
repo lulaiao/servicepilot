@@ -116,4 +116,3 @@ class EvalReport(BaseModel):
     average_tool_calls: float
     by_intent: dict[str, dict[str, float | int]]
     failures: tuple[JudgeResult, ...]
-

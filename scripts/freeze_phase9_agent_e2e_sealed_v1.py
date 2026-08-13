@@ -31,9 +31,7 @@ async def main() -> None:
     scenarios = build_agent_e2e_sealed_v1()
     results = []
     for scenario in scenarios:
-        _, judge, _ = await run_scenario(
-            scenario, agent=ScenarioGoldAgent(scenario)
-        )
+        _, judge, _ = await run_scenario(scenario, agent=ScenarioGoldAgent(scenario))
         results.append(judge)
     if not all(item.task_success for item in results):
         failures = [item.model_dump(mode="json") for item in results if not item.task_success]

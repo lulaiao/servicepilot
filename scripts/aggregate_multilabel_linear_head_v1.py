@@ -95,9 +95,7 @@ def main() -> None:
         "shortcut_audit": {
             "path": str(args.shortcut_audit),
             "sha256": sha256(args.shortcut_audit),
-            "lexical_centroid_exact_set_accuracy": shortcut[
-                "lexical_centroid_exact_set_accuracy"
-            ],
+            "lexical_centroid_exact_set_accuracy": shortcut["lexical_centroid_exact_set_accuracy"],
             "complaint_escalation_lexical_f1": shortcut["lexical_centroid_per_label"][
                 "complaint_escalation"
             ]["f1"],

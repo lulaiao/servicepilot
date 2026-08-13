@@ -65,4 +65,3 @@ class RouteDecision(BaseModel):
     reason: str
     should_clarify: bool = False
     should_stop: bool = False
-

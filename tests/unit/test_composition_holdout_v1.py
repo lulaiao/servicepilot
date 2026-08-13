@@ -9,9 +9,7 @@ def test_holdout_is_balanced_frozen_shape_and_unique() -> None:
 
     assert len(cases) == 60
     assert len({item.case_id for item in cases}) == 60
-    assert len(
-        {(item.text, item.model_primary, item.model_secondary) for item in cases}
-    ) == 60
+    assert len({(item.text, item.model_primary, item.model_secondary) for item in cases}) == 60
     assert Counter(item.category for item in cases) == {
         "explicit_pair": 10,
         "negated_escalation": 10,

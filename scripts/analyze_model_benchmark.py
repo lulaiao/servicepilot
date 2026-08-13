@@ -22,17 +22,11 @@ def main() -> None:
     args = parse_args()
     raw = json.loads(args.input.read_text(encoding="utf-8"))
     split = DatasetSplit(raw["split"])
-    gold = {
-        item.example_id: item
-        for item in build_routing_dataset()
-        if item.split is split
-    }
+    gold = {item.example_id: item for item in build_routing_dataset() if item.split is split}
     records: list[dict[str, Any]] = raw["records"]
     labels = [gold[item["example_id"]].primary_intent.value for item in records]
     predictions = [
-        item["prediction"]["primary_intent"]
-        if item["prediction"] is not None
-        else "__invalid__"
+        item["prediction"]["primary_intent"] if item["prediction"] is not None else "__invalid__"
         for item in records
     ]
     f1_scores: list[float] = []
@@ -50,15 +44,11 @@ def main() -> None:
             for expected, predicted in zip(labels, predictions, strict=True)
         )
         denominator = 2 * true_positive + false_positive + false_negative
-        f1_scores.append(
-            2 * true_positive / denominator if denominator else 0
-        )
+        f1_scores.append(2 * true_positive / denominator if denominator else 0)
     latencies = sorted(
         float(latency)
         for item in records
-        for latency in item.get(
-            "latency_repetitions_seconds", [item["latency_seconds"]]
-        )
+        for latency in item.get("latency_repetitions_seconds", [item["latency_seconds"]])
     )
     count = len(records)
     high_risk = {
@@ -70,9 +60,7 @@ def main() -> None:
         Intent.RESCHEDULE,
     }
     high_risk_records = [
-        item
-        for item in records
-        if gold[item["example_id"]].primary_intent in high_risk
+        item for item in records if gold[item["example_id"]].primary_intent in high_risk
     ]
     metrics = {
         "source": str(args.input),
@@ -86,10 +74,7 @@ def main() -> None:
             sum(
                 item["prediction"] is not None
                 and set(item["prediction"]["secondary_intents"])
-                == {
-                    intent.value
-                    for intent in gold[item["example_id"]].secondary_intents
-                }
+                == {intent.value for intent in gold[item["example_id"]].secondary_intents}
                 for item in records
             )
             / count,
@@ -118,15 +103,9 @@ def main() -> None:
             4,
         ),
         "mean_latency_seconds": raw["mean_latency_seconds"],
-        "p95_latency_seconds": latencies[
-            math.ceil(0.95 * len(latencies)) - 1
-        ],
-        "throughput_examples_per_second": round(
-            len(latencies) / sum(latencies), 4
-        ),
-        "mean_generation_tokens_per_second": raw.get(
-            "mean_generation_tokens_per_second"
-        ),
+        "p95_latency_seconds": latencies[math.ceil(0.95 * len(latencies)) - 1],
+        "throughput_examples_per_second": round(len(latencies) / sum(latencies), 4),
+        "mean_generation_tokens_per_second": raw.get("mean_generation_tokens_per_second"),
         "peak_rss_mib": raw["peak_rss_mib"],
         "peak_vram_allocated_mib": raw.get("peak_vram_allocated_mib"),
         "peak_vram_reserved_mib": raw.get("peak_vram_reserved_mib"),

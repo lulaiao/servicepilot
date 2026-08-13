@@ -26,9 +26,7 @@ def result(
 
 
 def test_action_only_cancellation_does_not_become_reschedule_or_refund() -> None:
-    legacy = project_legacy_intent(
-        result(IssueType.NONE, RequestedAction.CANCEL_ORDER)
-    )
+    legacy = project_legacy_intent(result(IssueType.NONE, RequestedAction.CANCEL_ORDER))
 
     assert legacy.primary_intent is Intent.CANCEL_ORDER
     assert legacy.secondary_intents == ()
@@ -44,9 +42,7 @@ def test_action_only_cancellation_does_not_become_reschedule_or_refund() -> None
 def test_incident_remains_primary_and_refund_remedy_is_not_duplicated(
     issue: IssueType, expected: Intent
 ) -> None:
-    legacy = project_legacy_intent(
-        result(issue, RequestedAction.PARTIAL_REFUND, amount="12")
-    )
+    legacy = project_legacy_intent(result(issue, RequestedAction.PARTIAL_REFUND, amount="12"))
 
     assert legacy.primary_intent is expected
     assert legacy.secondary_intents == ()

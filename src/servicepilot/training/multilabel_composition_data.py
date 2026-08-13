@@ -79,37 +79,55 @@ def build_multilabel_composition_v1() -> tuple[MultiLabelCompositionRecord, ...]
     triple = (*both, Intent.PARTIAL_REFUND)
 
     for index in range(20):
-        families.append(
-            ("explicit_pair", f"{_DELIVERY[index]}，{_ESCALATION[index % 10]}", both)
-        )
+        families.append(("explicit_pair", f"{_DELIVERY[index]}，{_ESCALATION[index % 10]}", both))
     for index in range(10):
         families.append(
             (
                 "three_intent",
-                f"{_DELIVERY[index + 5]}，{_ESCALATION[(index + 3) % 10]}，另外部分退款{index + 7}元",
+                f"{_DELIVERY[index + 5]}，{_ESCALATION[(index + 3) % 10]}，"
+                f"另外部分退款{index + 7}元",
                 triple,
             )
         )
     for index in range(10):
         families.append(
-            ("delivery_only", f"{_DELIVERY[index + 10]}，本次只记录配送异常", (Intent.DELIVERY_DELAY,))
+            (
+                "delivery_only",
+                f"{_DELIVERY[index + 10]}，本次只记录配送异常",
+                (Intent.DELIVERY_DELAY,),
+            )
         )
         families.append(
-            ("negated_escalation", f"{_DELIVERY[index]}，但不要{_ESCALATION_ACTION[index % 10]}", (Intent.DELIVERY_DELAY,))
+            (
+                "negated_escalation",
+                f"{_DELIVERY[index]}，但不要{_ESCALATION_ACTION[index % 10]}",
+                (Intent.DELIVERY_DELAY,),
+            )
         )
         families.append(
-            ("conditional_future", f"{_DELIVERY[index]}，如果明天还没解决再{_ESCALATION_ACTION[(index + 2) % 10]}", (Intent.DELIVERY_DELAY,))
+            (
+                "conditional_future",
+                f"{_DELIVERY[index]}，如果明天还没解决再{_ESCALATION_ACTION[(index + 2) % 10]}",
+                (Intent.DELIVERY_DELAY,),
+            )
         )
         families.append(
-            ("historical_request", f"{_DELIVERY[index]}；之前已经{_ESCALATION_ACTION[(index + 5) % 10]}，现在不要重复操作", (Intent.DELIVERY_DELAY,))
+            (
+                "historical_request",
+                f"{_DELIVERY[index]}；之前已经"
+                f"{_ESCALATION_ACTION[(index + 5) % 10]}，现在不要重复操作",
+                (Intent.DELIVERY_DELAY,),
+            )
         )
     for index in range(5):
         families.append(
-            ("escalation_only", f"服务处理没有结果，{_ESCALATION[index + 1]}", (Intent.COMPLAINT_ESCALATION,))
+            (
+                "escalation_only",
+                f"服务处理没有结果，{_ESCALATION[index + 1]}",
+                (Intent.COMPLAINT_ESCALATION,),
+            )
         )
-        families.append(
-            ("unrelated", f"请解释第{index + 1}种统计学方法，不要操作订单", ())
-        )
+        families.append(("unrelated", f"请解释第{index + 1}种统计学方法，不要操作订单", ()))
 
     category_seen: dict[str, int] = {}
     records = []

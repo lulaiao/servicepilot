@@ -27,9 +27,7 @@ def main() -> None:
     train = tuple(item for item in records if item.split is DataSplit.TRAIN)
     dev = tuple(item for item in records if item.split is DataSplit.DEV)
     new = tuple(item for item in train if item.source_record_id.startswith("v7-train-"))
-    v4_dev = tuple(
-        item for item in build_classifier_v4_sft() if item.split is DataSplit.DEV
-    )
+    v4_dev = tuple(item for item in build_classifier_v4_sft() if item.split is DataSplit.DEV)
     exact_overlap = {text(item) for item in train} & {text(item) for item in dev}
     passed = (
         len(records) == 180
@@ -47,8 +45,7 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(encoded)
     categories = Counter(
-        item.source_record_id.removeprefix("v7-train-").rsplit("-", maxsplit=1)[0]
-        for item in new
+        item.source_record_id.removeprefix("v7-train-").rsplit("-", maxsplit=1)[0] for item in new
     )
     payload = {
         "schema_version": "servicepilot-classifier-sft-v7-remediation",
