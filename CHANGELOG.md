@@ -36,6 +36,10 @@
 - Executable final-state, policy evidence, forbidden-action and false-success
   Judge.
 - Reproducible JSONL trajectory/report/manifest generation command.
+- Phase 10 CPU portfolio demo, self-contained Trace Viewer and validated
+  evidence index.
+- Clean archived-source CPython 3.11 acceptance with 261 passing tests.
+- Apache-2.0 license, contribution/security guidance and release checklist.
 
 ### Verification
 
@@ -50,3 +54,5 @@
 - Phase 3 fixed development catalog: 36/36 executable tasks succeeded; final
   state accuracy 100%, policy violations 0%, false-success 0%.
 - Phase 3 full test suite: 50 tests passed before final documentation update.
+- Phase 10 clean-source suite: 261 tests, Ruff over source/tests/scripts and
+  strict MyPy over 109 source files passed.

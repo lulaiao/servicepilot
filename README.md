@@ -71,3 +71,8 @@ See [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) for gated phases,
 [`docs/resume_evidence.md`](docs/resume_evidence.md) for claim-to-evidence links,
 and [`docs/adr/`](docs/adr/) for technology and model decisions. Failed model
 experiments are retained rather than hidden; unsupported metrics remain `TBD`.
+
+The source is licensed under Apache-2.0. See [`CONTRIBUTING.md`](CONTRIBUTING.md),
+[`SECURITY.md`](SECURITY.md), and the
+[`release checklist`](docs/release_checklist.md) before publishing or extending
+the project.

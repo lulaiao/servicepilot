@@ -1,0 +1,31 @@
+{
+  "schema_version": "servicepilot-phase10-release-readiness-v1",
+  "date": "2026-08-13",
+  "package_version": "0.1.0",
+  "release_status": "unreleased_alpha",
+  "local_gates": {
+    "ruff_passed": true,
+    "mypy_passed": true,
+    "mypy_source_file_count": 109,
+    "pytest_passed": true,
+    "pytest_test_count": 261,
+    "wheel_build_passed": true,
+    "license_in_wheel": true,
+    "tracked_secret_signature_scan_matches": 0,
+    "tracked_sensitive_filename_scan_matches": 0
+  },
+  "wheel": {
+    "filename": "servicepilot-0.1.0-py3-none-any.whl",
+    "sha256": "6a0fb995b622de5bcfc15cda6f3fb0bda3107a26a6d6e4bd56cef5ed1160e751",
+    "published": false
+  },
+  "external_gates": {
+    "public_repository_url_configured": false,
+    "monitored_security_contact_configured": false,
+    "hosted_ci_configured": false,
+    "release_tag_created": false,
+    "package_published": false
+  },
+  "local_readiness_passed": true,
+  "external_release_authorized": false
+}

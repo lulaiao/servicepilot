@@ -96,6 +96,14 @@
       "scope": "Fresh CPython 3.11 venv; CPU-only install, lint, tests, demo and evidence validation",
       "evidence": ["experiments/reports/phase10_clean_environment_acceptance.md", "experiments/manifests/phase10_clean_environment.json"],
       "reproduce": "Follow the isolation contract and commands in phase10_clean_environment_acceptance.md"
+    },
+    {
+      "id": "phase10-release-readiness",
+      "capability": "Local package and open-source handoff readiness",
+      "status": "accepted_local_only",
+      "scope": "Quality gates, wheel metadata, license inclusion and bounded tracked-file scans",
+      "evidence": ["experiments/reports/phase10_release_readiness.md", "experiments/manifests/phase10_release_readiness.json", "docs/release_checklist.md"],
+      "reproduce": "Run the local commands in phase10_release_readiness.md; external gates require owner decisions"
     }
   ]
 }

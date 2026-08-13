@@ -228,7 +228,8 @@ High-risk alignment evidence:
 
 ## Phase 10 — open-source delivery
 
-Status: in progress. CPU-only four-case demo, self-contained Trace Viewer,
+Status: local delivery accepted. CPU-only four-case demo, self-contained Trace Viewer,
 updated quick start, evidence-linked resume statements, consolidated report and
-ablation index, and clean archived-source installation are accepted. Final
-release metadata and project-wide handoff review remain.
+ablation index, clean archived-source installation, package build and
+project-wide handoff review are accepted. Public hosting, monitored security
+contact, hosted CI and a release tag remain owner-operated external gates.

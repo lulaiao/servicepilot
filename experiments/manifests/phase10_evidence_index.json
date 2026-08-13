@@ -1,8 +1,8 @@
 {
   "schema_version": "servicepilot-phase10-evidence-index-v1",
   "catalog": "experiments/configs/phase10_evidence_catalog.json",
-  "catalog_sha256": "99168c19be972bf13ff69cedd74e4a15b0991c399d3b17e933f71889f3ba8be6",
-  "entry_count": 12,
+  "catalog_sha256": "92f2b1daf853da87d2ff0bd37c40c9abd47f36a872ded3133ddb3675ddb34570",
+  "entry_count": 13,
   "entries": [
     {
       "id": "phase1-domain-core",
@@ -295,9 +295,35 @@
           "sha256": "6d82efc7330a3e983cd7092194b1ab768677d2c0fd5dbf4c32b347ba63607aa1"
         }
       ]
+    },
+    {
+      "id": "phase10-release-readiness",
+      "capability": "Local package and open-source handoff readiness",
+      "status": "accepted_local_only",
+      "scope": "Quality gates, wheel metadata, license inclusion and bounded tracked-file scans",
+      "evidence": [
+        "experiments/reports/phase10_release_readiness.md",
+        "experiments/manifests/phase10_release_readiness.json",
+        "docs/release_checklist.md"
+      ],
+      "reproduce": "Run the local commands in phase10_release_readiness.md; external gates require owner decisions",
+      "resolved_evidence": [
+        {
+          "path": "experiments/reports/phase10_release_readiness.md",
+          "sha256": "79c908e542fcb6b639275e861bb17fe328fcff20a42148018f4b3c6e354753fb"
+        },
+        {
+          "path": "experiments/manifests/phase10_release_readiness.json",
+          "sha256": "9ea1f77bab71600cb006ad9d79a71a12f1079e25eeb99346bb044429607928a3"
+        },
+        {
+          "path": "docs/release_checklist.md",
+          "sha256": "4999e4dda377a437f25dc915122217dc87334550bfdee9ab4f33bf8d2d764ff0"
+        }
+      ]
     }
   ],
   "all_evidence_present": true,
   "markdown_output": "docs/evidence_index.md",
-  "markdown_sha256": "5809f4bf34241f8f4a68c172638cf5cdb20a4ab1f1530e710d84914577bd050d"
+  "markdown_sha256": "c0b80228020a7f319bd41574fc930936a573d9eff2b874ec3f59f4714c15ce14"
 }
