@@ -14,6 +14,7 @@ artifacts/traces/*
 artifacts/reports/*
 artifacts/checkpoints/*
 artifacts/logs/*
+artifacts/demo/*
 data/generated/*
 !artifacts/**/.gitkeep
 !data/generated/.gitkeep
