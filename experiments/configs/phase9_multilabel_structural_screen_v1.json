@@ -1,0 +1,38 @@
+{
+  "protocol_version": "servicepilot-multilabel-structural-screen-v1",
+  "dataset": "data/training/phase9_multilabel_composition_v2.jsonl",
+  "dataset_sha256": "8991dae67ebff149ac62df0fb362b172cb5855e7c05058d3288c5d47c79a43ec",
+  "split": "dev",
+  "labels": ["delivery_delay", "complaint_escalation", "partial_refund"],
+  "candidates": {
+    "generative_json": {
+      "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+      "adapter_path": "artifacts/checkpoints/phase9_classifier_sft_v5_screen_seed20260816/checkpoint-10",
+      "decoding": "greedy",
+      "max_new_tokens": 80
+    },
+    "cross_encoder": {
+      "model_revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+      "threshold": 0.0,
+      "threshold_source": "predeclared_zero_logit_no_dev_tuning"
+    }
+  },
+  "acceptance_gates": {
+    "schema_valid_rate_min": 0.99,
+    "macro_f1_min": 0.85,
+    "exact_set_accuracy_min": 0.8,
+    "complaint_escalation_recall_min": 0.8,
+    "complaint_escalation_false_positive_rate_max": 0.05
+  },
+  "selection_order": [
+    "all_acceptance_gates_pass",
+    "higher_exact_set_accuracy",
+    "higher_macro_f1",
+    "lower_complaint_escalation_false_positive_rate",
+    "lower_mean_latency_seconds",
+    "lower_peak_vram_allocated_mib"
+  ],
+  "sealed_records": 0,
+  "sealed_access_allowed": false,
+  "threshold_tuning_allowed": false
+}
