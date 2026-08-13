@@ -6,9 +6,9 @@
   "local_gates": {
     "ruff_passed": true,
     "mypy_passed": true,
-    "mypy_source_file_count": 109,
+    "mypy_source_file_count": 110,
     "pytest_passed": true,
-    "pytest_test_count": 261,
+    "pytest_test_count": 268,
     "wheel_build_passed": true,
     "license_in_wheel": true,
     "tracked_secret_signature_scan_matches": 0,
@@ -16,7 +16,7 @@
   },
   "wheel": {
     "filename": "servicepilot-0.1.0-py3-none-any.whl",
-    "sha256": "6a0fb995b622de5bcfc15cda6f3fb0bda3107a26a6d6e4bd56cef5ed1160e751",
+    "sha256": "1e5922e14ec34e814a6dc82a8422cced8cf76ec3f6fce3a3a2c3324a2ff0edc1",
     "published": false
   },
   "external_gates": {

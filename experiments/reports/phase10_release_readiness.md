@@ -8,20 +8,23 @@ Status: **local gates accepted; external publication gates open**
 | Gate | Result |
 | --- | ---: |
 | Ruff over `src`, `tests`, `scripts` | pass |
-| Strict MyPy | 109 source files passed |
-| Full deterministic suite | 261 tests passed |
+| Strict MyPy | 110 source files passed |
+| Full deterministic suite | 268 tests passed |
 | Wheel build without dependency resolution | pass |
 | Apache-2.0 text included in wheel | pass |
 | Tracked private-key/access-key signature scan | no match |
 | Tracked `.env`, private-key and model-weight filename scan | no match |
 
 The locally built `servicepilot-0.1.0-py3-none-any.whl` had SHA256
-`6a0fb995b622de5bcfc15cda6f3fb0bda3107a26a6d6e4bd56cef5ed1160e751`.
+`1e5922e14ec34e814a6dc82a8422cced8cf76ec3f6fce3a3a2c3324a2ff0edc1`.
 It is a disposable verification artifact under `/tmp`, not a published release.
 
 The repository now contains the Apache-2.0 license text, contribution guidance,
 a security policy and an explicit release checklist. Package classifiers mark
 the project as Alpha; this is consistent with an unreleased research system.
+The tracked-file and metadata checks are automated by
+`scripts/run_phase10_release_readiness.py`; the command exits nonzero on a local
+gate failure and never authorizes publication.
 
 ## Deliberately open external gates
 
@@ -37,7 +40,7 @@ mean the software is approved for real payment or personal-data workloads.
 ## Reproduction
 
 ```bash
-make quality PYTHON=.venv/bin/python
+make release-check PYTHON=.venv/bin/python
 mkdir -p /tmp/servicepilot-dist-check
 .venv/bin/python -m pip wheel --no-deps --no-build-isolation \
   --wheel-dir /tmp/servicepilot-dist-check .

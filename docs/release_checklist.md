@@ -5,6 +5,7 @@ actions that still require an owner and hosting destination.
 
 ## Required local gates
 
+- [ ] `make release-check PYTHON=.venv/bin/python`
 - [ ] `python -m ruff check src tests scripts`
 - [ ] `python -m mypy src`
 - [ ] `python -m pytest -q`
@@ -24,3 +25,7 @@ actions that still require an owner and hosting destination.
 
 The external items remain intentionally open because the current local
 repository does not establish an owner account, hosting URL or release tag.
+
+The `release-check` target validates tracked-file boundaries and package/license
+metadata after running the complete quality suite. Its generated JSON is placed
+under ignored `artifacts/reports/`; it performs no publication or network call.

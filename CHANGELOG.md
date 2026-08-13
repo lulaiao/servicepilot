@@ -40,6 +40,8 @@
   evidence index.
 - Clean archived-source CPython 3.11 acceptance with 261 passing tests.
 - Apache-2.0 license, contribution/security guidance and release checklist.
+- Deterministic release-readiness checker for package/license metadata and
+  tracked sensitive-file boundaries.
 
 ### Verification
 
