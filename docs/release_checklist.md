@@ -1,19 +1,19 @@
 # Release checklist
 
 This checklist separates verified repository readiness from external release
-actions that still require an owner and hosting destination.
+actions that still require repository-owner settings or an explicit release decision.
 
 ## Required local gates
 
-- [ ] `make release-check PYTHON=.venv/bin/python`
-- [ ] `python -m ruff check src tests scripts`
-- [ ] `python -m mypy src`
-- [ ] `python -m pytest -q`
-- [ ] Build and validate the 12-entry evidence index.
-- [ ] Run and audit the four-case CPU demo.
-- [ ] Confirm a clean archived-source install under CPython 3.11.
-- [ ] Confirm tracked files contain no credentials, generated traces or model weights.
-- [ ] Confirm README, changelog, license and evidence links match the release revision.
+- [x] `make release-check PYTHON=.venv/bin/python`
+- [x] `python -m ruff check src tests scripts`
+- [x] `python -m mypy src`
+- [x] `python -m pytest -q`
+- [x] Build and validate the 13-entry evidence index.
+- [x] Run and audit the four-case CPU demo.
+- [x] Confirm a clean archived-source install under CPython 3.11.
+- [x] Confirm tracked files contain no credentials, generated traces or model weights.
+- [x] Confirm README, changelog, license and evidence links match the release revision.
 
 ## External gates
 
@@ -26,8 +26,9 @@ actions that still require an owner and hosting destination.
 - [ ] Choose a release tag only after the final revision passes all local gates.
 - [ ] Attach or link immutable reports; do not claim unexecuted metrics.
 
-The external items remain intentionally open because the current local
-repository does not establish an owner account, hosting URL or release tag.
+The remaining external items are intentionally open because branch protection,
+private vulnerability reporting and release creation require repository-owner
+settings or an explicit publication decision.
 
 See `docs/github_publication.md` for the non-destructive first-push procedure
 and post-push GitHub settings.
