@@ -19,10 +19,10 @@ actions that still require repository-owner settings or an explicit release deci
 
 - [x] Choose and record the public repository URL.
 - [x] Configure the GitHub private vulnerability-reporting path in repository files.
-- [ ] Enable private vulnerability reporting in GitHub repository settings.
+- [x] Enable private vulnerability reporting in GitHub repository settings.
 - [x] Add GitHub Actions configuration using the same quality commands.
 - [x] Observe the first GitHub-hosted Python 3.11/3.12 workflow passing.
-- [ ] Configure default-branch protection to require both matrix checks.
+- [x] Configure default-branch protection to require both matrix checks.
 - [ ] Choose a release tag only after the final revision passes all local gates.
 - [ ] Attach or link immutable reports; do not claim unexecuted metrics.
 

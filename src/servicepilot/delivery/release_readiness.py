@@ -52,8 +52,21 @@ def audit_release_readiness(root: Path, tracked_paths: Iterable[str]) -> Release
     missing = tuple(name for name in REQUIRED_FILES if not (root / name).is_file())
     pyproject_path = root / "pyproject.toml"
     project: dict[str, Any] = {}
+    package_version = "TBD"
     if pyproject_path.is_file():
-        project = tomllib.loads(pyproject_path.read_text(encoding="utf-8")).get("project", {})
+        pyproject = tomllib.loads(pyproject_path.read_text(encoding="utf-8"))
+        project = pyproject.get("project", {})
+        package_version = str(project.get("version", "TBD"))
+        if package_version == "TBD" and "version" in project.get("dynamic", []):
+            version_path = root / "src/servicepilot/_version.py"
+            if version_path.is_file():
+                match = re.search(
+                    r'^__version__\s*=\s*["\']([^"\']+)["\']',
+                    version_path.read_text(encoding="utf-8"),
+                    re.MULTILINE,
+                )
+                if match:
+                    package_version = match.group(1)
     license_value = project.get("license")
     license_text = license_value.get("text") if isinstance(license_value, dict) else license_value
     metadata_ok = license_text == "Apache-2.0"
@@ -81,7 +94,7 @@ def audit_release_readiness(root: Path, tracked_paths: Iterable[str]) -> Release
     }
     failed = tuple(name for name, passed in checks.items() if not passed)
     return ReleaseReadiness(
-        package_version=str(project.get("version", "TBD")),
+        package_version=package_version,
         required_files_present=not missing,
         license_metadata_is_apache_2_0=metadata_ok,
         license_text_is_apache_2_0=body_ok,
