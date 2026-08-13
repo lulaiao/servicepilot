@@ -28,11 +28,11 @@ The tracked-file and metadata checks are automated by
 `scripts/run_phase10_release_readiness.py`; the command exits nonzero on a local
 gate failure and never authorizes publication.
 
-The latest verified GitHub-hosted quality workflow, run
-[`31664789064`](https://github.com/lulaiao/servicepilot/actions/runs/31664789064),
-passed on exact revision `afd90427ca09d6a1248105d88841e60c54d81752` for both
-Python 3.11 and Python 3.12. Dependabot configuration was also observed running;
-its open MyPy 2.x range-expansion PR remains unmerged pending compatibility review.
+The protected RC PR #2 was squash-merged as
+`94695859bd685c882375b21e7ab6d15eca056b51`. Its GitHub-hosted quality workflow,
+run [`31676640225`](https://github.com/lulaiao/servicepilot/actions/runs/31676640225),
+passed for both Python 3.11 and Python 3.12. Dependabot configuration was also
+observed running; its MyPy 2.x range-expansion PR remains outside the RC scope.
 
 ## Deliberately open external gates
 
