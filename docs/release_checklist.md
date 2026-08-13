@@ -17,8 +17,9 @@ actions that still require an owner and hosting destination.
 
 ## External gates
 
-- [ ] Choose and record the public repository URL.
-- [ ] Configure a monitored private vulnerability-reporting contact.
+- [x] Choose and record the public repository URL.
+- [x] Configure the GitHub private vulnerability-reporting path in repository files.
+- [ ] Enable private vulnerability reporting in GitHub repository settings.
 - [x] Add GitHub Actions configuration using the same quality commands.
 - [ ] Observe the first GitHub-hosted Python 3.11/3.12 workflow passing.
 - [ ] Configure default-branch protection to require both matrix checks.

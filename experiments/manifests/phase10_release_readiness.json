@@ -16,12 +16,14 @@
   },
   "wheel": {
     "filename": "servicepilot-0.1.0-py3-none-any.whl",
-    "sha256": "1e5922e14ec34e814a6dc82a8422cced8cf76ec3f6fce3a3a2c3324a2ff0edc1",
+    "sha256": "7e86dc0f7e59bdab1aa887cae56eba2c2425629898cf73bbe9a9abf926e180c2",
     "published": false
   },
   "external_gates": {
-    "public_repository_url_configured": false,
-    "monitored_security_contact_configured": false,
+    "public_repository_url": "https://github.com/lulaiao/servicepilot",
+    "public_repository_url_configured": true,
+    "private_security_advisory_path_configured": true,
+    "github_private_vulnerability_reporting_enabled": false,
     "hosted_ci_configuration_committed": true,
     "hosted_ci_first_run_passed": false,
     "release_tag_created": false,

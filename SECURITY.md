@@ -9,10 +9,10 @@ independent security and privacy review.
 
 ## Reporting a vulnerability
 
-Until a public repository and private security contact are configured, do not
-publish exploit details. Contact the repository owner through the private
-channel used to share this project. A public release must add a monitored
-security contact before accepting external reports.
+Do not publish exploit details in a public issue. Use GitHub's private
+[security-advisory form](https://github.com/lulaiao/servicepilot/security/advisories/new).
+If private vulnerability reporting is not enabled, contact the repository owner
+through the private channel used to share this project.
 
 Include the affected revision, component, impact and minimal reproduction.
 Remove secrets, personal data and destructive payloads from the report.

@@ -27,6 +27,12 @@ dependencies = [
   "uvicorn[standard]>=0.34,<1",
 ]
 
+[project.urls]
+Homepage = "https://github.com/lulaiao/servicepilot"
+Repository = "https://github.com/lulaiao/servicepilot.git"
+Issues = "https://github.com/lulaiao/servicepilot/issues"
+Documentation = "https://github.com/lulaiao/servicepilot/tree/main/docs"
+
 [project.optional-dependencies]
 dev = [
   "httpx>=0.28,<1",

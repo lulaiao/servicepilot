@@ -44,6 +44,7 @@
   tracked sensitive-file boundaries.
 - Least-privilege GitHub Actions quality matrix, Dependabot configuration, and
   contribution templates for public-repository handoff.
+- Public GitHub repository metadata and private security-advisory routing.
 
 ### Verification
 

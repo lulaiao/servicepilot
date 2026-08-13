@@ -1,5 +1,9 @@
 # ServicePilot
 
+[![quality](https://github.com/lulaiao/servicepilot/actions/workflows/quality.yml/badge.svg)](https://github.com/lulaiao/servicepilot/actions/workflows/quality.yml)
+[![Python 3.11–3.12](https://img.shields.io/badge/python-3.11%E2%80%933.12-blue.svg)](https://www.python.org/downloads/)
+[![License: Apache--2.0](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
+
 ServicePilot is a reproducible, local-first after-sales agent for food delivery
 and local services. It is designed around executable business state, policy
 evidence, reliable MCP tool boundaries, stateful routing, layered memory, and
